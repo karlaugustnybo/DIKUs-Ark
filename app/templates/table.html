@@ -1,0 +1,92 @@
+{% extends 'layout.html' %}
+
+
+{% block body %}
+    <h1>Exploring The Raw Data</h1>
+    <h3 style="width: 50%; margin: auto;">Scroll through real sequencing-status and build a more detailed view of each datapoint, select subsets and download them as csv files for further exploratory data-analysis.</h3>
+
+    <table>
+        <tr>
+            <th>Genome ID</th>
+            <th>Sequencing Level</th>
+            <th>Endangeredness Level</th>
+            <th>EDGE</th>
+        </tr>
+        {% if genomes | length > 0 %}
+
+            {% for g in genomes %}
+
+                <tr>
+                    <td>{{100000 + g.id }}</td>
+                    <td>{{ g.seq }}</td>
+                    <td>{{ g.endangered }} / 10</td>
+                    <td>{{ g.is_edge }}</td>
+                    <td class="data-edits">
+                        <a href="/delete/{{ g.id }}/">Delete</a>
+                        <a href="/update/{{ g.id }}/">Update</a>
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+        {% else %}
+        <h3>There are no tasks in the database as of now...</h3>
+        <tr>
+            <td>100001</td>
+            <td>Fully Sequenced</td>
+            <td>3 / 10</td>
+            <td>False</td>
+        </tr>
+        <tr>
+            <td>100002</td>
+            <td>Fully Sequenced</td>
+            <td>5 / 10</td>
+            <td>False</td>
+        </tr>
+        <tr>
+            <td>100003</td>
+            <td>Not Sequenced</td>
+            <td>8 / 10</td>
+            <td>False</td>
+        </tr>
+        <tr>
+            <td>100004</td>
+            <td>Partially Sequenced</td>
+            <td>2 / 10</td>
+            <td>True</td>
+        </tr>
+        {% endif %}
+    </table>
+
+    <div class="bottom-functions">
+        <a href="/">Back to Homepage</a>
+        <a href="#">Export as CSV</a>
+        <a href="/data/map/">View Data as Heatmap</a>
+    </div>
+
+    <form class="form-card" method="post" action="/data/table/">
+        <h2>Submit Your Own Data</h2>
+
+        <div class="form-group">
+            <label for="seq">Sequencing Level</label>
+
+            <select id="seq" name="sequencing_level" style="scale: 1.25;">
+                <option value="Not Sequenced" selected>Not Sequenced</option>
+                <option value="Partially Sequenced">Partially Sequenced</option>
+                <option value="Fully Sequenced">Fully Sequenced</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="endangered">Endangeredness Level <span id="valueDisplay">2</span></label>
+            <input type="range" id="endangered" name="endangeredness_level" min="0" max="10" value="2"    oninput="valueDisplay.textContent = this.value">
+        </div>
+
+        <div class="form-group checkbox-row">
+            <label for="edge">EDGE Species</label>
+            <input type="checkbox" id="edge" name="edge">
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

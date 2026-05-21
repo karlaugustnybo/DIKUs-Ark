@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+
+
+{% block body %}
+
+<h1>Explore The Map</h1>
+<h3>See where in the world there is the highest need for DNA-sequencing, discover target-areas local to yourself, or make your own custom scoring function.</h3>
+
+<img src="{{url_for('static', filename='imgs/heatmap_ex.png')}}" alt="Heatmap Example" style="width: 70%;">
+
+<div class="index-bottom">
+    <a href="/">Back to Homepage</a>
+    <a href="/data/table/">View Data as Tabular</a>
+</div>
+
+{% endblock %}

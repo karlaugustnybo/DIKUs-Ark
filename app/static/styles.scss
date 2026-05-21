@@ -1,0 +1,179 @@
+$main_color: rgb(12, 11, 18);
+$secondary: rgb(244, 244, 255);
+$tertiary: rgb(255, 61, 161); // rgb(236, 51, 146);
+
+$main_2: rgb(12+10, 11+10, 18+15);
+
+body {
+    background-color: $main_color;
+    color: $secondary;
+    margin-top: 5em;
+}
+
+h1 {
+    margin-bottom: 1em;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+p {
+    margin: auto;
+    width: 60%;
+}
+
+table {
+    margin: auto;
+    width: 50%;
+    margin-top: 3em;
+    font-size: 1.4em;
+}
+
+a {
+    color: $tertiary;
+    font-weight: bold;
+}
+
+.homepage-para {
+    font-size: 1.30rem;
+    text-align: center;
+    line-height: 2.5rem;
+}
+
+.bottom-functions {
+    margin: auto;
+    margin-top: 2em;
+
+    a {
+        padding-left: 3em;
+        padding-right: 3em;
+    }
+}
+
+.index-bottom {
+    margin-top: 2rem;
+
+    a {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+.form-card {
+    margin: auto;
+    margin-top: 3em;
+    background: $main_2;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    width: 35%;
+    font-size: 1.25rem;
+}
+
+.form-card h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+    accent-color: $tertiary;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+input[type="range"] {
+    width: 15rem;
+    color: $tertiary;
+}
+
+.checkbox-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+
+    input[type="checkbox"] {
+        width: 1.1rem;
+        height: 1.1rem;
+    }
+}
+
+.form-card button {
+    width: 10rem;
+    border: none;
+    border-radius: 8px;
+    background: $tertiary;
+    color: $secondary;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.form-card button:hover {
+    background: $tertiary;
+}
+
+td {
+    a {
+        font-size: 0.80rem;
+        display: block;
+        margin-bottom: 0rem;
+    }
+}
+
+tr {
+    height: 2.5rem;
+}
+
+.data-edits {
+    a {
+        margin-left: 1.5rem;
+    }
+}
+
+
+// update page
+.update-card {
+    margin-top: 10rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 50%;
+    height: 600px;
+    font-size: 1.5rem;
+
+    h1 {
+        margin: 0;
+        margin-bottom: 2rem;
+    }
+
+    div {
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .checkbox-row {
+        input[type="checkbox"] {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+        display: flexbox;
+    }
+
+    select {
+        scale: 1.5;
+    }
+
+    input[type="range"] {
+        scale: 1.35;
+    }
+
+    button {
+        scale: 1.5;
+        margin-top: 2rem;
+    }
+}
