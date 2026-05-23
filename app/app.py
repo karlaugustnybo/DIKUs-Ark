@@ -1,7 +1,49 @@
 from flask import Flask, render_template, request, redirect
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
+import duckdb
+import pandas as pd, polars as pl
+import numpy as np
 
+con = duckdb.connect()
+
+# install and load
+con.execute('install spatial;')
+con.execute('load spatial;')
+
+
+# read in spatial data
+con.execute('''
+    create view spatial as (
+        select *, ST_GeomFromWKB(geom_wkb) as geom
+        from read_parquet('data/denmark_prototype/spatial/spatial_denmark.parquet')
+    );
+''')
+
+# read in extra info
+con.execute('''
+    create view tabular as (
+        select * from read_parquet('data/denmark_prototype/tabular/extra_info_denmark.parquet')
+    );
+''')
+
+spatial_df = pl.from_pandas(con.execute('''
+    select * from spatial;
+''').df())
+
+cols = ['id_no','sci_name','class','family','genus','sequencing_status','threat_score']
+# spatial_df = spatial_df.select(cols)
+
+extra = pl.from_pandas(con.execute('''
+    select * from tabular;
+''').df())
+
+# merge species with polygons
+merged = pl.from_pandas(con.execute('''
+    select s.*, t.populationTrend, t.systems, t.realm
+    from spatial s left join tabular t
+        on s.gbif_accepted_id = t.gbif_accepted_id;
+''').df())
 
 
 # app
@@ -80,6 +122,36 @@ def update(id:int):
 def map():
     return render_template('map.html')
 
+
+@app.route('/data/spatial/')
+def spatial():
+    return render_template(
+        'spatial.html', 
+        spatial_df=spatial_df.filter(~pl.col('id_no').is_null()).iter_rows(named=True), 
+        n=spatial_df.height
+    )
+
+
+@app.route('/data/spatial/chunk')
+def spatial_chunk():
+    offset = int(request.args.get('offset', 0))
+
+    rows = spatial_df.slice(offset, 100).iter_rows(named=True)
+
+    return render_template(
+        'spatial.html',
+        spatial_df=rows
+    )
+
+
+@app.route('/data/extra/')
+def extra():
+    return render_template('extra.html', extra=extra)
+
+
+@app.route('/data/tabular/')
+def tabular():
+    return render_template('tabular.html', merged=merged)
 
 
 

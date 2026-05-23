@@ -1,8 +1,8 @@
-$main_color: rgb(12, 11, 18);
-$secondary: rgb(244, 244, 255);
-$tertiary: rgb(255, 61, 161); // rgb(236, 51, 146);
+$main_color: rgb(255, 255, 255);
+$secondary: rgb(52, 52, 69);
+$tertiary: rgb(70, 188, 248); // rgb(236, 51, 146);
 
-$main_2: rgb(12+10, 11+10, 18+15);
+$main_2: rgb(233, 232, 234);
 
 body {
     background-color: $main_color;
@@ -24,7 +24,7 @@ table {
     margin: auto;
     width: 50%;
     margin-top: 3em;
-    font-size: 1.4em;
+    font-size: 1.2em;
 }
 
 a {
@@ -128,6 +128,11 @@ tr {
     height: 2.5rem;
 }
 
+th {
+   padding-left: 1em;
+   padding-right: 1em; 
+}
+
 .data-edits {
     a {
         margin-left: 1.5rem;
@@ -176,4 +181,23 @@ tr {
         scale: 1.5;
         margin-top: 2rem;
     }
+}
+
+
+.large-tabular {
+    width: 800px;
+    height: 650px;
+    overflow-y: auto;
+    overflow-x: auto;
+    margin: auto;
+
+    table {
+        width: 100%;
+        white-space: nowrap;
+    }
+}
+
+.page {
+    margin-top: 3em;
+    border-radius: 10px;
 }

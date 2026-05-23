@@ -1,6 +1,6 @@
 body {
-  background-color: rgb(12, 11, 18);
-  color: rgb(244, 244, 255);
+  background-color: rgb(255, 255, 255);
+  color: rgb(52, 52, 69);
   margin-top: 5em;
 }
 
@@ -18,11 +18,11 @@ table {
   margin: auto;
   width: 50%;
   margin-top: 3em;
-  font-size: 1.4em;
+  font-size: 1.2em;
 }
 
 a {
-  color: rgb(255, 61, 161);
+  color: rgb(70, 188, 248);
   font-weight: bold;
 }
 
@@ -52,7 +52,7 @@ a {
 .form-card {
   margin: auto;
   margin-top: 3em;
-  background: rgb(22, 21, 33);
+  background: rgb(233, 232, 234);
   padding: 2rem;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
@@ -68,7 +68,7 @@ a {
 
 .form-group {
   margin-bottom: 1.25rem;
-  accent-color: rgb(255, 61, 161);
+  accent-color: rgb(70, 188, 248);
 }
 
 label {
@@ -79,7 +79,7 @@ label {
 
 input[type=range] {
   width: 15rem;
-  color: rgb(255, 61, 161);
+  color: rgb(70, 188, 248);
 }
 
 .checkbox-row {
@@ -96,15 +96,15 @@ input[type=range] {
   width: 10rem;
   border: none;
   border-radius: 8px;
-  background: rgb(255, 61, 161);
-  color: rgb(244, 244, 255);
+  background: rgb(70, 188, 248);
+  color: rgb(52, 52, 69);
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .form-card button:hover {
-  background: rgb(255, 61, 161);
+  background: rgb(70, 188, 248);
 }
 
 td a {
@@ -115,6 +115,11 @@ td a {
 
 tr {
   height: 2.5rem;
+}
+
+th {
+  padding-left: 1em;
+  padding-right: 1em;
 }
 
 .data-edits a {
@@ -155,4 +160,21 @@ tr {
 .update-card button {
   scale: 1.5;
   margin-top: 2rem;
+}
+
+.large-tabular {
+  width: 80%;
+  height: 650px;
+  overflow-y: auto;
+  overflow-x: auto;
+  margin: auto;
+}
+.large-tabular table {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.page {
+  margin-top: 3em;
+  border-radius: 10px;
 }/*# sourceMappingURL=styles.css.map */
