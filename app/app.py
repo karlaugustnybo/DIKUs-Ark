@@ -8,41 +8,41 @@ import numpy as np
 con = duckdb.connect()
 
 # install and load
-con.execute('install spatial;')
-con.execute('load spatial;')
+con.execute('INSTALL spatial;')
+con.execute('LOAD spatial;')
 
 
 # read in spatial data
 con.execute('''
-    create view spatial as (
-        select *, ST_GeomFromWKB(geom_wkb) as geom
-        from read_parquet('data/denmark_prototype/spatial/spatial_denmark.parquet')
+    create view spatial AS (
+        SELECT *, ST_GeomFromWKB(geom_wkb) AS geom
+        FROM read_parquet('data/denmark_prototype/spatial/spatial_denmark.parquet')
     );
 ''')
 
 # read in extra info
 con.execute('''
-    create view tabular as (
-        select * from read_parquet('data/denmark_prototype/tabular/extra_info_denmark.parquet')
+    CREATE VIEW tabular AS (
+        SELECT * FROM read_parquet('data/denmark_prototype/tabular/extra_info_denmark.parquet')
     );
 ''')
 
 spatial_df = pl.from_pandas(con.execute('''
-    select * from spatial;
+    SELECT * FROM spatial;
 ''').df())
 
 cols = ['id_no','sci_name','class','family','genus','sequencing_status','threat_score']
 # spatial_df = spatial_df.select(cols)
 
 extra = pl.from_pandas(con.execute('''
-    select * from tabular;
+    SELECT * FROM tabular;
 ''').df())
 
 # merge species with polygons
 merged = pl.from_pandas(con.execute('''
-    select s.*, t.populationTrend, t.systems, t.realm
-    from spatial s left join tabular t
-        on s.gbif_accepted_id = t.gbif_accepted_id;
+    SELECT s.*, t.populationTrend, t.systems, t.realm
+    FROM spatial s LEFT JOIN tabular t
+        ON s.gbif_accepted_id = t.gbif_accepted_id;
 ''').df())
 
 
@@ -125,9 +125,12 @@ def map():
 
 @app.route('/data/spatial/')
 def spatial():
+    # Only include first 100 rows in initial page
+    initial_slice = spatial_df.filter(~pl.col('id_no').is_null()).slice(0, 100)
+
     return render_template(
         'spatial.html', 
-        spatial_df=spatial_df.filter(~pl.col('id_no').is_null()).iter_rows(named=True), 
+        spatial_df=initial_slice.iter_rows(named=True), 
         n=spatial_df.height
     )
 
