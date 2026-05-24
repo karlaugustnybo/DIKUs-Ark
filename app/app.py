@@ -142,7 +142,7 @@ def spatial_chunk():
     rows = spatial_df.slice(offset, 100).iter_rows(named=True)
 
     return render_template(
-        'spatial.html',
+        'spatial_rows.html',
         spatial_df=rows
     )
 
