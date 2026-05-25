@@ -125,13 +125,8 @@ def map():
 
 @app.route('/data/spatial/')
 def spatial():
-    # Only include first 100 rows in initial page
-    initial_slice = spatial_df.filter(~pl.col('id_no').is_null()).slice(0, 100)
-
     return render_template(
-        'spatial.html', 
-        spatial_df=initial_slice.iter_rows(named=True), 
-        n=spatial_df.height
+        'spatial.html'
     )
 
 

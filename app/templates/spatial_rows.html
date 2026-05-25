@@ -1,15 +1,3 @@
-<!-- {% for row in spatial_df %}
-<tr>
-    <td>{{row.id_no}}</td>
-    <td>{{row.sci_name}}</td>
-    <td>{{row.class}}</td>
-    <td>{{row.family}}</td>
-    <td>{{row.genus}}</td>
-    <td>{{row.sequencing_status}}</td>
-    <td>{{row.threat_score}}</td>
-</tr>
-{% endfor %} -->
-
 {% for row in spatial_df %}
 <tr>
     <td>{{row.id_no}}</td>
@@ -29,7 +17,7 @@
     <td>{{row.terrestial}}</td>
     <td>{{row.freshwater}}</td>
     <td>{{row.source}}</td>
-    <!-- <td>{{row.geom_wkb}}</td> -->
+    {# <td>{{row.geom_wkb}}</td> #}
     <td>{{row.redlistCategory}}</td>
     <td>{{row.gbif_accepted_id}}</td>
     <td>{{row.threat_score}}</td>
@@ -51,7 +39,7 @@
     <td>{{row.family_has_dna}}</td>
     <td>{{row.h3_res3}}</td>
     <td>{{row.h3_res7}}</td>
-    <!-- <td>{{row.iucn_grouping}}</td> -->
-    <!-- <td>{{row.geom}}</td> -->
+    {# <td>{{row.iucn_grouping}}</td> #}
+    {# <td>{{row.geom}}</td> #}
 </tr>
 {% endfor %}
