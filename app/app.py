@@ -31,8 +31,16 @@ spatial_df = pl.from_pandas(con.execute('''
     SELECT * FROM spatial;
 ''').df())
 
-cols = ['id_no','sci_name','class','family','genus','sequencing_status','threat_score']
-# spatial_df = spatial_df.select(cols)
+cols = [
+    'id_no','sci_name','class','family','genus','sequencing_status',
+    'threat_score','taxon_group','kingdom','phylum','order_name',
+    'iucn_category','presence','origin','seasonal','marine','terrestial',
+    'freshwater','redlistCategory','dna_coverage_score','gbif_accepted_id',
+    'sampling_priority','assembly_level','assembly_span','sample_available',
+    'published','match_method','has_dna_species_level','genus_has_dna',
+    'family_has_dna','h3_res3','h3_res7'
+]
+spatial_df = spatial_df.select(cols)
 
 extra = pl.from_pandas(con.execute('''
     SELECT * FROM tabular;
