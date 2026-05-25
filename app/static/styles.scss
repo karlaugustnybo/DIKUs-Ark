@@ -130,6 +130,11 @@ tr {
     height: 2.5rem;
 }
 
+th {
+   padding-left: 1em;
+   padding-right: 1em; 
+}
+
 .data-edits {
     a {
         margin-left: 1.5rem;
@@ -185,4 +190,22 @@ tr {
         scale: 1.5;
         margin-top: 2rem;
     }
+}
+
+.large-tabular {
+    width: 80%;
+    height: 650px;
+    overflow-y: auto;
+    overflow-x: auto;
+    margin: auto;
+
+    table {
+        width: 100%;
+        white-space: nowrap;
+    }
+}
+
+.page {
+    margin-top: 3em;
+    border-radius: 10px;
 }
