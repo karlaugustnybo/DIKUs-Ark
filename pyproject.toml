@@ -6,4 +6,9 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "tol-sdk>=2.1.2",
+    "flask>=3.1.1",
+    "duckdb>=1.5.2",
+    "flask-scss>=0.5",
+    "numpy>=1.26",
+    "matplotlib>=3.8",
 ]

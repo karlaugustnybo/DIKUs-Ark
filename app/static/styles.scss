@@ -1,13 +1,8 @@
-$main_color: rgb(12, 11, 18);
-$secondary: rgb(244, 244, 255);
-$tertiary: rgb(255, 61, 161); // rgb(236, 51, 146);
-
-$main_2: rgb(12+10, 11+10, 18+15);
-
 body {
-    background-color: $main_color;
-    color: $secondary;
+    background-color: #ffffff;
+    color: #000000;
     margin-top: 5em;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 h1 {
@@ -25,10 +20,19 @@ table {
     width: 50%;
     margin-top: 3em;
     font-size: 1.4em;
+    border-collapse: collapse;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+th, td {
+    padding: 0.5rem;
 }
 
 a {
-    color: $tertiary;
+    color: #0066cc;
     font-weight: bold;
 }
 
@@ -60,7 +64,7 @@ a {
 .form-card {
     margin: auto;
     margin-top: 3em;
-    background: $main_2;
+    background: #f5f5f5;
     padding: 2rem;
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.1);
@@ -76,7 +80,6 @@ a {
 
 .form-group {
     margin-bottom: 1.25rem;
-    accent-color: $tertiary;
 }
 
 label {
@@ -87,7 +90,6 @@ label {
 
 input[type="range"] {
     width: 15rem;
-    color: $tertiary;
 }
 
 .checkbox-row {
@@ -105,15 +107,15 @@ input[type="range"] {
     width: 10rem;
     border: none;
     border-radius: 8px;
-    background: $tertiary;
-    color: $secondary;
+    background: #333;
+    color: #fff;
     font-size: 1rem;
     cursor: pointer;
     transition: background 0.2s;
 }
 
 .form-card button:hover {
-    background: $tertiary;
+    background: #555;
 }
 
 td {
@@ -134,8 +136,15 @@ tr {
     }
 }
 
+#map {
+    width: 70%;
+    height: 500px;
+    margin: auto;
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
 
-// update page
 .update-card {
     margin-top: 10rem;
     display: flex;

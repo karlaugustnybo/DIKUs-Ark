@@ -1,13 +1,204 @@
 {% extends 'layout.html' %}
 
-
+{% block head %}
+<script src="https://unpkg.com/deck.gl@8.9.35/dist.min.js"></script>
+{% endblock %}
 
 {% block body %}
 
 <h1>Explore The Map</h1>
 <h3>See where in the world there is the highest need for DNA-sequencing, discover target-areas local to yourself, or make your own custom scoring function.</h3>
 
-<img src="{{url_for('static', filename='imgs/heatmap_ex.png')}}" alt="Heatmap Example" style="width: 70%;">
+<div id="controls" style="margin:1.5em auto; width:70%; font-size:1.1em;">
+    <div style="margin-bottom:1em; font-weight:bold;">
+        Resolution: <span id="resolution-display">H3 Res 3</span>
+        <small style="font-weight:normal; color:#666;">(switches automatically when zooming past 7)</small>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:1.5em; justify-content:center;">
+        <div class="form-group">
+            <label for="cr">CR Weight <span id="val-cr">{{ weights.cr }}</span></label>
+            <input type="range" id="cr" name="cr" min="0" max="10" step="0.5" value="{{ weights.cr }}">
+        </div>
+        <div class="form-group">
+            <label for="en">EN Weight <span id="val-en">{{ weights.en }}</span></label>
+            <input type="range" id="en" name="en" min="0" max="10" step="0.5" value="{{ weights.en }}">
+        </div>
+        <div class="form-group">
+            <label for="vu">VU Weight <span id="val-vu">{{ weights.vu }}</span></label>
+            <input type="range" id="vu" name="vu" min="0" max="10" step="0.5" value="{{ weights.vu }}">
+        </div>
+        <div class="form-group">
+            <label for="nt">NT Weight <span id="val-nt">{{ weights.nt }}</span></label>
+            <input type="range" id="nt" name="nt" min="0" max="10" step="0.5" value="{{ weights.nt }}">
+        </div>
+        <div class="form-group">
+            <label for="dd">DD Weight <span id="val-dd">{{ weights.dd }}</span></label>
+            <input type="range" id="dd" name="dd" min="0" max="10" step="0.5" value="{{ weights.dd }}">
+        </div>
+        <div class="form-group">
+            <label for="lc">LC Weight <span id="val-lc">{{ weights.lc }}</span></label>
+            <input type="range" id="lc" name="lc" min="0" max="10" step="0.1" value="{{ weights.lc }}">
+        </div>
+        <div class="form-group">
+            <label for="sp">Missing Species DNA <span id="val-sp">{{ weights.sp }}</span></label>
+            <input type="range" id="sp" name="sp" min="0" max="10" step="0.5" value="{{ weights.sp }}">
+        </div>
+        <div class="form-group">
+            <label for="gen">Missing Genus DNA <span id="val-gen">{{ weights.gen }}</span></label>
+            <input type="range" id="gen" name="gen" min="0" max="10" step="0.5" value="{{ weights.gen }}">
+        </div>
+    </div>
+</div>
+
+<div id="map"></div>
+
+<script>
+    const initialData = {{ data | tojson }};
+
+    // Current state
+    let currentResolution = 'res3';
+    let debounceTimer = null;
+    let fetchNonce = 0;
+    let lastZoom = null;
+
+    // Utility: read all weight slider values and map bounds
+    function getWeights() {
+        const ids = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen'];
+        const params = new URLSearchParams();
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) params.append(id, el.value);
+        });
+        params.append('resolution', currentResolution);
+        if (currentResolution === 'res7') {
+            try {
+                const viewport = deckgl.viewManager.getViewports()[0];
+                const [minLon, minLat, maxLon, maxLat] = viewport.getBounds();
+                params.append('lat_min', minLat);
+                params.append('lat_max', maxLat);
+                params.append('lon_min', minLon);
+                params.append('lon_max', maxLon);
+            } catch (e) {
+                // viewport not ready yet — fall back to full table
+            }
+        }
+        return params;
+    }
+
+    // Update visible label values on slider input
+    const sliderIds = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen'];
+    sliderIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('input', () => {
+            document.getElementById('val-' + id).textContent = el.value;
+        });
+        el.addEventListener('change', () => {
+            // Debounce fetch when slider is released
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => fetchAndUpdateLayer(), 150);
+        });
+    });
+
+    // Build polygon layer from data array
+    function createPolygonLayer(data) {
+        return new deck.PolygonLayer({
+            id: 'h3-polygons',
+            data: data,
+            getPolygon: d => d.contour,
+            getFillColor: d => d.color,
+            pickable: true,
+            stroked: true,
+            getLineColor: [255, 255, 255, 80],
+            getLineWidth: 1,
+            lineWidthUnits: 'pixels',
+        });
+    }
+
+    // Fetch new data via API and update layer (guarded by nonce)
+    async function fetchAndUpdateLayer() {
+        const myNonce = ++fetchNonce;
+        const params = getWeights();
+        try {
+            const resp = await fetch('/api/map-data/?' + params.toString());
+            if (myNonce !== fetchNonce) return; // stale request, ignore
+            const json = await resp.json();
+            if (myNonce !== fetchNonce) return; // stale request, ignore
+            const newLayer = createPolygonLayer(json.data);
+            deckgl.setProps({ layers: [baseTileLayer, newLayer] });
+        } catch (err) {
+            console.error('Failed to update map data:', err);
+        }
+    }
+
+    // Base tile layer (will be reused)
+    const baseTileLayer = new deck.TileLayer({
+        id: 'carto-light',
+        data: 'https://basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+        minZoom: 0,
+        maxZoom: 19,
+        tileSize: 256,
+        renderSubLayers: props => {
+            const {bbox} = props.tile;
+            return new deck.BitmapLayer(props, {
+                data: null,
+                image: props.data,
+                bounds: [bbox.west, bbox.south, bbox.east, bbox.north],
+            });
+        },
+    });
+
+    const deckgl = new deck.DeckGL({
+        container: 'map',
+        initialViewState: {
+            longitude: 10,
+            latitude: 56,
+            zoom: 4,
+        },
+        controller: true,
+        onViewStateChange: ({viewState}) => {
+            const roundedZoom = Math.round(viewState.zoom * 10) / 10;
+            if (roundedZoom === lastZoom) return;
+            lastZoom = roundedZoom;
+            const desiredResolution = roundedZoom > 7 ? 'res7' : 'res3';
+            if (desiredResolution !== currentResolution) {
+                currentResolution = desiredResolution;
+                document.getElementById('resolution-display').textContent = currentResolution === 'res3' ? 'H3 Res 3' : 'H3 Res 7';
+                fetchAndUpdateLayer();
+            }
+        },
+        getTooltip: ({object}) => {
+            if (!object) return null;
+            return {
+                html: `
+                    <div style="min-width:200px;">
+                        <strong>H3: ${object.h3_index}</strong><br/>
+                        Score: ${object.score.toFixed(2)}<br/>
+                        <hr style="border-color:rgba(100,100,100,0.2); margin:0.4rem 0;">
+                        CR: ${object.details.CR}, EN: ${object.details.EN}, VU: ${object.details.VU}<br/>
+                        NT: ${object.details.NT}, DD: ${object.details.DD}, LC: ${object.details.LC}<br/>
+                        Missing Species DNA: ${object.details['Missing Species DNA']}<br/>
+                        Missing Genus DNA: ${object.details['Missing Genus DNA']}
+                    </div>
+                `,
+                style: {
+                    backgroundColor: 'rgba(255,255,255,0.95)',
+                    color: '#000000',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.4rem',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                }
+            };
+        },
+        layers: [
+            baseTileLayer,
+            createPolygonLayer(initialData)
+        ]
+    });
+</script>
 
 <div class="index-bottom">
     <a href="/">Back to Homepage</a>
