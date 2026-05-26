@@ -63,7 +63,7 @@ DEFAULT_WEIGHTS = {
     'sp':  2.0,   # missing species-level DNA
     'gen': 3.0,   # missing genus-level DNA
     'fam': 4.0,   # missing family-level DNA
-    'cov': 5.0,   # DNA coverage score weight
+    'cov': 1.0,   # DNA coverage score weight
 }
 
 
@@ -103,7 +103,19 @@ def build_data(df, weights):
         Maximum score across all rows (used for normalisation).
     """
     w = weights
-    # 1. Weighted linear sum of the eight contributing counts.
+    # 1. Weighted linear sum of all contributing counts.
+    #    The last two (fam, cov) safely default to zero arrays when
+    #    the columns are absent (e.g. H3 tables not yet updated).
+    missing_family_dna = (
+        df['missing_family_dna'].values
+        if 'missing_family_dna' in df.columns
+        else np.zeros(len(df), dtype=np.float32)
+    )
+    dna_coverage_score = (
+        df['dna_coverage_score'].values
+        if 'dna_coverage_score' in df.columns
+        else np.zeros(len(df), dtype=np.float32)
+    )
     scores = (
         df['crit_endangered_count'].values * w['cr']
         + df['endangered_count'].values * w['en']
@@ -113,6 +125,8 @@ def build_data(df, weights):
         + df['least_concern_count'].values * w['lc']
         + df['missing_species_dna'].values * w['sp']
         + df['missing_genus_dna'].values * w['gen']
+        + missing_family_dna * w['fam']
+        + dna_coverage_score * w['cov']
     ).astype(np.float32)
 
     # 2. Normalise so the colour scale spans 0-1 across the whole dataset.
@@ -151,6 +165,12 @@ def build_data(df, weights):
                 'LC': int(row['least_concern_count']),
                 'Missing Species DNA': int(row['missing_species_dna']),
                 'Missing Genus DNA': int(row['missing_genus_dna']),
+                # Future-proof: include missing-family and coverage
+                # scores in the tooltip when the H3 tables gain them.
+                'Missing Family DNA': int(
+                    row.get('missing_family_dna', 0)),
+                'DNA Coverage Score': int(
+                    row.get('dna_coverage_score', 0)),
             }
         })
     return records, float(s_max)

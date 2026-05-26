@@ -48,60 +48,155 @@
 <h3>See where in the world there is the highest need for DNA-sequencing, discover target-areas local to yourself, or make your own custom scoring function.</h3>
 
 {# ------------------------------------------------------------------
-   WEIGHT-SLIDER CONTROL BAR
+   WEIGHT-SLIDER CONTROL BAR (Dual Dropdowns)
    ------------------------------------------------------------------
-   These eight `<input type="range">` sliders allow the user to
-   tweak the scoring formula interactively.
+   Same dual-dropdown layout as table.html:
+   • IUCN Category Weights (CR, EN, VU, NT, DD, LC)
+   • DNA & Coverage Weights (sp, gen, fam, cov)
 
-   Each slider ID corresponds to a key in DEFAULT_WEIGHTS (app.py).
-   When a slider is released, JS serialises all eight values and
-   sends them to `/api/map-data/` as URL query parameters.
-
-   Layout note: the sliders sit in a flex-wrap row so they reflow
-   gracefully on smaller screens.
+   Every slider now has a paired `<input type="number">` so users
+   can type exact values or drag the slider. Both inputs are synced
+   and debounced → the map re-fetches with new weights only after
+   the user releases / stops typing.
    ------------------------------------------------------------------ #}
-<div id="controls" style="margin:1.5em auto; width:70%; font-size:1.1em;">
-    {# Display which H3 resolution the next fetch will use.
-       Updated dynamically by JS when zoom crosses threshold 7. #}
+<div id="controls" class="sliders-wrapper" style="margin:1.5em auto; width:70%; font-size:1.1em;">
+    {# Display which H3 resolution the next fetch will use. #}
     <div style="margin-bottom:1em; font-weight:bold;">
         Resolution: <span id="resolution-display">H3 Res 3</span>
         <small style="font-weight:normal; color:#666;">(switches automatically when zooming past 7)</small>
     </div>
 
-    <div style="display:flex; flex-wrap:wrap; gap:1.5em; justify-content:center;">
-        {# --- IUCN Category Weights --- #}
-        <div class="form-group">
-            <label for="cr">CR Weight <span id="val-cr">{{ weights.cr }}</span></label>
-            <input type="range" id="cr" name="cr" min="0" max="10" step="0.5" value="{{ weights.cr }}">
+    <!-- Dropdown 1: IUCN Category Weights ------------------------------->
+    <div class="sliders-dropdown" style="margin-top:0;">
+        <button type="button" class="dropdown-toggle" id="iucn-btn"
+                onclick="toggleMapDropdown('iucn-panel', 'iucn-btn', 'IUCN Category Weights')">
+            IUCN Category Weights ▼
+        </button>
+        <div id="iucn-panel" class="dropdown-panel" style="display:none;">
+            <div class="dropdown-grid">
+                <div class="weight-row">
+                    <label for="cr">CR Weight</label>
+                    <div class="weight-controls">
+                        <input type="range" id="cr" name="cr"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.cr }}">
+                        <input type="number" id="num-cr" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.cr }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                    <label for="en">EN Weight</label>
+                    <div class="weight-controls">
+                        <input type="range" id="en" name="en"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.en }}">
+                        <input type="number" id="num-en" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.en }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                    <label for="vu">VU Weight</label>
+                    <div class="weight-controls">
+                        <input type="range" id="vu" name="vu"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.vu }}">
+                        <input type="number" id="num-vu" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.vu }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                    <label for="nt">NT Weight</label>
+                    <div class="weight-controls">
+                        <input type="range" id="nt" name="nt"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.nt }}">
+                        <input type="number" id="num-nt" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.nt }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                    <label for="dd">DD Weight</label>
+                    <div class="weight-controls">
+                        <input type="range" id="dd" name="dd"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.dd }}">
+                        <input type="number" id="num-dd" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.dd }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                    <label for="lc">LC Weight</label>
+                    <div class="weight-controls">
+                        <input type="range" id="lc" name="lc"
+                               min="0" max="10" step="0.1"
+                               value="{{ weights.lc }}">
+                        <input type="number" id="num-lc" class="weight-num"
+                               min="0" max="10" step="0.1"
+                               value="{{ weights.lc }}">
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="en">EN Weight <span id="val-en">{{ weights.en }}</span></label>
-            <input type="range" id="en" name="en" min="0" max="10" step="0.5" value="{{ weights.en }}">
-        </div>
-        <div class="form-group">
-            <label for="vu">VU Weight <span id="val-vu">{{ weights.vu }}</span></label>
-            <input type="range" id="vu" name="vu" min="0" max="10" step="0.5" value="{{ weights.vu }}">
-        </div>
-        <div class="form-group">
-            <label for="nt">NT Weight <span id="val-nt">{{ weights.nt }}</span></label>
-            <input type="range" id="nt" name="nt" min="0" max="10" step="0.5" value="{{ weights.nt }}">
-        </div>
-        <div class="form-group">
-            <label for="dd">DD Weight <span id="val-dd">{{ weights.dd }}</span></label>
-            <input type="range" id="dd" name="dd" min="0" max="10" step="0.5" value="{{ weights.dd }}">
-        </div>
-        <div class="form-group">
-            <label for="lc">LC Weight <span id="val-lc">{{ weights.lc }}</span></label>
-            <input type="range" id="lc" name="lc" min="0" max="10" step="0.1" value="{{ weights.lc }}">
-        </div>
-        {# --- DNA Availability Weights (count of missing sequences) --- #}
-        <div class="form-group">
-            <label for="sp">Missing Species DNA <span id="val-sp">{{ weights.sp }}</span></label>
-            <input type="range" id="sp" name="sp" min="0" max="10" step="0.5" value="{{ weights.sp }}">
-        </div>
-        <div class="form-group">
-            <label for="gen">Missing Genus DNA <span id="val-gen">{{ weights.gen }}</span></label>
-            <input type="range" id="gen" name="gen" min="0" max="10" step="0.5" value="{{ weights.gen }}">
+    </div>
+
+    <!-- Dropdown 2: DNA & Coverage Weights ---------------------------->
+    <div class="sliders-dropdown" style="margin-top:1em;">
+        <button type="button" class="dropdown-toggle" id="dna-btn"
+                onclick="toggleMapDropdown('dna-panel', 'dna-btn', 'DNA & Coverage Weights')">
+            DNA & Coverage Weights ▼
+        </button>
+        <div id="dna-panel" class="dropdown-panel" style="display:none;">
+            <div class="dropdown-grid">
+                <div class="weight-row">
+                    <label for="sp">Missing Species DNA</label>
+                    <div class="weight-controls">
+                        <input type="range" id="sp" name="sp"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.sp }}">
+                        <input type="number" id="num-sp" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.sp }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                    <label for="gen">Missing Genus DNA</label>
+                    <div class="weight-controls">
+                        <input type="range" id="gen" name="gen"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.gen }}">
+                        <input type="number" id="num-gen" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.gen }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                    <label for="fam">Missing Family DNA</label>
+                    <div class="weight-controls">
+                        <input type="range" id="fam" name="fam"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.fam }}">
+                        <input type="number" id="num-fam" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.fam }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                    <label for="cov">DNA Coverage Weight</label>
+                    <div class="weight-controls">
+                        <input type="range" id="cov" name="cov"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.cov }}">
+                        <input type="number" id="num-cov" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.cov }}">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -155,8 +250,15 @@
      * is ready, we clip the query to the visible lat / lon bounds so
      * the server sends only the polygons in view (lightweight).
      */
+    /**
+     * Reads the ten slider values and map-bounding box, then
+     * builds a URLSearchParams object for the /api/map-data/ request.
+     *
+     * All sliders now include the two new DNA weights
+     * (fam = Missing Family DNA, cov = DNA Coverage).
+     */
     function getWeights() {
-        const ids = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen'];
+        const ids = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen', 'fam', 'cov'];
         const params = new URLSearchParams();
         ids.forEach(id => {
             const el = document.getElementById(id);
@@ -186,17 +288,70 @@
     // ----------------------------------------------------------------
     // `input`  → live label updates while dragging.
     // `change` → debounced fetch fired when the user releases the thumb.
-    const sliderIds = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen'];
+    /**
+     * Toggle a map dropdown panel open / closed.
+     * Mirrors the table.html toggleDropdown() function.
+     */
+    window.toggleMapDropdown = function(panelId, btnId, label) {
+        const panel = document.getElementById(panelId);
+        const btn   = document.getElementById(btnId);
+        if (panel.style.display === 'none') {
+            panel.style.display = 'block';
+            btn.textContent = label + ' ▲';
+        } else {
+            panel.style.display = 'none';
+            btn.textContent = label + ' ▼';
+        }
+    };
+
+    /**
+     * Debounce helper: waits `ms` ms of silence, then runs the fn.
+     * Prevents rapid slider drags or typed values from spamming fetches.
+     */
+    function debounceMap(fn, ms) {
+        let timer;
+        return function(...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn.apply(this, args), ms);
+        };
+    }
+
+    /**
+     * Triggered whenever any weight changes. Re-fetches the map data.
+     * Debounced at 150 ms for responsive but not excessive reloading.
+     */
+    const triggerMapWeightUpdate = debounceMap(() => {
+        fetchAndUpdateLayer();
+    }, 150);
+
+    // ----------------------------------------------------------------
+    // Dual input (range + number) wiring for all 10 sliders
+    // ----------------------------------------------------------------
+    const sliderIds = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen', 'fam', 'cov'];
     sliderIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.addEventListener('input', () => {
-            document.getElementById('val-' + id).textContent = el.value;
+        const rangeInput = document.getElementById(id);
+        const numInput   = document.getElementById('num-' + id);
+        if (!rangeInput) return;
+
+        // `input` on range → sync number value (don't fetch yet).
+        rangeInput.addEventListener('input', () => {
+            if (numInput) numInput.value = rangeInput.value;
         });
-        el.addEventListener('change', () => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => fetchAndUpdateLayer(), 150);
-        });
+        // `change` on range → fetch after release.
+        rangeInput.addEventListener('change', triggerMapWeightUpdate);
+
+        // `input` on number → sync range, clamp, then fetch.
+        if (numInput) {
+            numInput.addEventListener('input', () => {
+                let val = parseFloat(numInput.value) || 0;
+                const min = parseFloat(numInput.min);
+                const max = parseFloat(numInput.max);
+                if (val < min) val = min;
+                if (val > max) val = max;
+                rangeInput.value = val;
+                triggerMapWeightUpdate();
+            });
+        }
     });
 
     // ----------------------------------------------------------------
