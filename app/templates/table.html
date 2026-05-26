@@ -5,33 +5,133 @@
     <h1>Exploring The Raw Data</h1>
     <h3 style="width: 50%; margin: auto;">Scroll through real sequencing-status and build a more detailed view of each datapoint, select subsets and download them as csv files for further exploratory data-analysis.</h3>
 
-    <form method="get" action="/data/table/" style="margin-top:1.5em;">
-        <input type="text" name="search" value="{{ search }}" placeholder="Search species or family..."
+    <form method="get" action="/data/table/" style="margin-top:1.5em;" id="search-form">
+        <input type="text" id="search-input" name="search" value="{{ search }}" placeholder="Search species or family..."
                style="padding:0.5rem 1rem; border-radius:8px; border:1px solid #ddd; background:#ffffff; color:#000000;">
         <button type="submit" style="padding:0.5rem 1rem; border-radius:8px; border:none; background:#0066cc; color:#ffffff; cursor:pointer;">Search</button>
     </form>
 
-    <table>
-        <tr>
-            <th><a href="?sort=species_name&order={% if sort=='species_name' and order=='asc' %}desc{% else %}asc{% endif %}{% if search %}&search={{ search }}{% endif %}">Species Name</a></th>
-            <th><a href="?sort=family&order={% if sort=='family' and order=='asc' %}desc{% else %}asc{% endif %}{% if search %}&search={{ search }}{% endif %}">Family</a></th>
-            <th><a href="?sort=redlist_category&order={% if sort=='redlist_category' and order=='asc' %}desc{% else %}asc{% endif %}{% if search %}&search={{ search }}{% endif %}">IUCN Status</a></th>
-            <th><a href="?sort=threat_score&order={% if sort=='threat_score' and order=='asc' %}desc{% else %}asc{% endif %}{% if search %}&search={{ search }}{% endif %}">Threat Score</a></th>
-            <th><a href="?sort=dna_coverage_score&order={% if sort=='dna_coverage_score' and order=='asc' %}desc{% else %}asc{% endif %}{% if search %}&search={{ search }}{% endif %}">DNA Coverage Score</a></th>
-        </tr>
-        {% for row in rows %}
+    <table id="species-table">
+        <thead>
             <tr>
-                <td>{{ row[0] }}</td>
-                <td>{{ row[1] }}</td>
-                <td>{{ row[2] }}</td>
-                <td>{{ row[3] }}</td>
-                <td>{{ row[4] }}</td>
+                <th><a href="#" data-sort="species_name">Species Name</a></th>
+                <th><a href="#" data-sort="family">Family</a></th>
+                <th><a href="#" data-sort="redlist_category">IUCN Status</a></th>
+                <th><a href="#" data-sort="threat_score">Threat Score</a></th>
+                <th><a href="#" data-sort="dna_coverage_score">DNA Coverage Score</a></th>
             </tr>
-        {% endfor %}
+        </thead>
+        <tbody>
+        </tbody>
     </table>
+
+    <div class="pagination" style="margin-top: 2em; text-align: center; display: none;" id="pagination">
+        <span id="page-info"></span>
+        <div style="margin-top: 1.5em;">
+            <button id="prev-btn" style="padding:0.5rem 1rem; border-radius:8px; border:1px solid #0066cc; background:#ffffff; color:#0066cc; cursor:pointer;">Previous</button>
+            <button id="next-btn" style="padding:0.5rem 1rem; border-radius:8px; border:1px solid #0066cc; background:#ffffff; color:#0066cc; cursor:pointer;">Next</button>
+        </div>
+    </div>
 
     <div class="bottom-functions">
         <a href="/">Back to Homepage</a>
         <a href="/data/map/">View Data as Heatmap</a>
     </div>
+
+    <script>
+    (function() {
+        let page = 1;
+        let totalPages = 1;
+        const search = new URLSearchParams(window.location.search).get('search') || '';
+        let sort = '{{ sort }}';
+        let order = '{{ order }}';
+        const tbody = document.querySelector('#species-table tbody');
+        const pageInfo = document.getElementById('page-info');
+        const pagination = document.getElementById('pagination');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        function arrow(col) {
+            if (sort === col) {
+                return order === 'asc' ? ' ↑' : ' ↓';
+            }
+            return '';
+        }
+
+        function updateSortLinks() {
+            document.querySelectorAll('th a').forEach(a => {
+                const col = a.getAttribute('data-sort');
+                a.textContent = a.getAttribute('data-label') + arrow(col);
+            });
+        }
+
+        function setHeaders() {
+            const headers = ['Species Name', 'Family', 'IUCN Status', 'Threat Score', 'DNA Coverage Score'];
+            document.querySelectorAll('th a').forEach((a, i) => {
+                a.setAttribute('data-label', headers[i]);
+            });
+            updateSortLinks();
+        }
+
+        async function fetchData() {
+            const url = `/api/table-data/?page=${page}&sort=${sort}&order=${order}${search ? '&search=' + encodeURIComponent(search) : ''}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            totalPages = data.total_pages;
+
+            tbody.innerHTML = '';
+            data.rows.forEach(row => {
+                const tr = document.createElement('tr');
+                row.forEach(cell => {
+                    const td = document.createElement('td');
+                    td.textContent = cell;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+
+            pageInfo.textContent = `Page ${data.page} of ${data.total_pages}`;
+            page = data.page;
+
+            prevBtn.disabled = (page <= 1);
+            nextBtn.disabled = (page >= totalPages);
+            prevBtn.style.opacity = prevBtn.disabled ? '0.4' : '1';
+            nextBtn.style.opacity = nextBtn.disabled ? '0.4' : '1';
+
+            if (totalPages > 1) {
+                pagination.style.display = 'block';
+            } else {
+                pagination.style.display = 'none';
+            }
+
+            updateSortLinks();
+        }
+
+        document.querySelectorAll('th a').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                const col = a.getAttribute('data-sort');
+                if (sort === col) {
+                    order = (order === 'asc') ? 'desc' : 'asc';
+                } else {
+                    sort = col;
+                    order = 'asc';
+                }
+                page = 1;
+                fetchData();
+            });
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (page > 1) { page--; fetchData(); }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (page < totalPages) { page++; fetchData(); }
+        });
+
+        setHeaders();
+        fetchData();
+    })();
+    </script>
 {% endblock %}

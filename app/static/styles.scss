@@ -31,9 +31,17 @@ th, td {
     padding: 0.5rem;
 }
 
-a {
+a,
+a:visited,
+a:hover,
+a:active,
+a:focus {
     color: #0066cc;
     font-weight: bold;
+}
+
+th a {
+    text-decoration: none;
 }
 
 .homepage-para {

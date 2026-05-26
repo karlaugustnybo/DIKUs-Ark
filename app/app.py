@@ -99,10 +99,28 @@ def index():
 
 @app.route('/data/table/', methods=['GET'])
 def table():
+    return render_template(
+        'table.html',
+        search=request.args.get('search', ''),
+        sort=request.args.get('sort', 'species_name'),
+        order=request.args.get('order', 'asc'),
+    )
+
+
+@app.route('/api/table-data/', methods=['GET'])
+def table_data():
     con = get_con()
     search = request.args.get('search', '').strip()
     sort = request.args.get('sort', 'species_name')
     order = request.args.get('order', 'asc')
+    page = request.args.get('page', '1')
+    try:
+        page = int(page)
+    except ValueError:
+        page = 1
+    if page < 1:
+        page = 1
+    per_page = 10
 
     allowed = {
         'species_name', 'family', 'redlist_category',
@@ -122,12 +140,27 @@ def table():
         base += " WHERE species_name ILIKE ? OR family ILIKE ?"
         like = f"%{search}%"
         params = [like, like]
-    base += f" ORDER BY {sort} {order_sql}"
 
+    count_sql = "SELECT COUNT(*) FROM merged_species"
+    if search:
+        count_sql += " WHERE species_name ILIKE ? OR family ILIKE ?"
+
+    total = con.execute(count_sql, params).fetchone()[0]
+    total_pages = max(1, (total + per_page - 1) // per_page)
+    if page > total_pages:
+        page = total_pages
+    offset = (page - 1) * per_page
+
+    base += f" ORDER BY {sort} {order_sql}"
+    base += f" LIMIT {per_page} OFFSET {offset}"
     rows = con.execute(base, params).fetchall()
     con.close()
-    return render_template(
-        'table.html', rows=rows, search=search, sort=sort, order=order
+
+    return jsonify(
+        rows=[[str(c) if c is not None else '' for c in r] for r in rows],
+        page=page,
+        total_pages=total_pages,
+        total=total,
     )
 
 
