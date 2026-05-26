@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.23.7"
+__generated_with = "0.23.8"
 app = marimo.App(width="full")
 
 
@@ -15,7 +15,7 @@ def _():
 
     inferno = matplotlib.colormaps["inferno"]
 
-    DB_PATH = "denmark.duckdb"
+    DB_PATH = "denmark_prototype/denmark.duckdb"
     con = duckdb.connect(DB_PATH, read_only=True)
     con.execute("INSTALL spatial; LOAD spatial;")
 

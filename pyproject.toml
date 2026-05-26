@@ -11,4 +11,9 @@ dependencies = [
     "flask-scss>=0.5",
     "numpy>=1.26",
     "matplotlib>=3.8",
+    "marimo>=0.23.8",
+    "pyarrow>=24.0.0",
+    "lonboard>=0.16.0",
+    "pandas>=3.0.3",
+    "h3>=4.4.2",
 ]
