@@ -12,7 +12,7 @@ DB_PATH = os.path.join(__dir__, '..', 'denmark_prototype', 'denmark.duckdb')
 app = Flask(__name__)
 Scss(app)
 
-inferno = matplotlib.colormaps["inferno"]
+viridis = matplotlib.colormaps["viridis"]
 
 DEFAULT_WEIGHTS = {
     'cr': 4.0,
@@ -47,7 +47,7 @@ def build_data(df, weights):
     s_max = scores.max() if len(scores) > 0 and scores.max() > 0 else 1.0
     fracs = scores / s_max
 
-    rgba = inferno(fracs)
+    rgba = viridis(fracs)
     rgb = (rgba[:, :3] * 255).astype(np.uint8)
 
     records = []
@@ -83,15 +83,15 @@ def build_data(df, weights):
 def index():
     con = get_con()
     stats = {
-        'total': con.execute("SELECT count(*) FROM merged_species").fetchone()[0],
+        'total': con.execute("SELECT COUNT(*) FROM merged_species").fetchone()[0],
         'without_dna': con.execute(
-            "SELECT count(*) FROM merged_species WHERE has_dna_species_level = false"
+            "SELECT COUNT(*) FROM merged_species WHERE has_dna_species_level = false"
         ).fetchone()[0],
         'critically_endangered': con.execute(
-            "SELECT count(*) FROM merged_species WHERE redlist_category = 'Critically Endangered'"
+            "SELECT COUNT(*) FROM merged_species WHERE redlist_category = 'Critically Endangered'"
         ).fetchone()[0],
-        'res3_cells': con.execute("SELECT count(*) FROM h3_res3_metrics").fetchone()[0],
-        'res7_cells': con.execute("SELECT count(*) FROM h3_res7_metrics").fetchone()[0],
+        'res3_cells': con.execute("SELECT COUNT(*) FROM h3_res3_metrics").fetchone()[0],
+        'res7_cells': con.execute("SELECT COUNT(*) FROM h3_res7_metrics").fetchone()[0],
     }
     con.close()
     return render_template('index.html', stats=stats)
