@@ -1,56 +1,444 @@
+{# =============================================================================
+   TABLE VIEW — DIKUs ARK
+   =============================================================================
+   This template implements a client-side, paginated data table for the
+   /data/table/ route. Instead of a traditional full-page reload per page,
+   all pagination, sorting, and weight customisation is handled
+   asynchronously via JavaScript fetch() calls to /api/table-data/.
+
+   Template inheritance:
+       Extends layout.html (shared header / nav / CSS).
+
+   Server-side variables passed in (set once on initial load):
+       search — current filter text
+       sort   — active sort column key
+       order  — current sort direction ('asc'|'desc')
+       weights— dict of slider defaults passed to the template for
+                initial slider rendering
+   ============================================================================= #}
+
 {% extends 'layout.html' %}
 
 
 {% block body %}
+    <!-- Page title and description -->
     <h1>Exploring The Raw Data</h1>
-    <h3 style="width: 50%; margin: auto;">Scroll through real sequencing-status and build a more detailed view of each datapoint, select subsets and download them as csv files for further exploratory data-analysis.</h3>
+    <h3 style="width: 50%; margin: auto;">
+        Scroll through real sequencing-status and build a more detailed view of
+        each datapoint, select subsets and download them as csv files for
+        further exploratory data-analysis.
+    </h3>
 
-    <form method="get" action="/data/table/" style="margin-top:1.5em;" id="search-form">
-        <input type="text" id="search-input" name="search" value="{{ search }}" placeholder="Search species or family..."
-               style="padding:0.5rem 1rem; border-radius:8px; border:1px solid #ddd; background:#ffffff; color:#000000;">
-        <button type="submit" style="padding:0.5rem 1rem; border-radius:8px; border:none; background:#0066cc; color:#ffffff; cursor:pointer;">Search</button>
+
+    <!-- ===================================================================== -->
+    <!-- WEIGHT CUSTOMISATION DROPDOWNS (IUCN + DNA & Coverage)                -->
+    <!-- ===================================================================== -->
+    <!--
+      Two collapsible dropdown panels let the user tweak scoring weights.
+      The same weights are sent to /api/table-data/ on every fetch, so
+      the table re-sorts and re-scores in real-time.
+
+      Architecture flow:
+         Slider / number input change
+              → JS event handler
+              → debounce(250 ms)
+              → getWeightsParams() serialises all slider values
+              → fetch('/api/table-data/?' + params)
+              → app.py computes weighted threat_score & priority in SQL
+              → JSON returned → rows rebuilt in <tbody>
+    -->
+    <div class="sliders-wrapper" style="margin-top:1.5em;">
+
+        <!-- Dropdown 1: IUCN Category Weights -------------------------------->
+        <!--
+          IUCN categories (CR, EN, VU, NT, DD, LC) are used as a "weight"
+          multiplied by each species' fixed raw_threat_score.  The result:
+          `threat_score = IUCN_WEIGHT × raw_threat_score`.
+          This becomes one of the displayed columns *and* feeds into
+          the overall Priority score.
+        -->
+        <div class="sliders-dropdown">
+            <button type="button" class="dropdown-toggle" id="iucn-btn"
+                    onclick="toggleDropdown('iucn-panel', 'iucn-btn', 'IUCN Category Weights')">
+                IUCN Category Weights ▼
+            </button>
+            <div id="iucn-panel" class="dropdown-panel" style="display:none;">
+                <div class="dropdown-grid">
+                    <div class="weight-row">
+                        <label for="cr">CR Weight</label>
+                        <div class="weight-controls">
+                            <input type="range" id="cr" name="cr"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.cr }}">
+                            <input type="number" id="num-cr" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.cr }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="en">EN Weight</label>
+                        <div class="weight-controls">
+                            <input type="range" id="en" name="en"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.en }}">
+                            <input type="number" id="num-en" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.en }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="vu">VU Weight</label>
+                        <div class="weight-controls">
+                            <input type="range" id="vu" name="vu"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.vu }}">
+                            <input type="number" id="num-vu" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.vu }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="nt">NT Weight</label>
+                        <div class="weight-controls">
+                            <input type="range" id="nt" name="nt"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.nt }}">
+                            <input type="number" id="num-nt" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.nt }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="dd">DD Weight</label>
+                        <div class="weight-controls">
+                            <input type="range" id="dd" name="dd"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.dd }}">
+                            <input type="number" id="num-dd" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.dd }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="lc">LC Weight</label>
+                        <div class="weight-controls">
+                            <input type="range" id="lc" name="lc"
+                                   min="0" max="10" step="0.1"
+                                   value="{{ weights.lc }}">
+                            <input type="number" id="num-lc" class="weight-num"
+                                   min="0" max="10" step="0.1"
+                                   value="{{ weights.lc }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dropdown 2: DNA Weights & Coverage -------------------------------->
+        <!--
+          These four DNA-related weights reward (or penalise) species by
+          how much DNA data is missing at different taxonomic levels.
+
+          sp  – Missing Species DNA weight:
+                applied when `has_dna_species_level = false`.
+          gen – Missing Genus DNA weight:
+                applied when `genus_has_dna = false`.
+          fam – Missing Family DNA weight:
+                applied when `family_has_dna = false`.
+          cov – DNA Coverage Score weight:
+                scales the integer `dna_coverage_score` column.
+
+          The formula (per species row in SQL):
+              priority = (IUCN_WEIGHT × threat_score)
+                       + (has_dna_species_level ? 0 : sp_weight)
+                       + (genus_has_dna ? 0 : gen_weight)
+                       + (family_has_dna ? 0 : fam_weight)
+                       + (cov_weight × dna_coverage_score)
+        -->
+        <div class="sliders-dropdown" style="margin-top:1em;">
+            <button type="button" class="dropdown-toggle" id="dna-btn"
+                    onclick="toggleDropdown('dna-panel', 'dna-btn', 'DNA & Coverage Weights')">
+                DNA & Coverage Weights ▼
+            </button>
+            <div id="dna-panel" class="dropdown-panel" style="display:none;">
+                <div class="dropdown-grid">
+                    <div class="weight-row">
+                        <label for="sp">Missing Species DNA</label>
+                        <div class="weight-controls">
+                            <input type="range" id="sp" name="sp"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.sp }}">
+                            <input type="number" id="num-sp" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.sp }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="gen">Missing Genus DNA</label>
+                        <div class="weight-controls">
+                            <input type="range" id="gen" name="gen"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.gen }}">
+                            <input type="number" id="num-gen" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.gen }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="fam">Missing Family DNA</label>
+                        <div class="weight-controls">
+                            <input type="range" id="fam" name="fam"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.fam }}">
+                            <input type="number" id="num-fam" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.fam }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="cov">DNA Coverage Weight</label>
+                        <div class="weight-controls">
+                            <input type="range" id="cov" name="cov"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.cov }}">
+                            <input type="number" id="num-cov" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.cov }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================================== -->
+    <!-- SEARCH BOX                                                            -->
+    <!-- ===================================================================== -->
+    <!-- Standard GET form that reloads the page with ?search=... so the
+         server-side variable {{ search }} is populated on first load.     -->
+    <form method="get" action="/data/table/" style="margin-top:1.5em;"
+          id="search-form">
+        <input type="text" id="search-input" name="search"
+               value="{{ search }}"
+               placeholder="Search species or family..."
+               style="padding:0.5rem 1rem; border-radius:8px;
+                      border:1px solid #ddd; background:#ffffff;
+                      color:#000000;">
+        <button type="submit"
+                style="padding:0.5rem 1rem; border-radius:8px; border:none;
+                       background:#0066cc; color:#ffffff;
+                       cursor:pointer;">
+            Search
+        </button>
     </form>
 
+
+    <!-- ===================================================================== -->
+    <!-- DATA TABLE (dynamically populated)                                    -->
+    <!-- ===================================================================== -->
+    <!-- <tbody> is left empty here. JavaScript fetches JSON from
+         /api/table-data/ after DOM ready and injects rows.                 -->
     <table id="species-table">
         <thead>
             <tr>
+                {# Each header link stores the database column name in
+                   data-sort. Clicking triggers the JS sort handler.          #}
                 <th><a href="#" data-sort="species_name">Species Name</a></th>
                 <th><a href="#" data-sort="family">Family</a></th>
-                <th><a href="#" data-sort="redlist_category">IUCN Status</a></th>
+                <th><a href="#" data-sort="redlist_category">
+                    IUCN Status</a></th>
                 <th><a href="#" data-sort="threat_score">Threat Score</a></th>
-                <th><a href="#" data-sort="dna_coverage_score">DNA Coverage Score</a></th>
+                <th><a href="#" data-sort="dna_coverage_score">
+                    DNA Coverage Score</a></th>
+                <th><a href="#" data-sort="priority">Priority</a></th>
             </tr>
         </thead>
         <tbody>
         </tbody>
     </table>
 
-    <div class="pagination" style="margin-top: 2em; text-align: center; display: none;" id="pagination">
+
+    <!-- ===================================================================== -->
+    <!-- PAGINATION CONTROLS                                                   -->
+    <!-- ===================================================================== -->
+    <!-- Hidden until JS knows there is more than one page. Buttons use
+         inline styles to keep them blue on white as requested.               -->
+    <div class="pagination" style="margin-top: 2em; text-align: center;
+                                   display: none;" id="pagination">
         <span id="page-info"></span>
         <div style="margin-top: 1.5em;">
-            <button id="prev-btn" style="padding:0.5rem 1rem; border-radius:8px; border:1px solid #0066cc; background:#ffffff; color:#0066cc; cursor:pointer;">Previous</button>
-            <button id="next-btn" style="padding:0.5rem 1rem; border-radius:8px; border:1px solid #0066cc; background:#ffffff; color:#0066cc; cursor:pointer;">Next</button>
+            <button id="prev-btn"
+                    style="padding:0.5rem 1rem; border-radius:8px;
+                           border:1px solid #0066cc; background:#ffffff;
+                           color:#0066cc; cursor:pointer;">
+                Previous
+            </button>
+            <button id="next-btn"
+                    style="padding:0.5rem 1rem; border-radius:8px;
+                           border:1px solid #0066cc; background:#ffffff;
+                           color:#0066cc; cursor:pointer;">
+                Next
+            </button>
         </div>
     </div>
 
+
+    <!-- ===================================================================== -->
+    <!-- NAVIGATION LINKS                                                      -->
+    <!-- ===================================================================== -->
     <div class="bottom-functions">
         <a href="/">Back to Homepage</a>
         <a href="/data/map/">View Data as Heatmap</a>
     </div>
 
-    <script>
-    (function() {
-        let page = 1;
-        let totalPages = 1;
-        const search = new URLSearchParams(window.location.search).get('search') || '';
-        let sort = '{{ sort }}';
-        let order = '{{ order }}';
-        const tbody = document.querySelector('#species-table tbody');
-        const pageInfo = document.getElementById('page-info');
-        const pagination = document.getElementById('pagination');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
 
+    <!-- ===================================================================== -->
+    <!-- CLIENT-SIDE LOGIC                                                     -->
+    <!-- ===================================================================== -->
+    <script>
+    /**
+     * Toggle a dropdown panel open / closed.
+     *  panelId  — id of the <div> to show / hide
+     *  btnId    — id of the <button> whose text should change
+     *  label    — base button text (arrow added automatically)
+     */
+    function toggleDropdown(panelId, btnId, label) {
+        const panel = document.getElementById(panelId);
+        const btn   = document.getElementById(btnId);
+        if (panel.style.display === 'none') {
+            panel.style.display = 'block';
+            btn.textContent = label + ' ▲';
+        } else {
+            panel.style.display = 'none';
+            btn.textContent = label + ' ▼';
+        }
+    }
+
+    /**
+     * Main IIFE that controls table pagination, sorting, and weight updates.
+     * All interaction with the server goes through /api/table-data/?...
+     */
+    (function() {
+        // ----- state -------------------------------------------------------
+        // Page numbers are 1-based for user-facing display but converted
+        // to 0-based row offsets in SQL via: offset = (page - 1) * per_page.
+        let page = 1;                 // current page number (1-based)
+        let totalPages = 1;            // total number of pages returned
+
+        // search is read from the initial URL (?search=...) and never
+        // changes during the IIFE — only via page reload.
+        // The server-side {{ search }} variable seeds the search box.
+        const search =
+              new URLSearchParams(window.location.search).get('search') || '';
+
+        // sort / order are persistent state toggled by column-header clicks.
+        let sort = '{{ sort }}';       // active sort column key
+        let order = '{{ order }}';     // 'asc' or 'desc'
+
+        // ----- DOM references ----------------------------------------------
+        const tbody      = document.querySelector('#species-table tbody');
+        const pageInfo   = document.getElementById('page-info');
+        const pagination = document.getElementById('pagination');
+        const prevBtn    = document.getElementById('prev-btn');
+        const nextBtn    = document.getElementById('next-btn');
+
+        // Weight slider IDs — must match the keys in DEFAULT_WEIGHTS (app.py)
+        const sliderIds = ['cr','en','vu','nt','dd','lc','sp','gen','fam','cov'];
+
+        /**
+         * Debounce helper: waits `ms` milliseconds after the last call,
+         * then executes `fn`. Used so rapid slider drags or typed values
+         * do not spam the server for every keystroke or tiny drag event.
+         *
+         * How it works:
+         *   • Each input event starts a timer.
+         *   • If a new event arrives before the timer fires, the old
+         *     timer is cancelled and a fresh one is scheduled.
+         *   • Only after `ms` of "silence" does the actual function run.
+         */
+        function debounce(fn, ms) {
+            let timer;
+            return function(...args) {
+                clearTimeout(timer);
+                timer = setTimeout(() => fn.apply(this, args), ms);
+            };
+        }
+
+        /**
+         * Triggered whenever any weight changes. Resets to page 1 and
+         * fetches updated table data with the new weights.
+         *
+         * Uses debounce(250 ms) so the user can type or drag freely
+         * without triggering dozens of overlapping fetch requests.
+         */
+        const triggerWeightUpdate = debounce(() => {
+            page = 1;        // reset to first page after every weight change
+            fetchData();
+        }, 250);
+
+        /**
+         * Reads the 10 slider values (range or number — both share the
+         * same `id`, so whichever the user touched last is authoritative)
+         * and serialises them as URLSearchParams for the API request.
+         */
+        function getWeightsParams() {
+            const params = new URLSearchParams();
+            sliderIds.forEach(id => {
+                // Only the `<input type="range">` carries the weight key id;
+                // the `<input type="number">` mirrors it via 'num-' prefix.
+                // We read from the range input because it is always present
+                // and is synced bidirectionally by the event handlers below.
+                const el = document.getElementById(id);
+                if (el) params.append(id, el.value);
+            });
+            return params;
+        }
+
+        // ----------------------------------------------------------------
+        // Dual input (range + number) wiring
+        // ----------------------------------------------------------------
+        // For each weight slider there are TWO <input> elements:
+        //   1. type="range"  – id="cr", visually a horizontal track.
+        //   2. type="number" – id="num-cr", visually a small value box.
+        //
+        // Event chains:
+        //   • Drag range  → `input` syncs number  instantly
+        //                 → `change` triggers weight update (debounced).
+        //   • Type number → `input` syncs range AND triggers weight
+        //                     update (debounced) after clamping.
+        // ----------------------------------------------------------------
+        sliderIds.forEach(id => {
+            const rangeInput = document.getElementById(id);
+            const numInput   = document.getElementById('num-' + id);
+            if (!rangeInput || !numInput) return;
+
+            // Range dragged → sync number value immediately,
+            // but do NOT fire the fetch yet (wait for `change`).
+            rangeInput.addEventListener('input', () => {
+                numInput.value = rangeInput.value;
+            });
+            // Range released (mouse-up / touch-end) → trigger fetch.
+            rangeInput.addEventListener('change', triggerWeightUpdate);
+
+            // Number typed → sync range, clamp to [min, max], then fetch.
+            numInput.addEventListener('input', () => {
+                let val = parseFloat(numInput.value) || 0;
+                const min = parseFloat(numInput.min);
+                const max = parseFloat(numInput.max);
+                // Clamp out-of-bounds values in real time for clean UX.
+                if (val < min) val = min;
+                if (val > max) val = max;
+                rangeInput.value = val;
+                triggerWeightUpdate();
+            });
+        });
+
+        /**
+         * Return an up/down arrow string for the currently sorted column
+         * so the user can see sort direction visually.
+         */
         function arrow(col) {
             if (sort === col) {
                 return order === 'asc' ? ' ↑' : ' ↓';
@@ -58,6 +446,10 @@
             return '';
         }
 
+        /**
+         * Rewrite every table-header link text to "Column Name ↑|↓".
+         * Called after every fetch so the arrow reflects the active sort.
+         */
         function updateSortLinks() {
             document.querySelectorAll('th a').forEach(a => {
                 const col = a.getAttribute('data-sort');
@@ -65,23 +457,54 @@
             });
         }
 
+        /**
+         * Set the human-readable labels once on page load, then call
+         * updateSortLinks() to apply the initial arrow.
+         */
         function setHeaders() {
-            const headers = ['Species Name', 'Family', 'IUCN Status', 'Threat Score', 'DNA Coverage Score'];
+            const headers = [
+                'Species Name', 'Family', 'IUCN Status',
+                'Threat Score', 'DNA Coverage Score', 'Priority'
+            ];
             document.querySelectorAll('th a').forEach((a, i) => {
                 a.setAttribute('data-label', headers[i]);
             });
             updateSortLinks();
         }
 
+        /**
+         * Core data-fetch routine.
+         *
+         * Steps:
+         *   1. Build the full query string:
+         *        …/api/table-data/?page=N&sort=col&order=dir&search=…&cr=…&en=…
+         *      The weights portion is only appended if at least one slider
+         *      differs from its default (which never happens here because
+         *      we always send all sliders for consistency).
+         *   2. GET /api/table-data/.
+         *   3. Rebuild the <tbody> with the returned row arrays.
+         *   4. Update pagination text, enable/disable navigation buttons,
+         *      and refresh column-header arrows.
+         */
         async function fetchData() {
-            const url = `/api/table-data/?page=${page}&sort=${sort}&order=${order}${search ? '&search=' + encodeURIComponent(search) : ''}`;
-            const res = await fetch(url);
+            const weights = getWeightsParams();
+            let url = `/api/table-data/?page=${page}&sort=${sort}` +
+                      `&order=${order}` +
+                      (search ? '&search=' + encodeURIComponent(search) : '');
+            if (weights.toString()) {
+                url += '&' + weights.toString();
+            }
+
+            const res  = await fetch(url);
             const data = await res.json();
             totalPages = data.total_pages;
 
+            // -- step 3: rebuild <tbody> --
             tbody.innerHTML = '';
             data.rows.forEach(row => {
                 const tr = document.createElement('tr');
+                // `row` is a flat array of strings: [species_name, family,
+                // redlist_category, threat_score, dna_coverage_score, priority]
                 row.forEach(cell => {
                     const td = document.createElement('td');
                     td.textContent = cell;
@@ -90,26 +513,29 @@
                 tbody.appendChild(tr);
             });
 
+            // -- step 4: update pagination UI --
             pageInfo.textContent = `Page ${data.page} of ${data.total_pages}`;
-            page = data.page;
+            page = data.page;   // sync with the page the server actually returned
 
+            // Disable / grey-out Previous / Next at boundaries.
             prevBtn.disabled = (page <= 1);
             nextBtn.disabled = (page >= totalPages);
             prevBtn.style.opacity = prevBtn.disabled ? '0.4' : '1';
             nextBtn.style.opacity = nextBtn.disabled ? '0.4' : '1';
 
-            if (totalPages > 1) {
-                pagination.style.display = 'block';
-            } else {
-                pagination.style.display = 'none';
-            }
+            // Hide pagination entirely when there is only one page.
+            pagination.style.display = (totalPages > 1) ? 'block' : 'none';
 
+            // Refresh sort-indicator arrows in the header.
             updateSortLinks();
         }
 
+        // ----- sort header click handlers ----------------------------------
+        // Clicking a column header toggles ascending / descending sort
+        // and resets pagination to page 1.
         document.querySelectorAll('th a').forEach(a => {
             a.addEventListener('click', e => {
-                e.preventDefault();
+                e.preventDefault();   // prevent href="#" jump
                 const col = a.getAttribute('data-sort');
                 if (sort === col) {
                     order = (order === 'asc') ? 'desc' : 'asc';
@@ -122,14 +548,15 @@
             });
         });
 
+        // ----- pagination button handlers ----------------------------------
         prevBtn.addEventListener('click', () => {
             if (page > 1) { page--; fetchData(); }
         });
-
         nextBtn.addEventListener('click', () => {
             if (page < totalPages) { page++; fetchData(); }
         });
 
+        // Initial render
         setHeaders();
         fetchData();
     })();

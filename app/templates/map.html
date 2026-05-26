@@ -1,6 +1,43 @@
+{# ==========================================================
+   MAP VIEW  —  DIKUs ARK
+   ==========================================================
+   This template renders a full-screen interactive heat-map
+   that shows aggregated H3-hexagon data. Both slider weights
+   (IUCN categories + DNA counts) and the H3 resolution level
+   can be changed interactively.
+
+   Architecture:
+   -------------
+   Server (app.py /build_data)
+      ↓  JSON polygon list injected into initialData
+   Jinja2 template  (this file)
+      ↓  deck.DeckGL + deck.PolygonLayer
+   Browser JS
+      ↓  /api/map-data/ fetch on zoom / slider change
+   Server re-scores + re-colours in real time
+
+   Tech stack:
+   • Deck.gl   – loads tiles + renders 55k+ polygons at 60 fps
+   • H3        – Uber’s hexagonal geo-spatial indexing lib
+   • DuckDB    – analytical DB behind /api/map-data/
+
+   Template inheritance:
+   • Extends layout.html for shared CSS / navigation.
+   • Adds deck.gl CDN script to <head> via `{% block head %}`.
+
+   Server-side JSON passed in Jinja2 context:
+       data       – list of polygon records (first paint)
+       weights    – current slider values for form reset
+       resolution – 'res3' or 'res7'
+       max_score  – maximum score among all cells (for tooltip)
+   ========================================================== #}
+
 {% extends 'layout.html' %}
 
 {% block head %}
+{# deck.gl is the core rendering engine (PolygonLayer + TileLayer).
+   The widgets stylesheet provides optional map controls
+   such as the built-in Zoom / Fullscreen buttons. #}
 <script src="https://unpkg.com/deck.gl@9/dist.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/@deck.gl/widgets@9/dist/stylesheet.css">
 {% endblock %}
@@ -10,13 +47,29 @@
 <h1>Explore The Map</h1>
 <h3>See where in the world there is the highest need for DNA-sequencing, discover target-areas local to yourself, or make your own custom scoring function.</h3>
 
+{# ------------------------------------------------------------------
+   WEIGHT-SLIDER CONTROL BAR
+   ------------------------------------------------------------------
+   These eight `<input type="range">` sliders allow the user to
+   tweak the scoring formula interactively.
+
+   Each slider ID corresponds to a key in DEFAULT_WEIGHTS (app.py).
+   When a slider is released, JS serialises all eight values and
+   sends them to `/api/map-data/` as URL query parameters.
+
+   Layout note: the sliders sit in a flex-wrap row so they reflow
+   gracefully on smaller screens.
+   ------------------------------------------------------------------ #}
 <div id="controls" style="margin:1.5em auto; width:70%; font-size:1.1em;">
+    {# Display which H3 resolution the next fetch will use.
+       Updated dynamically by JS when zoom crosses threshold 7. #}
     <div style="margin-bottom:1em; font-weight:bold;">
         Resolution: <span id="resolution-display">H3 Res 3</span>
         <small style="font-weight:normal; color:#666;">(switches automatically when zooming past 7)</small>
     </div>
 
     <div style="display:flex; flex-wrap:wrap; gap:1.5em; justify-content:center;">
+        {# --- IUCN Category Weights --- #}
         <div class="form-group">
             <label for="cr">CR Weight <span id="val-cr">{{ weights.cr }}</span></label>
             <input type="range" id="cr" name="cr" min="0" max="10" step="0.5" value="{{ weights.cr }}">
@@ -41,6 +94,7 @@
             <label for="lc">LC Weight <span id="val-lc">{{ weights.lc }}</span></label>
             <input type="range" id="lc" name="lc" min="0" max="10" step="0.1" value="{{ weights.lc }}">
         </div>
+        {# --- DNA Availability Weights (count of missing sequences) --- #}
         <div class="form-group">
             <label for="sp">Missing Species DNA <span id="val-sp">{{ weights.sp }}</span></label>
             <input type="range" id="sp" name="sp" min="0" max="10" step="0.5" value="{{ weights.sp }}">
@@ -52,18 +106,55 @@
     </div>
 </div>
 
+{# Container `<div>` where deck.gl mounts its WebGL canvas.
+   Height must be set explicitly; the `#map` rule in styles.css
+   handles width, margin, border, and border-radius. #}
 <div id="map"></div>
 
 <script>
+{# ==========================================================
+   CLIENT-SIDE MAP LOGIC
+   ==========================================================
+
+   1.  initialData  → injected by Flask/Jinja2 on first load.
+   2.  deck.DeckGL  → renders two layers  (tile + polygon).
+   3.  user actions → slider change OR zoom > 7 ⟹ fetch new JSON.
+   4.  fetch guard  → nonce counter discards stale responses.
+
+   See inline comments below for each function / subsection.
+   ========================================================== #}
     const initialData = {{ data | tojson }};
 
-    // Current state
+    // ----------------------------------------------------------------
+    //  State variables
+    // ----------------------------------------------------------------
+    // currentResolution:  'res3' (coarse, ~220 km edge)   or
+    //                     'res7' (fine, ~5 km edge).
+    // The `onViewStateChange` handler toggles this automatically.
     let currentResolution = 'res3';
+
+    // debounceTimer:  prevents rapid slider drags from firing
+    // multiple overlapping fetch requests.
     let debounceTimer = null;
+
+    // fetchNonce:  monotonically-increasing integer. When an async
+    // fetch resolves, its local nonce is compared with the global
+    // nonce. If they differ, the result is stale and discarded.
     let fetchNonce = 0;
+
+    // lastZoom:  rounded zoom level (1 decimal place). Tracked to
+    // avoid re-triggering the resolution switch logic for the same
+    // zoom value (which fires continuously during scroll).
     let lastZoom = null;
 
-    // Utility: read all weight slider values and map bounds
+    /**
+     * Reads the eight slider values and map-bounding box, then
+     * builds a URLSearchParams object for the API request.
+     *
+     * When the current resolution is `res7` and the Deck.gl viewport
+     * is ready, we clip the query to the visible lat / lon bounds so
+     * the server sends only the polygons in view (lightweight).
+     */
     function getWeights() {
         const ids = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen'];
         const params = new URLSearchParams();
@@ -74,6 +165,9 @@
         params.append('resolution', currentResolution);
         if (currentResolution === 'res7') {
             try {
+                // deck.gl viewports are ordered [minLon, minLat,
+                // maxLon, maxLat]. These become SQL BETWEEN clauses
+                // in the server's /api/map-data/ handler.
                 const viewport = deckgl.viewManager.getViewports()[0];
                 const [minLon, minLat, maxLon, maxLat] = viewport.getBounds();
                 params.append('lat_min', minLat);
@@ -87,7 +181,11 @@
         return params;
     }
 
-    // Update visible label values on slider input
+    // ----------------------------------------------------------------
+    // Slider event handlers
+    // ----------------------------------------------------------------
+    // `input`  → live label updates while dragging.
+    // `change` → debounced fetch fired when the user releases the thumb.
     const sliderIds = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen'];
     sliderIds.forEach(id => {
         const el = document.getElementById(id);
@@ -96,13 +194,27 @@
             document.getElementById('val-' + id).textContent = el.value;
         });
         el.addEventListener('change', () => {
-            // Debounce fetch when slider is released
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => fetchAndUpdateLayer(), 150);
         });
     });
 
-    // Build polygon layer from data array
+    // ----------------------------------------------------------------
+    // Layer helpers
+    // ----------------------------------------------------------------
+    /**
+     * Factory for the polygon layer that renders one closed ring
+     * per H3 cell.
+     *
+     * Deck.gl PolygonLayer expects each datum to have:
+     *   • getPolygon → array of [lng, lat] vertices forming a ring.
+     *   • getFillColor → [r, g, b, a]
+     *
+     * Why PolygonLayer and not H3HexagonLayer?
+     *   PolygonLayer lets us pre-compute lat/lng boundaries in Python
+     *   with h3.cell_to_boundary(). No Web-assembly H3 dependency is
+     *   needed in the browser, keeping the JS bundle size tiny.
+     */
     function createPolygonLayer(data) {
         return new deck.PolygonLayer({
             id: 'h3-polygons',
@@ -117,15 +229,29 @@
         });
     }
 
-    // Fetch new data via API and update layer (guarded by nonce)
+    /**
+     * Orchestrates the asynchronous fetch to `/api/map-data/` and
+     * replaces the polygon layer on the map.
+     *
+     * Called by:
+     *   • Slider `change` events
+     *   • Zoom `onViewStateChange` when crossing resolution boundary
+     */
     async function fetchAndUpdateLayer() {
-        const myNonce = ++fetchNonce;
+        const myNonce = ++fetchNonce;       // claim next nonce
         const params = getWeights();
         try {
             const resp = await fetch('/api/map-data/?' + params.toString());
-            if (myNonce !== fetchNonce) return; // stale request, ignore
+
+            // -- stale-guard #1 (request started before another) --
+            if (myNonce !== fetchNonce) return;
+
             const json = await resp.json();
-            if (myNonce !== fetchNonce) return; // stale request, ignore
+
+            // -- stale-guard #2 (another request started in-parallel) --
+            if (myNonce !== fetchNonce) return;
+
+            // Build a fresh PolygonLayer and swap it in.
             const newLayer = createPolygonLayer(json.data);
             deckgl.setProps({ layers: [baseTileLayer, newLayer] });
         } catch (err) {
@@ -133,7 +259,12 @@
         }
     }
 
-    // Base tile layer (will be reused)
+    // ----------------------------------------------------------------
+    // Base map tile layer (reused between re-renders)
+    // ----------------------------------------------------------------
+    // CartoDB light base tiles are free, no API key required.
+    // We render them with BitmapLayer so they sit underneath the
+    // H3 hexagons as a literal base layer.
     const baseTileLayer = new deck.TileLayer({
         id: 'carto-light',
         data: 'https://basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
@@ -152,47 +283,54 @@
         },
     });
 
-    // Current view state of map
+    // ----------------------------------------------------------------
+    // Deck.gl initialisation
+    // ----------------------------------------------------------------
+    // `currentViewState` mirrors the last reported `viewState` so
+    // `getWeights()` can read viewport bounds accurately when in
+    // res7 mode.
     let currentViewState = {
-            longitude: 10,
-            latitude: 56,
-            zoom: 4,
-        }
+        longitude: 10,
+        latitude: 56,
+        zoom: 4,
+    };
 
     const deckgl = new deck.DeckGL({
         container: 'map',
-        views: new deck.MapView({
-            repeat: true
-        }),
+        views: new deck.MapView({ repeat: true }),  // allow panning east/west
         viewState: currentViewState,
-        controller: true,
+        controller: true,               // enable mouse drag / wheel zoom
+
+        // Optional UI widgets provided by deck.gl
         widgets: [
-            new deck.FullscreenWidget({
-                placement: 'top-right'
-            }),
-            new deck.ZoomWidget({
-                placement: 'top-right'
-            }),
-            // new deck.LoadingWidget({
-            //     placement: 'top-left'
-            // })
+            new deck.FullscreenWidget({ placement: 'top-right' }),
+            new deck.ZoomWidget({ placement: 'top-right' }),
         ],
+
+        // Called every time the user pans, zooms, or rotates.
         onViewStateChange: ({viewState}) => {
-            // Update view state
+            // Persist so bounds queries work on res7.
             currentViewState = viewState;
             deckgl.setProps({viewState: currentViewState});
 
-            // Possibly change h3 cell resolution
+            // --- Zoom-based resolution switch ---
+            // res3 is coarse; res7 is fine. The threshold zoom=7 is
+            // empirically chosen so the hexagons fill roughly ¼ of
+            // the screen at that zoom level.
             const roundedZoom = Math.round(viewState.zoom * 10) / 10;
             if (roundedZoom === lastZoom) return;
             lastZoom = roundedZoom;
             const desiredResolution = roundedZoom > 7 ? 'res7' : 'res3';
             if (desiredResolution !== currentResolution) {
                 currentResolution = desiredResolution;
-                document.getElementById('resolution-display').textContent = currentResolution === 'res3' ? 'H3 Res 3' : 'H3 Res 7';
+                document.getElementById('resolution-display').textContent =
+                    currentResolution === 'res3' ? 'H3 Res 3' : 'H3 Res 7';
                 fetchAndUpdateLayer();
             }
         },
+
+        // --- Hover tooltip for individual hexagons ---
+        // Pops up when `pickable: true` on the PolygonLayer.
         getTooltip: ({object}) => {
             if (!object) return null;
             return {
@@ -218,6 +356,8 @@
                 }
             };
         },
+
+        // Initial layer stack: tile base + server-provided polygons.
         layers: [
             baseTileLayer,
             createPolygonLayer(initialData)
@@ -225,6 +365,7 @@
     });
 </script>
 
+{# Bottom navigation links (back to home / table). #}
 <div class="index-bottom">
     <a href="/">Back to Homepage</a>
     <a href="/data/table/">View Data as Tabular</a>
