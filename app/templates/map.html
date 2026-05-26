@@ -1,7 +1,8 @@
 {% extends 'layout.html' %}
 
 {% block head %}
-<script src="https://unpkg.com/deck.gl@8.9.35/dist.min.js"></script>
+<script src="https://unpkg.com/deck.gl@9/dist.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@deck.gl/widgets@9/dist/stylesheet.css">
 {% endblock %}
 
 {% block body %}
@@ -139,6 +140,8 @@
         minZoom: 0,
         maxZoom: 19,
         tileSize: 256,
+        wrapToBounds: false,
+        repeatX: true,
         renderSubLayers: props => {
             const {bbox} = props.tile;
             return new deck.BitmapLayer(props, {
@@ -149,15 +152,37 @@
         },
     });
 
-    const deckgl = new deck.DeckGL({
-        container: 'map',
-        initialViewState: {
+    // Current view state of map
+    let currentViewState = {
             longitude: 10,
             latitude: 56,
             zoom: 4,
-        },
+        }
+
+    const deckgl = new deck.DeckGL({
+        container: 'map',
+        views: new deck.MapView({
+            repeat: true
+        }),
+        viewState: currentViewState,
         controller: true,
+        widgets: [
+            new deck.FullscreenWidget({
+                placement: 'top-right'
+            }),
+            new deck.ZoomWidget({
+                placement: 'top-right'
+            }),
+            // new deck.LoadingWidget({
+            //     placement: 'top-left'
+            // })
+        ],
         onViewStateChange: ({viewState}) => {
+            // Update view state
+            currentViewState = viewState;
+            deckgl.setProps({viewState: currentViewState});
+
+            // Possibly change h3 cell resolution
             const roundedZoom = Math.round(viewState.zoom * 10) / 10;
             if (roundedZoom === lastZoom) return;
             lastZoom = roundedZoom;
