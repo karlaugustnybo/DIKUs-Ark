@@ -560,5 +560,53 @@
         setHeaders();
         fetchData();
     })();
+
+    // allow use of arrow keys shortcut
+    document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") {
+        document.getElementById("prev-btn")?.click();
+    }
+
+    if (event.key === "ArrowRight") {
+        document.getElementById("next-btn")?.click();
+    }
+    });
+
+
+    // suggest arrow keys on hover
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+
+    function addTooltip(button) {
+    const tooltip = document.createElement("div");
+    tooltip.textContent = "Tip: Use ← → arrow keys";
+
+    tooltip.style.position = "fixed";
+    tooltip.style.background = "black";
+    tooltip.style.color = "white";
+    tooltip.style.padding = "4px 8px";
+    tooltip.style.borderRadius = "4px";
+    tooltip.style.fontSize = "12px";
+    tooltip.style.pointerEvents = "none";
+    tooltip.style.display = "none";
+
+    document.body.appendChild(tooltip);
+
+    button.addEventListener("mouseenter", () => {
+        tooltip.style.display = "block";
+    });
+
+    button.addEventListener("mousemove", (e) => {
+        tooltip.style.left = `${e.clientX + 12}px`;
+        tooltip.style.top = `${e.clientY + 12}px`;
+    });
+
+    button.addEventListener("mouseleave", () => {
+        tooltip.style.display = "none";
+    });
+    }
+
+    if (prevBtn) addTooltip(prevBtn);
+    if (nextBtn) addTooltip(nextBtn);
     </script>
 {% endblock %}
