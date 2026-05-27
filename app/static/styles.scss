@@ -217,3 +217,94 @@ th {
     margin-top: 3em;
     border-radius: 10px;
 }
+
+.sliders-wrapper {
+  margin: auto;
+  width: 70%;
+  text-align: center;
+}
+
+.sliders-dropdown {
+  margin-top: 1.5em;
+}
+
+.dropdown-toggle {
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #ffffff;
+  color: #000000;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown-toggle:hover {
+  background: #f0f0f0;
+}
+
+.dropdown-panel {
+  margin-top: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fafafa;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Grid layout for the dropdown sliders */
+.dropdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5em;
+  padding: 1.5em;
+}
+
+/* Each weight row: label above, then range + number input */
+.weight-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.weight-row label {
+  font-weight: bold;
+  font-size: 0.95rem;
+  color: #000000;
+}
+
+.weight-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75em;
+  width: 100%;
+}
+
+.weight-controls input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
+
+.weight-num {
+  width: 4.5rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* Hide the spin-buttons on number inputs for a cleaner look */
+.weight-num::-webkit-outer-spin-button,
+.weight-num::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.weight-num[type=number] {
+  -moz-appearance: textfield;
+}
+
+/*# sourceMappingURL=styles.css.map */
