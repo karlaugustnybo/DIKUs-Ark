@@ -206,7 +206,6 @@
    handles width, margin, border, and border-radius. #}
 <div id="map"></div>
 
-<script>
 {# ==========================================================
    CLIENT-SIDE MAP LOGIC
    ==========================================================
@@ -218,6 +217,8 @@
 
    See inline comments below for each function / subsection.
    ========================================================== #}
+
+<script>
     const initialData = {{ data | tojson }};
 
     // ----------------------------------------------------------------
@@ -241,6 +242,23 @@
     // avoid re-triggering the resolution switch logic for the same
     // zoom value (which fires continuously during scroll).
     let lastZoom = null;
+
+    // `currentViewState` mirrors the last reported `viewState` so
+    // `getWeights()` can read viewport bounds accurately when in
+    // res7 mode.
+    let currentViewState = {
+        longitude: 10,
+        latitude: 56,
+        zoom: 4,
+        maxZoom: 19,
+        minZoom: 0
+    };
+
+    // Threshold for after how big a move, new data should be rendered
+    const renderThreshold = 0.0001;
+
+    // Save last bounds
+    let lastFetchedBounds = [0, 0, 0, 0];
 
     /**
      * Reads the eight slider values and map-bounding box, then
@@ -423,6 +441,8 @@
     const baseTileLayer = new deck.TileLayer({
         id: 'carto-light',
         data: 'https://basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+        refinementStrategy: 'best-available',
+        maxCacheSize: 200,
         minZoom: 0,
         maxZoom: 19,
         tileSize: 256,
@@ -441,14 +461,6 @@
     // ----------------------------------------------------------------
     // Deck.gl initialisation
     // ----------------------------------------------------------------
-    // `currentViewState` mirrors the last reported `viewState` so
-    // `getWeights()` can read viewport bounds accurately when in
-    // res7 mode.
-    let currentViewState = {
-        longitude: 10,
-        latitude: 56,
-        zoom: 4,
-    };
 
     const deckgl = new deck.DeckGL({
         container: 'map',
@@ -464,23 +476,53 @@
 
         // Called every time the user pans, zooms, or rotates.
         onViewStateChange: ({viewState}) => {
-            // Persist so bounds queries work on res7.
             currentViewState = viewState;
-            deckgl.setProps({viewState: currentViewState});
+            deckgl.setProps({ viewState: currentViewState });
 
-            // --- Zoom-based resolution switch ---
-            // res3 is coarse; res7 is fine. The threshold zoom=7 is
-            // empirically chosen so the hexagons fill roughly ¼ of
-            // the screen at that zoom level.
+            // Alt herunder kører nu også ved panorering:
+            const viewport = new deck.WebMercatorViewport(viewState);
+            if (!viewport) return;
+
+            // Compute zoom
             const roundedZoom = Math.round(viewState.zoom * 10) / 10;
-            if (roundedZoom === lastZoom) return;
             lastZoom = roundedZoom;
+
             const desiredResolution = roundedZoom > 7 ? 'res7' : 'res3';
-            if (desiredResolution !== currentResolution) {
+            const currentBounds = viewport.getBounds();
+
+            const boundsChanged = currentBounds.some(
+                (val, i) => Math.abs(lastFetchedBounds[i] - val) > renderThreshold
+            );
+            const resolutionChanged = desiredResolution !== currentResolution;
+
+            if (resolutionChanged) {
                 currentResolution = desiredResolution;
-                document.getElementById('resolution-display').textContent =
-                    currentResolution === 'res3' ? 'H3 Res 3' : 'H3 Res 7';
+                document.getElementById('resolution-display')
+                    .textContent = currentResolution === 'res3' ? 'H3 Res 3' : 'H3 Res 7';
+            }
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
                 fetchAndUpdateLayer();
+            }, 200);
+
+            if (resolutionChanged || boundsChanged) {
+                // Update resolution if needed
+                if (resolutionChanged) {
+                    currentResolution = desiredResolution;
+                    document.getElementById('resolution-display')
+                        .textContent = currentResolution === 'res3' ? 'H3 Res 3' : 'H3 Res 7';
+                }
+                // Update bounds if needed
+                if (boundsChanged) {
+                    lastFetchedBounds = currentBounds;
+                }
+                // Update h3 layer with debonce timer ot avoid spamming with calls
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    fetchAndUpdateLayer();
+                }, 200);
+                
             }
         },
 
