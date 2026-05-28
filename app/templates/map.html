@@ -396,8 +396,8 @@
             getFillColor: d => d.color,
             pickable: true,
             stroked: true,
-            getLineColor: [255, 255, 255, 80],
-            getLineWidth: 1,
+            getLineColor: [255, 255, 255, 35],
+            getLineWidth: 2,
             lineWidthUnits: 'pixels',
         });
     }
@@ -472,6 +472,7 @@
         widgets: [
             new deck.FullscreenWidget({ placement: 'top-right' }),
             new deck.ZoomWidget({ placement: 'top-right' }),
+            // new deck.ResetViewWidget({ placement: 'top-right' })
         ],
 
         // Called every time the user pans, zooms, or rotates.
