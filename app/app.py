@@ -354,14 +354,14 @@ def table_data():
     """
     params = []
     if search:
-        base += " WHERE species_name ILIKE ? OR family ILIKE ?"
-        like = f"%{search}%"
+        base += " WHERE regexp_full_match(species_name, ?) OR regexp_full_match(family, ?)"
+        like = f"{search}"
         params = [like, like]
 
     # Total row count (needed for page count calculation).
     count_sql = "SELECT COUNT(*) FROM merged_species"
     if search:
-        count_sql += " WHERE species_name ILIKE ? OR family ILIKE ?"
+        count_sql += " WHERE species_name LIKE ? OR family LIKE ?"
 
     total = con.execute(count_sql, params).fetchone()[0]
     total_pages = max(1, (total + per_page - 1) // per_page)
