@@ -6,7 +6,22 @@
    1. CSS Custom Properties (Design Tokens)
    ------------------------------------------------------------------- */
 :root {
-  /* Spacing */
+  /* Spacing (ported from digital garden fluid scale)
+     xs-min/max values in px, clamped between min and max viewport */
+  --space-3xs: clamp(0.3125rem, 0.3125rem + 0vw, 0.3125rem);   /* 5px */
+  --space-2xs: clamp(0.4375rem, 0.4375rem + 0vw, 0.4375rem);   /* 7px */
+  --space-xs:  clamp(0.625rem,  0.625rem  + 0vw, 0.625rem);     /* 10px */
+  --space-s:   clamp(1rem,      calc(0.84375rem + 0.78vw),      1.5rem);    /* 16–24px */
+  --space-m:   clamp(1.5rem,    calc(1.28125rem + 1.09vw),      2.25rem);   /* 24–36px */
+  --space-l:   clamp(2.25rem,   calc(1.9375rem  + 1.56vw),       3.375rem);  /* 36–54px */
+  --space-xl:  clamp(3.375rem,  calc(2.90625rem + 2.34vw),       5.0625rem); /* 54–81px */
+  --space-2xl: clamp(4.5rem,    calc(3.875rem  + 3.13vw),       6.75rem);   /* 72–108px */
+  --space-3xl: clamp(6rem,      calc(5.1875rem + 4.06vw),       9rem);      /* 96–144px */
+  --space-4xl: clamp(9rem,      calc(7.75rem   + 6.25vw),       13.5rem);   /* 144–216px */
+  --space-5xl: clamp(12rem,     calc(10.3125rem + 8.44vw),      18rem);     /* 192–288px */
+  --space-6xl: clamp(15rem,     calc(12.9375rem + 10.31vw),     22.5rem);   /* 240–360px */
+
+  /* Legacy numeric tokens (kept for backward compat in existing rules) */
   --space-4: 0.25rem;
   --space-8: 0.5rem;
   --space-12: 0.75rem;
@@ -617,6 +632,9 @@ th.col-label {
 }
 
 .dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
   padding: var(--space-12) var(--space-24);
   border-radius: var(--border-radius-base);
   border: 1px solid var(--color-tinted-cream);
@@ -634,6 +652,19 @@ th.col-label {
   background: var(--color-cream);
   border-color: var(--color-primary-green);
   box-shadow: var(--box-shadow-sm);
+}
+
+.dropdown-toggle .chevron-icon {
+  transition:
+    color 0.3s ease-in-out,
+    background-color 0.3s ease-in-out,
+    transform 0.8s ease-in-out;
+  color: var(--color-gray-600);
+  flex-shrink: 0;
+}
+
+.dropdown-toggle:hover .chevron-icon {
+  color: var(--color-primary-green);
 }
 
 .dropdown-panel {
@@ -716,8 +747,9 @@ th.col-label {
   margin: var(--space-32) auto;
   border: 1px solid var(--color-tinted-cream);
   background: var(--color-light-cream);
-  border-radius: var(--border-radius-base);
+  border-radius: var(--border-radius-lg);
   box-shadow: var(--box-shadow-md);
+  overflow: hidden;
 }
 
 /* -------------------------------------------------------------------

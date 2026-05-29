@@ -21,8 +21,11 @@
 
         <div class="sliders-dropdown">
             <button type="button" class="dropdown-toggle" id="iucn-btn"
-                    onclick="toggleDropdown('iucn-panel', 'iucn-btn', 'IUCN Category Weights')">
-                IUCN Category Weights &darr;
+                    onclick="toggleDropdown('iucn-panel', 'iucn-btn')">
+                IUCN Category Weights
+                <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m19.5 8.25l-7.5 7.5l-7.5-7.5"/>
+                </svg>
             </button>
             <div id="iucn-panel" class="dropdown-panel js-hidden">
                 <div class="dropdown-grid">
@@ -98,8 +101,11 @@
 
         <div class="sliders-dropdown">
             <button type="button" class="dropdown-toggle" id="dna-btn"
-                    onclick="toggleDropdown('dna-panel', 'dna-btn', 'DNA & Coverage Weights')">
-                DNA & Coverage Weights &darr;
+                    onclick="toggleDropdown('dna-panel', 'dna-btn')">
+                DNA & Coverage Weights
+                <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m19.5 8.25l-7.5 7.5l-7.5-7.5"/>
+                </svg>
             </button>
             <div id="dna-panel" class="dropdown-panel js-hidden">
                 <div class="dropdown-grid">
@@ -167,7 +173,7 @@
     <form method="get" action="/data/table/" class="search-form" id="search-form">
         <input type="text" id="search-input" name="search"
                value="{{ search }}"
-               placeholder="Search species or family using REGEX...">
+               placeholder="Search using REGEX...">
         <button type="submit" class="btn-primary">
             Search
         </button>
@@ -200,21 +206,17 @@
         </div>
     </div>
 
-    <div class="bottom-functions">
-        <a href="/">Back to Homepage</a>
-        <a href="/data/map/">View Data as Heatmap</a>
-    </div>
-
     <script>
-    function toggleDropdown(panelId, btnId, label) {
+    function toggleDropdown(panelId, btnId) {
         const panel = document.getElementById(panelId);
         const btn   = document.getElementById(btnId);
+        const chevron = btn.querySelector('.chevron-icon');
         if (panel.classList.contains('js-hidden')) {
             panel.classList.remove('js-hidden');
-            btn.textContent = label + ' \u25B2';
+            if (chevron) chevron.style.transform = 'rotate(180deg)';
         } else {
             panel.classList.add('js-hidden');
-            btn.textContent = label + ' \u25BC';
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
         }
     }
 
