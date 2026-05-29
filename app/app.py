@@ -33,6 +33,31 @@ import numpy as np
 import matplotlib
 import h3
 import os
+import time
+from collections import defaultdict
+
+QUERY_METRICS = defaultdict(lambda: [0, 0.0])
+
+# Monitor a given query from a duckdb connection
+def monitor(con: duckdb.DuckDBPyConnection, query: str, parameters=None):
+    start_time = time.perf_counter()
+    try:
+        return con.execute(query, parameters=parameters)
+    finally:
+        stop_time = time.perf_counter()
+        duration = stop_time - start_time
+        stats = QUERY_METRICS[query]
+        stats[0] += 1
+        stats[1] += duration
+
+# Print stats of monitored queries
+def print_stats():
+    metrics = sorted(QUERY_METRICS.items(), key=(lambda item: item[1][1]), reverse=True)
+    print((30*'=') + 'BEGIN STATS FOR QUERIES' + (30*'=') + '\n\n')
+    for (query, lst) in metrics:
+        print(f'Num calls: {lst[0]}, avg time: {lst[1]/lst[0]}, total time: {lst[1]}')
+        print(query)
+    print((31*'=') + 'END STATS FOR QUERIES' + (31*'=') + '\n\n')
 
 # ---------------------------------------------------------------------------
 # 1. Paths & initialisation
@@ -47,6 +72,9 @@ app = Flask(__name__)
 
 # Matplotlib colormap used for the heat-map polygons.
 viridis = matplotlib.colormaps["viridis"]
+
+# Create main connection to derive cursors from
+MAIN_CON = duckdb.connect(DB_PATH, read_only=True)
 
 # Defaults for the scoring sliders.  Keys must stay in sync with the HTML
 # slider IDs (cr, en, vu, nt, dd, lc, sp, gen, fam, cov, samp) and with
@@ -71,7 +99,7 @@ def get_con():
     Return a read-only DuckDB connection.
     Called inside each route so the DB stays isolated per request.
     """
-    return duckdb.connect(DB_PATH, read_only=True)
+    return MAIN_CON.cursor()
 
 
 # ---------------------------------------------------------------------------
@@ -427,7 +455,7 @@ def table_data():
     else:
         base += f" ORDER BY {sort} {order_sql}"
     base += f" LIMIT {per_page} OFFSET {offset}"
-    rows = con.execute(base, params).fetchall()
+    rows = monitor(con, base, params).fetchall()
     con.close()
 
     # Round floating score values down to 2 decimals for clean display.
@@ -545,14 +573,18 @@ def map_data():
         lat_min = max(-90.0, min(90.0, float(lat_min) - lat_buf))
         lat_max = max(-90.0, min(90.0, float(lat_max) + lat_buf))
         
-        df = con.execute(f"""
-            SELECT * FROM {table_name}
-            WHERE latitude BETWEEN {lat_min} AND {lat_max}
-              AND longitude BETWEEN {lon_min} AND {lon_max}
-        """).df()
+        query = f"SELECT * FROM {table_name} " \
+                 "WHERE (longitude BETWEEN ? AND ?) " \
+                 "AND (latitude BETWEEN ? AND ?)"
+        df = monitor(con, query, [
+            float(lon_min), 
+            float(lon_max),
+            float(lat_min), 
+            float(lat_max)
+        ]).df()
     else:
         # Full dataset for res3 — coarse polygons are lightweight enough
-        df = con.execute(f"SELECT * FROM {table_name}").df()
+        df = monitor(con, f"SELECT * FROM {table_name}").df()
     con.close()
 
     # build_data() returns `(records, max_score)` where records is a
@@ -566,3 +598,8 @@ def map_data():
 # ---------------------------------------------------------------------------
 if __name__ == '__main__':
     app.run(debug=True)
+
+# Close main con connection and print stats 
+# from monitored queries.
+MAIN_CON.close()
+print_stats()
