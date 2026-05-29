@@ -1280,12 +1280,36 @@ th.col-label {
   color: var(--color-accent-brown);
   display: flex;
   align-items: center;
-  gap: var(--space-4);
-  transition: gap 0.3s ease-in-out;
+  cursor: pointer;
+  position: relative;
+  left: 0;
+  top: 0;
+  text-decoration: none;
+  transition:
+    all 0.6s ease,
+    transform 0.3s cubic-bezier(0.2, 1, 0.8, 1);
+}
+
+.feature-card .feature-arrow .arrow-icon {
+  vertical-align: middle;
+  width: 0;
+  opacity: 0;
+  flex-shrink: 0;
+  color: currentColor;
+  transition:
+    all 0.6s ease,
+    transform 0.3s cubic-bezier(0.2, 1, 0.8, 1);
 }
 
 .feature-card:hover .feature-arrow {
-  gap: var(--space-8);
+  color: var(--color-primary-green);
+  transform: translate3d(3px, 0, 0);
+}
+
+.feature-card:hover .feature-arrow .arrow-icon {
+  width: 16px;
+  opacity: 1;
+  margin-right: var(--space-4);
   color: var(--color-primary-green);
 }
 
