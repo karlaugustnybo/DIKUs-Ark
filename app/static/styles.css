@@ -294,4 +294,26 @@ th {
   -moz-appearance: textfield;
 }
 
+th.col-label {
+  color: #0066cc;
+  font-weight: bold;
+  padding: 0.5rem;
+  cursor: default;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+.status-cr { background-color: #d32f2f; color: #ffffff; }
+.status-en { background-color: #ed6c02; color: #ffffff; }
+.status-vu { background-color: #fbc02d; color: #000000; }
+.status-nt { background-color: #2e7d32; color: #ffffff; }
+.status-lc { background-color: #4caf50; color: #ffffff; }
+.status-dd { background-color: #616161; color: #ffffff; }
+
 /*# sourceMappingURL=styles.css.map */

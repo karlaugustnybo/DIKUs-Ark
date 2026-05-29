@@ -196,6 +196,17 @@
                                value="{{ weights.cov }}">
                     </div>
                 </div>
+                <div class="weight-row">
+                    <label for="samp">Already Sampled</label>
+                    <div class="weight-controls">
+                        <input type="range" id="samp" name="samp"
+                               min="0" max="10" step="0.1"
+                               value="{{ weights.samp }}">
+                        <input type="number" id="num-samp" class="weight-num"
+                               min="0" max="10" step="0.1"
+                               value="{{ weights.samp }}">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -254,29 +265,12 @@
         minZoom: 0
     };
 
-    // Threshold for after how big a move, new data should be rendered
-    const renderThreshold = 0.0001;
-
-    // Save last bounds
-    let lastFetchedBounds = [0, 0, 0, 0];
-
     /**
-     * Reads the eight slider values and map-bounding box, then
-     * builds a URLSearchParams object for the API request.
-     *
-     * When the current resolution is `res7` and the Deck.gl viewport
-     * is ready, we clip the query to the visible lat / lon bounds so
-     * the server sends only the polygons in view (lightweight).
-     */
-    /**
-     * Reads the ten slider values and map-bounding box, then
+     * Reads the slider values and map-bounding box, then
      * builds a URLSearchParams object for the /api/map-data/ request.
-     *
-     * All sliders now include the two new DNA weights
-     * (fam = Missing Family DNA, cov = DNA Coverage).
      */
     function getWeights() {
-        const ids = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen', 'fam', 'cov'];
+        const ids = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen', 'fam', 'cov', 'samp'];
         const params = new URLSearchParams();
         ids.forEach(id => {
             const el = document.getElementById(id);
@@ -343,9 +337,9 @@
     }, 150);
 
     // ----------------------------------------------------------------
-    // Dual input (range + number) wiring for all 10 sliders
+    // Dual input (range + number) wiring for all 11 sliders
     // ----------------------------------------------------------------
-    const sliderIds = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen', 'fam', 'cov'];
+    const sliderIds = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen', 'fam', 'cov', 'samp'];
     sliderIds.forEach(id => {
         const rangeInput = document.getElementById(id);
         const numInput   = document.getElementById('num-' + id);
@@ -477,53 +471,23 @@
 
         // Called every time the user pans, zooms, or rotates.
         onViewStateChange: ({viewState}) => {
+            // Persist so bounds queries work on res7.
             currentViewState = viewState;
-            deckgl.setProps({ viewState: currentViewState });
+            deckgl.setProps({viewState: currentViewState});
 
-            // Alt herunder kører nu også ved panorering:
-            const viewport = new deck.WebMercatorViewport(viewState);
-            if (!viewport) return;
-
-            // Compute zoom
+            // --- Zoom-based resolution switch ---
+            // res3 is coarse; res7 is fine. The threshold zoom=7 is
+            // empirically chosen so the hexagons fill roughly a quarter
+            // of the screen at that zoom level.
             const roundedZoom = Math.round(viewState.zoom * 10) / 10;
+            if (roundedZoom === lastZoom) return;
             lastZoom = roundedZoom;
-
             const desiredResolution = roundedZoom > 7 ? 'res7' : 'res3';
-            const currentBounds = viewport.getBounds();
-
-            const boundsChanged = currentBounds.some(
-                (val, i) => Math.abs(lastFetchedBounds[i] - val) > renderThreshold
-            );
-            const resolutionChanged = desiredResolution !== currentResolution;
-
-            if (resolutionChanged) {
+            if (desiredResolution !== currentResolution) {
                 currentResolution = desiredResolution;
-                document.getElementById('resolution-display')
-                    .textContent = currentResolution === 'res3' ? 'H3 Res 3' : 'H3 Res 7';
-            }
-
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
+                document.getElementById('resolution-display').textContent =
+                    currentResolution === 'res3' ? 'H3 Res 3' : 'H3 Res 7';
                 fetchAndUpdateLayer();
-            }, 200);
-
-            if (resolutionChanged || boundsChanged) {
-                // Update resolution if needed
-                if (resolutionChanged) {
-                    currentResolution = desiredResolution;
-                    document.getElementById('resolution-display')
-                        .textContent = currentResolution === 'res3' ? 'H3 Res 3' : 'H3 Res 7';
-                }
-                // Update bounds if needed
-                if (boundsChanged) {
-                    lastFetchedBounds = currentBounds;
-                }
-                // Update h3 layer with debonce timer ot avoid spamming with calls
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => {
-                    fetchAndUpdateLayer();
-                }, 200);
-                
             }
         },
 

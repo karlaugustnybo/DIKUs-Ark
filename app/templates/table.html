@@ -206,6 +206,17 @@
                                    value="{{ weights.cov }}">
                         </div>
                     </div>
+                    <div class="weight-row">
+                        <label for="samp">Already Sampled</label>
+                        <div class="weight-controls">
+                            <input type="range" id="samp" name="samp"
+                                   min="0" max="10" step="0.1"
+                                   value="{{ weights.samp }}">
+                            <input type="number" id="num-samp" class="weight-num"
+                                   min="0" max="10" step="0.1"
+                                   value="{{ weights.samp }}">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -247,11 +258,9 @@
                    data-sort. Clicking triggers the JS sort handler.          #}
                 <th><a href="#" data-sort="species_name">Species Name</a></th>
                 <th><a href="#" data-sort="family">Family</a></th>
-                <th><a href="#" data-sort="redlist_category">
-                    IUCN Status</a></th>
+                <th><a href="#" data-sort="threat_score">IUCN Status</a></th>
                 <th><a href="#" data-sort="threat_score">Threat Score</a></th>
-                <th><a href="#" data-sort="dna_coverage_score">
-                    DNA Coverage Score</a></th>
+                <th><a href="#" data-sort="dna_level">Missing DNA Level</a></th>
                 <th><a href="#" data-sort="priority">Priority</a></th>
             </tr>
         </thead>
@@ -345,7 +354,7 @@
         const nextBtn    = document.getElementById('next-btn');
 
         // Weight slider IDs — must match the keys in DEFAULT_WEIGHTS (app.py)
-        const sliderIds = ['cr','en','vu','nt','dd','lc','sp','gen','fam','cov'];
+        const sliderIds = ['cr','en','vu','nt','dd','lc','sp','gen','fam','cov','samp'];
 
         /**
          * Debounce helper: waits `ms` milliseconds after the last call,
@@ -464,7 +473,7 @@
         function setHeaders() {
             const headers = [
                 'Species Name', 'Family', 'IUCN Status',
-                'Threat Score', 'DNA Coverage Score', 'Priority'
+                'Threat Score', 'Missing DNA Level', 'Priority'
             ];
             document.querySelectorAll('th a').forEach((a, i) => {
                 a.setAttribute('data-label', headers[i]);
@@ -500,14 +509,31 @@
             totalPages = data.total_pages;
 
             // -- step 3: rebuild <tbody> --
+            const statusClasses = {
+                'Critically Endangered': 'status-cr',
+                'Endangered': 'status-en',
+                'Vulnerable': 'status-vu',
+                'Near Threatened': 'status-nt',
+                'Least Concern': 'status-lc',
+                'Data Deficient': 'status-dd',
+            };
             tbody.innerHTML = '';
             data.rows.forEach(row => {
                 const tr = document.createElement('tr');
-                // `row` is a flat array of strings: [species_name, family,
-                // redlist_category, threat_score, dna_coverage_score, priority]
-                row.forEach(cell => {
+                // row = [species_name, family, redlist_category,
+                //        threat_score, dna_level, priority]
+                row.forEach((cell, idx) => {
                     const td = document.createElement('td');
-                    td.textContent = cell;
+                    if (idx === 2) {
+                        // IUCN Status → coloured badge
+                        const cls = statusClasses[cell] || '';
+                        const span = document.createElement('span');
+                        span.className = 'status-badge ' + cls;
+                        span.textContent = cell;
+                        td.appendChild(span);
+                    } else {
+                        td.textContent = cell;
+                    }
                     tr.appendChild(td);
                 });
                 tbody.appendChild(tr);
