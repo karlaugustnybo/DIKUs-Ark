@@ -1,43 +1,10 @@
 {# ==========================================================
    MAP VIEW  —  DIKUs ARK
-   ==========================================================
-   This template renders a full-screen interactive heat-map
-   that shows aggregated H3-hexagon data. Both slider weights
-   (IUCN categories + DNA counts) and the H3 resolution level
-   can be changed interactively.
-
-   Architecture:
-   -------------
-   Server (app.py /build_data)
-      ↓  JSON polygon list injected into initialData
-   Jinja2 template  (this file)
-      ↓  deck.DeckGL + deck.PolygonLayer
-   Browser JS
-      ↓  /api/map-data/ fetch on zoom / slider change
-   Server re-scores + re-colours in real time
-
-   Tech stack:
-   • Deck.gl   – loads tiles + renders 55k+ polygons at 60 fps
-   • H3        – Uber’s hexagonal geo-spatial indexing lib
-   • DuckDB    – analytical DB behind /api/map-data/
-
-   Template inheritance:
-   • Extends layout.html for shared CSS / navigation.
-   • Adds deck.gl CDN script to <head> via `{% block head %}`.
-
-   Server-side JSON passed in Jinja2 context:
-       data       – list of polygon records (first paint)
-       weights    – current slider values for form reset
-       resolution – 'res3' or 'res7'
-       max_score  – maximum score among all cells (for tooltip)
    ========================================================== #}
 
 {% extends 'layout.html' %}
 
 {% block head %}
-{# deck.gl is the core rendering engine (PolygonLayer + TileLayer).
-   The widgets stylesheet provides optional map controls
-   such as the built-in Zoom / Fullscreen buttons. #}
 <script src="https://unpkg.com/deck.gl@9/dist.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/@deck.gl/widgets@9/dist/stylesheet.css">
 {% endblock %}
@@ -45,34 +12,20 @@
 {% block body %}
 
 <h1>Explore The Map</h1>
-<h3>See where in the world there is the highest need for DNA-sequencing, discover target-areas local to yourself, or make your own custom scoring function.</h3>
+<p class="page-description">See where in the world there is the highest need for DNA-sequencing, discover target-areas local to yourself, or make your own custom scoring function.</p>
 
-{# ------------------------------------------------------------------
-   WEIGHT-SLIDER CONTROL BAR (Dual Dropdowns)
-   ------------------------------------------------------------------
-   Same dual-dropdown layout as table.html:
-   • IUCN Category Weights (CR, EN, VU, NT, DD, LC)
-   • DNA & Coverage Weights (sp, gen, fam, cov)
-
-   Every slider now has a paired `<input type="number">` so users
-   can type exact values or drag the slider. Both inputs are synced
-   and debounced → the map re-fetches with new weights only after
-   the user releases / stops typing.
-   ------------------------------------------------------------------ #}
-<div id="controls" class="sliders-wrapper" style="margin:1.5em auto; width:70%; font-size:1.1em;">
-    {# Display which H3 resolution the next fetch will use. #}
-    <div style="margin-bottom:1em; font-weight:bold;">
+<div id="controls" class="sliders-wrapper">
+    <div class="resolution-display">
         Resolution: <span id="resolution-display">H3 Res 3</span>
-        <small style="font-weight:normal; color:#666;">(switches automatically when zooming past 7)</small>
+        <small>(switches automatically when zooming past 7)</small>
     </div>
 
-    <!-- Dropdown 1: IUCN Category Weights ------------------------------->
-    <div class="sliders-dropdown" style="margin-top:0;">
+    <div class="sliders-dropdown no-margin-top">
         <button type="button" class="dropdown-toggle" id="iucn-btn"
                 onclick="toggleMapDropdown('iucn-panel', 'iucn-btn', 'IUCN Category Weights')">
-            IUCN Category Weights ▼
+            IUCN Category Weights &darr;
         </button>
-        <div id="iucn-panel" class="dropdown-panel" style="display:none;">
+        <div id="iucn-panel" class="dropdown-panel js-hidden">
             <div class="dropdown-grid">
                 <div class="weight-row">
                     <label for="cr">CR Weight</label>
@@ -144,13 +97,12 @@
         </div>
     </div>
 
-    <!-- Dropdown 2: DNA & Coverage Weights ---------------------------->
-    <div class="sliders-dropdown" style="margin-top:1em;">
+    <div class="sliders-dropdown">
         <button type="button" class="dropdown-toggle" id="dna-btn"
                 onclick="toggleMapDropdown('dna-panel', 'dna-btn', 'DNA & Coverage Weights')">
-            DNA & Coverage Weights ▼
+            DNA & Coverage Weights &darr;
         </button>
-        <div id="dna-panel" class="dropdown-panel" style="display:none;">
+        <div id="dna-panel" class="dropdown-panel js-hidden">
             <div class="dropdown-grid">
                 <div class="weight-row">
                     <label for="sp">Missing Species DNA</label>
@@ -212,51 +164,16 @@
     </div>
 </div>
 
-{# Container `<div>` where deck.gl mounts its WebGL canvas.
-   Height must be set explicitly; the `#map` rule in styles.css
-   handles width, margin, border, and border-radius. #}
 <div id="map"></div>
-
-{# ==========================================================
-   CLIENT-SIDE MAP LOGIC
-   ==========================================================
-
-   1.  initialData  → injected by Flask/Jinja2 on first load.
-   2.  deck.DeckGL  → renders two layers  (tile + polygon).
-   3.  user actions → slider change OR zoom > 7 ⟹ fetch new JSON.
-   4.  fetch guard  → nonce counter discards stale responses.
-
-   See inline comments below for each function / subsection.
-   ========================================================== #}
 
 <script>
     const initialData = {{ data | tojson }};
 
-    // ----------------------------------------------------------------
-    //  State variables
-    // ----------------------------------------------------------------
-    // currentResolution:  'res3' (coarse, ~220 km edge)   or
-    //                     'res7' (fine, ~5 km edge).
-    // The `onViewStateChange` handler toggles this automatically.
     let currentResolution = 'res3';
-
-    // debounceTimer:  prevents rapid slider drags from firing
-    // multiple overlapping fetch requests.
     let debounceTimer = null;
-
-    // fetchNonce:  monotonically-increasing integer. When an async
-    // fetch resolves, its local nonce is compared with the global
-    // nonce. If they differ, the result is stale and discarded.
     let fetchNonce = 0;
-
-    // lastZoom:  rounded zoom level (1 decimal place). Tracked to
-    // avoid re-triggering the resolution switch logic for the same
-    // zoom value (which fires continuously during scroll).
     let lastZoom = null;
 
-    // `currentViewState` mirrors the last reported `viewState` so
-    // `getWeights()` can read viewport bounds accurately when in
-    // res7 mode.
     let currentViewState = {
         longitude: 10,
         latitude: 56,
@@ -265,10 +182,6 @@
         minZoom: 0
     };
 
-    /**
-     * Reads the slider values and map-bounding box, then
-     * builds a URLSearchParams object for the /api/map-data/ request.
-     */
     function getWeights() {
         const ids = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen', 'fam', 'cov', 'samp'];
         const params = new URLSearchParams();
@@ -279,47 +192,29 @@
         params.append('resolution', currentResolution);
         if (currentResolution === 'res7') {
             try {
-                // deck.gl viewports are ordered [minLon, minLat,
-                // maxLon, maxLat]. These become SQL BETWEEN clauses
-                // in the server's /api/map-data/ handler.
                 const viewport = deckgl.viewManager.getViewports()[0];
                 const [minLon, minLat, maxLon, maxLat] = viewport.getBounds();
                 params.append('lat_min', minLat);
                 params.append('lat_max', maxLat);
                 params.append('lon_min', minLon);
                 params.append('lon_max', maxLon);
-            } catch (e) {
-                // viewport not ready yet — fall back to full table
-            }
+            } catch (e) {}
         }
         return params;
     }
 
-    // ----------------------------------------------------------------
-    // Slider event handlers
-    // ----------------------------------------------------------------
-    // `input`  → live label updates while dragging.
-    // `change` → debounced fetch fired when the user releases the thumb.
-    /**
-     * Toggle a map dropdown panel open / closed.
-     * Mirrors the table.html toggleDropdown() function.
-     */
     window.toggleMapDropdown = function(panelId, btnId, label) {
         const panel = document.getElementById(panelId);
         const btn   = document.getElementById(btnId);
-        if (panel.style.display === 'none') {
-            panel.style.display = 'block';
-            btn.textContent = label + ' ▲';
+        if (panel.classList.contains('js-hidden')) {
+            panel.classList.remove('js-hidden');
+            btn.textContent = label + ' \u25B2';
         } else {
-            panel.style.display = 'none';
-            btn.textContent = label + ' ▼';
+            panel.classList.add('js-hidden');
+            btn.textContent = label + ' \u25BC';
         }
     };
 
-    /**
-     * Debounce helper: waits `ms` ms of silence, then runs the fn.
-     * Prevents rapid slider drags or typed values from spamming fetches.
-     */
     function debounceMap(fn, ms) {
         let timer;
         return function(...args) {
@@ -328,31 +223,21 @@
         };
     }
 
-    /**
-     * Triggered whenever any weight changes. Re-fetches the map data.
-     * Debounced at 150 ms for responsive but not excessive reloading.
-     */
     const triggerMapWeightUpdate = debounceMap(() => {
         fetchAndUpdateLayer();
     }, 150);
 
-    // ----------------------------------------------------------------
-    // Dual input (range + number) wiring for all 11 sliders
-    // ----------------------------------------------------------------
     const sliderIds = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen', 'fam', 'cov', 'samp'];
     sliderIds.forEach(id => {
         const rangeInput = document.getElementById(id);
         const numInput   = document.getElementById('num-' + id);
         if (!rangeInput) return;
 
-        // `input` on range → sync number value (don't fetch yet).
         rangeInput.addEventListener('input', () => {
             if (numInput) numInput.value = rangeInput.value;
         });
-        // `change` on range → fetch after release.
         rangeInput.addEventListener('change', triggerMapWeightUpdate);
 
-        // `input` on number → sync range, clamp, then fetch.
         if (numInput) {
             numInput.addEventListener('input', () => {
                 let val = parseFloat(numInput.value) || 0;
@@ -366,22 +251,6 @@
         }
     });
 
-    // ----------------------------------------------------------------
-    // Layer helpers
-    // ----------------------------------------------------------------
-    /**
-     * Factory for the polygon layer that renders one closed ring
-     * per H3 cell.
-     *
-     * Deck.gl PolygonLayer expects each datum to have:
-     *   • getPolygon → array of [lng, lat] vertices forming a ring.
-     *   • getFillColor → [r, g, b, a]
-     *
-     * Why PolygonLayer and not H3HexagonLayer?
-     *   PolygonLayer lets us pre-compute lat/lng boundaries in Python
-     *   with h3.cell_to_boundary(). No Web-assembly H3 dependency is
-     *   needed in the browser, keeping the JS bundle size tiny.
-     */
     function createPolygonLayer(data) {
         return new deck.PolygonLayer({
             id: 'h3-polygons',
@@ -396,29 +265,14 @@
         });
     }
 
-    /**
-     * Orchestrates the asynchronous fetch to `/api/map-data/` and
-     * replaces the polygon layer on the map.
-     *
-     * Called by:
-     *   • Slider `change` events
-     *   • Zoom `onViewStateChange` when crossing resolution boundary
-     */
     async function fetchAndUpdateLayer() {
-        const myNonce = ++fetchNonce;       // claim next nonce
+        const myNonce = ++fetchNonce;
         const params = getWeights();
         try {
             const resp = await fetch('/api/map-data/?' + params.toString());
-
-            // -- stale-guard #1 (request started before another) --
             if (myNonce !== fetchNonce) return;
-
             const json = await resp.json();
-
-            // -- stale-guard #2 (another request started in-parallel) --
             if (myNonce !== fetchNonce) return;
-
-            // Build a fresh PolygonLayer and swap it in.
             const newLayer = createPolygonLayer(json.data);
             deckgl.setProps({ layers: [baseTileLayer, newLayer] });
         } catch (err) {
@@ -426,12 +280,6 @@
         }
     }
 
-    // ----------------------------------------------------------------
-    // Base map tile layer (reused between re-renders)
-    // ----------------------------------------------------------------
-    // CartoDB light base tiles are free, no API key required.
-    // We render them with BitmapLayer so they sit underneath the
-    // H3 hexagons as a literal base layer.
     const baseTileLayer = new deck.TileLayer({
         id: 'carto-light',
         data: 'https://basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
@@ -452,33 +300,21 @@
         },
     });
 
-    // ----------------------------------------------------------------
-    // Deck.gl initialisation
-    // ----------------------------------------------------------------
-
     const deckgl = new deck.DeckGL({
         container: 'map',
-        views: new deck.MapView({ repeat: true }),  // allow panning east/west
+        views: new deck.MapView({ repeat: true }),
         viewState: currentViewState,
-        controller: true,               // enable mouse drag / wheel zoom
+        controller: true,
 
-        // Optional UI widgets provided by deck.gl
         widgets: [
             new deck.FullscreenWidget({ placement: 'top-right' }),
             new deck.ZoomWidget({ placement: 'top-right' }),
-            // new deck.ResetViewWidget({ placement: 'top-right' })
         ],
 
-        // Called every time the user pans, zooms, or rotates.
         onViewStateChange: ({viewState}) => {
-            // Persist so bounds queries work on res7.
             currentViewState = viewState;
             deckgl.setProps({viewState: currentViewState});
 
-            // --- Zoom-based resolution switch ---
-            // res3 is coarse; res7 is fine. The threshold zoom=7 is
-            // empirically chosen so the hexagons fill roughly a quarter
-            // of the screen at that zoom level.
             const roundedZoom = Math.round(viewState.zoom * 10) / 10;
             if (roundedZoom === lastZoom) return;
             lastZoom = roundedZoom;
@@ -491,35 +327,35 @@
             }
         },
 
-        // --- Hover tooltip for individual hexagons ---
-        // Pops up when `pickable: true` on the PolygonLayer.
         getTooltip: ({object}) => {
             if (!object) return null;
             return {
                 html: `
-                    <div style="min-width:200px;">
-                        <strong>H3: ${object.h3_index}</strong><br/>
-                        Score: ${object.score.toFixed(2)}<br/>
+                    <div style="min-width:200px; font-family: var(--font-sans);">
+                        <strong style="color: var(--color-black);">H3: ${object.h3_index}</strong><br/>
+                        <span style="color: var(--color-gray-600);">Score: ${object.score.toFixed(2)}</span><br/>
                         <hr style="border-color:rgba(100,100,100,0.2); margin:0.4rem 0;">
+                        <span style="color: var(--color-gray-600); font-size: 0.85em;">
                         CR: ${object.details.CR}, EN: ${object.details.EN}, VU: ${object.details.VU}<br/>
                         NT: ${object.details.NT}, DD: ${object.details.DD}, LC: ${object.details.LC}<br/>
                         Missing Species DNA: ${object.details['Missing Species DNA']}<br/>
                         Missing Genus DNA: ${object.details['Missing Genus DNA']}
+                        </span>
                     </div>
                 `,
                 style: {
-                    backgroundColor: 'rgba(255,255,255,0.95)',
-                    color: '#000000',
+                    backgroundColor: 'rgba(252, 251, 247, 0.97)',
+                    color: 'var(--color-black)',
                     padding: '0.75rem 1rem',
-                    borderRadius: '8px',
+                    borderRadius: 'var(--border-radius-base)',
                     fontSize: '0.9rem',
                     lineHeight: '1.4rem',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                    boxShadow: 'var(--box-shadow-sm)',
+                    border: '1px solid var(--color-tinted-cream)',
                 }
             };
         },
 
-        // Initial layer stack: tile base + server-provided polygons.
         layers: [
             baseTileLayer,
             createPolygonLayer(initialData)
@@ -527,7 +363,6 @@
     });
 </script>
 
-{# Bottom navigation links (back to home / table). #}
 <div class="index-bottom">
     <a href="/">Back to Homepage</a>
     <a href="/data/table/">View Data as Tabular</a>

@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>DIKUS ARK</title>
+        <title>DIKUs ARK</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Baskervville:ital@0;1&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Noto+Serif+Display:ital,wght@0,100..900;1,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
         {% block head %}{% endblock %}
     </head>
-    <body style="text-align: center;">
-        <header style="position: fixed; top: 0; left: 0; right: 0; background: #ffffff; border-bottom: 1px solid #ddd; padding: 1rem 2rem; z-index: 1000; display: flex; justify-content: center; gap: 3rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-            <a href="/" style="color: #0066cc; text-decoration: none; font-weight: bold;">Home</a>
-            <a href="/data/table/" style="color: #0066cc; text-decoration: none; font-weight: bold;">Table</a>
-            <a href="/data/map/" style="color: #0066cc; text-decoration: none; font-weight: bold;">Map</a>
-        </header>
+    <body>
+        <nav class="site-navbar">
+            <div class="nav-left">
+                <a href="/" class="nav-brand">DIKUs ARK</a>
+            </div>
+            <div class="nav-right" role="navigation" aria-label="Main">
+                <a href="/data/table/"><span>Table</span></a>
+                <a href="/data/map/"><span>Map</span></a>
+                <a href="/tutorial/"><span>Tutorial</span></a>
+            </div>
+        </nav>
         {% block body %}{% endblock %}
+        <footer class="site-footer">
+            <p>DIKUs ARK — Conservation prioritisation tool powered by ecological data and genomic sequencing insights.</p>
+        </footer>
     </body>
 </html>

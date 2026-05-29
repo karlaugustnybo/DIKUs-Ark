@@ -1,46 +1,83 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <h1 style="margin-top: 5em;">DIKUS ARK</h1><br>
-    
-    <div class="homepage-para">
-        <p>
-            The Ark is a living map designed to guide preservation efforts 
-            in a rapidly changing world. It highlights regions where 
-            biodiversity is under the greatest threat, helping scientists 
-            and conservationists focus their attention where it matters most. 
-            By combining ecological data, risk assessments, and species 
-            distribution, the map offers a clear, visual overview of urgency 
-            across the globe to help conservationists direct their efforts and 
-            talent.
-        </p><br>
-        <p>
-            At its core, the project supports the sequencing and preservation of 
-            genetic material from endangered species. Each highlighted area 
-            represents not just a place, but a collection of irreplaceable life 
-            forms whose DNA may soon be lost. Capturing this information today 
-            creates opportunities for future research, conservation, and 
-            potential restoration.
-        </p><br>
-        <p>
-            The interface is built to be simple and exploratory. Users can 
-            navigate the map, zoom into critical regions, and access concise 
-            insights about species at risk and ongoing efforts. The goal is to 
-            make complex scientific priorities accessible and engaging, 
-            implemented in a lightweight demo based on real-world datasets.
-        </p><br>
-        <p>
-            Ultimately, the Ark is a tool and a statement: a step toward 
-            ensuring that extinction does not mean erasure forever.
-        </p>
-    </div>
 
-    <div style="margin-top:3em; font-size:1.3em;">
-        <p>{{ stats.total }} species  ·  {{ stats.without_dna }} without DNA  ·  {{ stats.critically_endangered }} critically endangered  ·  {{ stats.res3_cells }} large H3 cells  ·  {{ stats.res7_cells }} small H3 cells</p>
-    </div>
+<div class="homepage-wrapper">
+  <header class="homepage-hero">
+    <h1>
+      <span class="hero-name">DIKUs Ark</span><span class="hero-intro"> guides conservation and DNA sequencing efforts by mapping biodiversity risk across the globe.</span>
+    </h1>
+    <p class="hero-tagline">A step toward ensuring that extinction does not mean erasure.</p>
+  </header>
 
-    <div class="index-bottom">
-        <a href="/data/table/">View Data as Tabular</a>
-        <a href="/data/map/">View Data as Heatmap</a>
+  <div class="section-divider">
+    <span>Explore</span>
+  </div>
+
+  <div class="feature-grid">
+    <a href="/data/table/" class="feature-card">
+      <div class="feature-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+        </svg>
+      </div>
+      <h3>Species Table</h3>
+      <p>Browse, filter, and sort every species in the database. Adjust scoring weights to discover which animals need DNA sequencing the most.</p>
+      <div class="feature-arrow">Explore the Table &rarr;</div>
+    </a>
+
+    <a href="/data/map/" class="feature-card">
+      <div class="feature-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.54 15H17a2 2 0 0 0-2 2v4.54"/><path d="M7 3.34V5a3 3 0 0 0 3 3a2 2 0 0 1 2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1.9-2 2-2h3.17"/><path d="M11 21.95V18a2 2 0 0 0-2-2a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05"/><circle cx="12" cy="12" r="10"/>
+        </svg>
+      </div>
+      <h3>Interactive Heatmap</h3>
+      <p>Visualise global conservation priorities on an interactive map. Zoom into any region and explore H3 hexagon aggregations in real time.</p>
+      <div class="feature-arrow">Open the Map &rarr;</div>
+    </a>
+
+    <a href="/tutorial/" class="feature-card">
+      <div class="feature-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+          <line x1="12" x2="12.01" y1="17" y2="17"/>
+        </svg>
+      </div>
+      <h3>Tutorial</h3>
+      <p>Learn how to navigate the table and map, understand the weighting system, and build your own custom conservation scores.</p>
+      <div class="feature-arrow">Read the Tutorial &rarr;</div>
+    </a>
+  </div>
+
+  <div class="section-divider">
+    <span>At a Glance</span>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-number">{{ stats.total }}</div>
+      <div class="stat-label">Species</div>
     </div>
+    <div class="stat-item">
+      <div class="stat-number">{{ stats.without_dna }}</div>
+      <div class="stat-label">Without DNA</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">{{ stats.critically_endangered }}</div>
+      <div class="stat-label">Critically Endangered</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">{{ stats.res3_cells }}</div>
+      <div class="stat-label">Large H3 Cells</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">{{ stats.res7_cells }}</div>
+      <div class="stat-label">Small H3 Cells</div>
+    </div>
+  </div>
+
+</div>
+
 {% endblock %}
