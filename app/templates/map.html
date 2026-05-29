@@ -184,6 +184,19 @@
         minZoom: 0
     };
 
+    // Buffer choosing multiples of current view size to render on each side
+    const bufConst = 3;
+    
+    // Padding to use when checking if near bound edge
+    const edgePadding = 5;
+
+    // Last rendered bounds
+    let renderedBounds = [0, 0, 0, 0];
+
+    // Abort controller til at stoppe tidligere fetchAndUpdateLayer kald
+    let fetchController = null;
+
+
     function getWeights() {
         const ids = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen', 'fam', 'cov', 'samp'];
         const params = new URLSearchParams();
@@ -195,11 +208,24 @@
         if (currentResolution === 'res7') {
             try {
                 const viewport = deckgl.viewManager.getViewports()[0];
-                const [minLon, minLat, maxLon, maxLat] = viewport.getBounds();
-                params.append('lat_min', minLat);
-                params.append('lat_max', maxLat);
-                params.append('lon_min', minLon);
-                params.append('lon_max', maxLon);
+                const [lonMin, latMin, lonMax, latMax] = viewport.getBounds();
+
+                // Use buffer space around region viewed to get new bounds
+                const lonBuf = bufConst * (lonMax - lonMin);
+                const latBuf = bufConst * (latMax - latMin);
+
+                const newLonMin = (lonMin - lonBuf + 180.0) % 360.0 - 180.0;
+                const newLonMax = (lonMax + lonBuf + 180.0) % 360.0 - 180.0;
+                const newLatMin = Math.max(-90.0, Math.min(90.0, latMin - latBuf));
+                const newLatMax = Math.max(-90.0, Math.min(90.0, latMax + latBuf));
+
+                renderedBounds = [newLonMin, newLatMin, newLonMax, newLatMax];
+
+                params.append('lat_min', newLatMin);
+                params.append('lat_max', newLatMax);
+                params.append('lon_min', newLonMin);
+                params.append('lon_max', newLonMax);
+
             } catch (e) {}
         }
         return params;
@@ -313,17 +339,35 @@
     }
 
     async function fetchAndUpdateLayer() {
-        const myNonce = ++fetchNonce;
+        // Abort last fetch
+        if (fetchController) {
+            fetchController.abort();
+        }
+
+        // Create new abort controller and extract its signal
+        fetchController = new AbortController;
+        signal = fetchController.signal;
+
         const params = getWeights();
         try {
-            const resp = await fetch('/api/map-data/?' + params.toString());
-            if (myNonce !== fetchNonce) return;
+            // Use api to get data of h3 cells with signal to potentially abort
+            const resp = await fetch('/api/map-data/?' + params.toString(), { signal: signal });
+
             const json = await resp.json();
-            if (myNonce !== fetchNonce) return;
+
             const newLayer = createPolygonLayer(json.data);
             deckgl.setProps({ layers: [baseTileLayer, newLayer] });
+
+            // Reset abort controller, as call is finished
+            fetchController = null;
         } catch (err) {
-            console.error('Failed to update map data:', err);
+            // If error due to abort, only log it
+            if (err.name === 'AbortError') {
+                console.log('Aborted connection, as a new one was instantiated.')
+            }
+            else {
+                console.error('Failed to update map data:', err);
+            }
         }
     }
 
@@ -358,17 +402,46 @@
             new deck.ZoomWidget({ placement: 'top-right' }),
         ],
 
+        // Called every time the user pans, zooms, or rotates.
         onViewStateChange: ({viewState}) => {
             currentViewState = viewState;
-            deckgl.setProps({viewState: currentViewState});
+            deckgl.setProps({ viewState: currentViewState });
 
+            const viewport = new deck.WebMercatorViewport(viewState);
+            if (!viewport) return;
+
+            // Compute zoom
             const roundedZoom = Math.round(viewState.zoom * 10) / 10;
-            if (roundedZoom === lastZoom) return;
             lastZoom = roundedZoom;
+
             const desiredResolution = roundedZoom > 7 ? 'res7' : 'res3';
-            if (desiredResolution !== currentResolution) {
-                currentResolution = desiredResolution;
-                fetchAndUpdateLayer();
+            const currentBounds = viewport.getBounds();
+
+            // True if rectangle of currentBounds with added edgePadding 
+            // is not fully contained in the renderedBounds rectangle.
+            const nearBoundsEdge = (
+                currentBounds[0] - edgePadding < renderedBounds[0] ||
+                currentBounds[1] - edgePadding < renderedBounds[1] ||
+                currentBounds[2] + edgePadding > renderedBounds[2] ||
+                currentBounds[3] + edgePadding > renderedBounds[3]
+            );
+            
+            // True if resolution is changed.
+            const resolutionChanged = desiredResolution !== currentResolution;
+
+            if (resolutionChanged || nearBoundsEdge) {
+                // Update resolution if needed
+                if (resolutionChanged) {
+                    currentResolution = desiredResolution;
+                }
+
+                // Update h3 layer with debonce timer ot avoid spamming with calls.
+                // Here, we also update renderedBounds.
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    fetchAndUpdateLayer();
+                }, 200);
+                
             }
         },
 
