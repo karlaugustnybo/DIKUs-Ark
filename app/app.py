@@ -274,8 +274,8 @@ def table():
     return render_template(
         'table.html',
         search=request.args.get('search', ''),
-        sort=request.args.get('sort', 'species_name'),
-        order=request.args.get('order', 'asc'),
+        sort=request.args.get('sort', 'priority'),
+        order=request.args.get('order', 'desc'),
         weights=weights,
     )
 
@@ -318,8 +318,8 @@ def table_data():
     # dynamically for pagination, sorting, and weight injection.
     con = get_con()
     search = request.args.get('search', '').strip()
-    sort = request.args.get('sort', 'species_name')
-    order = request.args.get('order', 'asc')
+    sort = request.args.get('sort', 'priority')
+    order = request.args.get('order', 'desc')
     page = request.args.get('page', '1')
     try:
         page = int(page)

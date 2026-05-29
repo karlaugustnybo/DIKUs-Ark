@@ -13,8 +13,7 @@
     <h1>Exploring The Raw Data</h1>
     <p class="page-description">
         Scroll through real sequencing-status and build a more detailed view of
-        each datapoint, select subsets and download them as csv files for
-        further exploratory data-analysis.
+        each datapoint, use REGEX search or modify the scoring function.
     </p>
 
     <div class="sliders-wrapper">
@@ -210,13 +209,12 @@
     function toggleDropdown(panelId, btnId) {
         const panel = document.getElementById(panelId);
         const btn   = document.getElementById(btnId);
-        const chevron = btn.querySelector('.chevron-icon');
         if (panel.classList.contains('js-hidden')) {
             panel.classList.remove('js-hidden');
-            if (chevron) chevron.style.transform = 'rotate(180deg)';
+            btn.classList.add('is-open');
         } else {
             panel.classList.add('js-hidden');
-            if (chevron) chevron.style.transform = 'rotate(0deg)';
+            btn.classList.remove('is-open');
         }
     }
 
@@ -236,6 +234,76 @@
         const nextBtn    = document.getElementById('next-btn');
 
         const sliderIds = ['cr','en','vu','nt','dd','lc','sp','gen','fam','cov','samp'];
+
+        function getStepDecimals(stepStr) {
+            const s = String(stepStr);
+            const idx = s.indexOf('.');
+            return idx === -1 ? 0 : s.length - idx - 1;
+        }
+
+        function fmtNum(v, decimals) {
+            if (typeof decimals !== 'number') decimals = 2;
+            const n = parseFloat(v);
+            if (Number.isNaN(n)) return '';
+            const fixed = n.toFixed(decimals);
+            return fixed.replace(/\.?0+$/, '');
+        }
+
+        function easeInOutCubic(t) {
+            return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+        }
+
+        function animateValue(el, from, to, duration) {
+            const start = parseFloat(from);
+            const end   = parseFloat(to);
+            if (Number.isNaN(start)) return;
+            const decimals = getStepDecimals(el.step || '1');
+            const startTime = performance.now();
+
+            function tick(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = easeInOutCubic(progress);
+                const current = start + (end - start) * eased;
+                el.value = fmtNum(current, decimals);
+                if (progress < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        // --- Slider interactions ----------------------------------------
+        sliderIds.forEach(id => {
+            const rangeInput = document.getElementById(id);
+            const numInput   = document.getElementById('num-' + id);
+            if (!rangeInput || !numInput) return;
+
+            // Normalise number display on load
+            numInput.value = fmtNum(numInput.value, getStepDecimals(rangeInput.step));
+
+            // During drag: show fine-grained value for responsiveness
+            rangeInput.addEventListener('input', () => {
+                numInput.value = fmtNum(rangeInput.value, getStepDecimals(rangeInput.step));
+            });
+
+            // On release: smooth-glide number to snapped slider value
+            rangeInput.addEventListener('change', () => {
+                animateValue(numInput, numInput.value, rangeInput.value, 150);
+                triggerWeightUpdate();
+            });
+
+            // Typing in number box: ease slider to the typed value
+            numInput.addEventListener('change', () => {
+                let val = parseFloat(numInput.value) || 0;
+                const min = parseFloat(numInput.min);
+                const max = parseFloat(numInput.max);
+                if (val < min) val = min;
+                if (val > max) val = max;
+                // Tween both fields
+                animateValue(rangeInput, rangeInput.value, val, 200);
+                animateValue(numInput, numInput.value, val, 200);
+                triggerWeightUpdate();
+            });
+        });
 
         function debounce(fn, ms) {
             let timer;
@@ -258,27 +326,6 @@
             });
             return params;
         }
-
-        sliderIds.forEach(id => {
-            const rangeInput = document.getElementById(id);
-            const numInput   = document.getElementById('num-' + id);
-            if (!rangeInput || !numInput) return;
-
-            rangeInput.addEventListener('input', () => {
-                numInput.value = rangeInput.value;
-            });
-            rangeInput.addEventListener('change', triggerWeightUpdate);
-
-            numInput.addEventListener('input', () => {
-                let val = parseFloat(numInput.value) || 0;
-                const min = parseFloat(numInput.min);
-                const max = parseFloat(numInput.max);
-                if (val < min) val = min;
-                if (val > max) val = max;
-                rangeInput.value = val;
-                triggerWeightUpdate();
-            });
-        });
 
         function arrow(col) {
             if (sort === col) {
