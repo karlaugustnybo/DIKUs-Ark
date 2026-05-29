@@ -188,7 +188,14 @@
     const bufConst = 3;
     
     // Padding to use when checking if near bound edge
-    const edgePadding = 5;
+    const edgePaddingConst = 1;
+
+    // edgePaddingConst MUST BE SMALLER THAN OR EQUAL TO bufConst!
+    if (edgePaddingConst > bufConst) {
+        throw new RangeError(
+            `Configuration fault: 'edgePaddingConst' (${edgePaddingConst}) cannot be greater than 'bufConst' (${bufConst}).`
+        );
+    }
 
     // Last rendered bounds
     let renderedBounds = [0, 0, 0, 0];
@@ -216,8 +223,8 @@
 
                 const newLonMin = (lonMin - lonBuf + 180.0) % 360.0 - 180.0;
                 const newLonMax = (lonMax + lonBuf + 180.0) % 360.0 - 180.0;
-                const newLatMin = Math.max(-90.0, Math.min(90.0, latMin - latBuf));
-                const newLatMax = Math.max(-90.0, Math.min(90.0, latMax + latBuf));
+                const newLatMin = latMin - latBuf;
+                const newLatMax = latMax + latBuf;
 
                 renderedBounds = [newLonMin, newLatMin, newLonMax, newLatMax];
 
@@ -417,18 +424,43 @@
             const desiredResolution = roundedZoom > 7 ? 'res7' : 'res3';
             const currentBounds = viewport.getBounds();
 
-            // True if rectangle of currentBounds with added edgePadding 
+            // Check if rectangle of currentBounds with added edgePadding 
             // is not fully contained in the renderedBounds rectangle.
+            
+            // Rendered rectangle
+            const rendLonMin = renderedBounds[0];
+            const rendLatMin = renderedBounds[1];
+            const rendLonMax = renderedBounds[2];
+            const rendLatMax = renderedBounds[3];
+
+            // Viewed rectangle
+            const viewLonMin = currentBounds[0];
+            const viewLatMin = currentBounds[1];
+            const viewLonMax = currentBounds[2];
+            const viewLatMax = currentBounds[3];
+
+            // Padding on each coordinate axis
+            const lonPad = edgePaddingConst * (viewLonMax - viewLonMin);
+            const latPad = edgePaddingConst * (viewLatMax - viewLatMin);
+
+            // Padded view rectangle
+            const padLonMin = (viewLonMin - lonPad + 180.0) % 360.0 - 180.0;
+            const padLonMax = (viewLonMax + lonPad + 180.0) % 360.0 - 180.0;
+            const padLatMin = viewLatMin - latPad;
+            const padLatMax = viewLatMax + latPad;
+
+            // Final check
             const nearBoundsEdge = (
-                currentBounds[0] - edgePadding < renderedBounds[0] ||
-                currentBounds[1] - edgePadding < renderedBounds[1] ||
-                currentBounds[2] + edgePadding > renderedBounds[2] ||
-                currentBounds[3] + edgePadding > renderedBounds[3]
+                padLonMin < rendLonMin ||
+                padLatMin < rendLatMin ||
+                padLonMax > rendLonMax ||
+                padLatMax > rendLatMax
             );
             
             // True if resolution is changed.
             const resolutionChanged = desiredResolution !== currentResolution;
 
+            // If resolution changed or near edge of bounds, load new data
             if (resolutionChanged || nearBoundsEdge) {
                 // Update resolution if needed
                 if (resolutionChanged) {
