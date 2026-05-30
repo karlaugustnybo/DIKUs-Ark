@@ -23,7 +23,12 @@
       </div>
       <h3>Species Table</h3>
       <p>Browse, filter, and sort every species in the database. Adjust scoring weights to discover which animals need DNA sequencing the most.</p>
-      <div class="feature-arrow">Explore the Table &rarr;</div>
+      <div class="feature-arrow">
+        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+        </svg>
+        <span>Explore the Table</span>
+      </div>
     </a>
 
     <a href="/data/map/" class="feature-card">
@@ -34,7 +39,12 @@
       </div>
       <h3>Interactive Heatmap</h3>
       <p>Visualise global conservation priorities on an interactive map. Zoom into any region and explore H3 hexagon aggregations in real time.</p>
-      <div class="feature-arrow">Open the Map &rarr;</div>
+      <div class="feature-arrow">
+        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+        </svg>
+        <span>Open the Map</span>
+      </div>
     </a>
 
     <a href="/tutorial/" class="feature-card">
@@ -47,7 +57,12 @@
       </div>
       <h3>Tutorial</h3>
       <p>Learn how to navigate the table and map, understand the weighting system, and build your own custom conservation scores.</p>
-      <div class="feature-arrow">Read the Tutorial &rarr;</div>
+      <div class="feature-arrow">
+        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+        </svg>
+        <span>Read the Tutorial</span>
+      </div>
     </a>
   </div>
 
@@ -55,28 +70,97 @@
     <span>At a Glance</span>
   </div>
 
-  <div class="stats-grid">
+  <div class="stats-grid" id="stats-grid">
     <div class="stat-item">
-      <div class="stat-number">{{ stats.total }}</div>
+      <div class="stat-number" data-target="{{ stats.total }}">0</div>
       <div class="stat-label">Species</div>
     </div>
     <div class="stat-item">
-      <div class="stat-number">{{ stats.without_dna }}</div>
+      <div class="stat-number" data-target="{{ stats.without_dna }}">0</div>
       <div class="stat-label">Without DNA</div>
     </div>
     <div class="stat-item">
-      <div class="stat-number">{{ stats.critically_endangered }}</div>
+      <div class="stat-number" data-target="{{ stats.critically_endangered }}">0</div>
       <div class="stat-label">Critically Endangered</div>
     </div>
     <div class="stat-item">
-      <div class="stat-number">{{ stats.res3_cells }}</div>
+      <div class="stat-number" data-target="{{ stats.res3_cells }}">0</div>
       <div class="stat-label">Large H3 Cells</div>
     </div>
     <div class="stat-item">
-      <div class="stat-number">{{ stats.res7_cells }}</div>
+      <div class="stat-number" data-target="{{ stats.res7_cells }}">0</div>
       <div class="stat-label">Small H3 Cells</div>
     </div>
   </div>
+
+  <script>
+    (function () {
+      const statsGrid = document.getElementById('stats-grid');
+      if (!statsGrid) return;
+
+      let hasAnimated = false;
+
+      function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      function animateStat(el, target, duration) {
+        const start = performance.now();
+        const isFloat = String(target).indexOf('.') !== -1;
+
+        function tick(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = easeOutCubic(progress);
+          const current = eased * target;
+
+          if (isFloat) {
+            el.textContent = current.toFixed(1);
+          } else {
+            el.textContent = Math.round(current).toLocaleString();
+          }
+
+          if (progress < 1) {
+            requestAnimationFrame(tick);
+          } else {
+            el.textContent = isFloat ? target.toFixed(1) : target.toLocaleString();
+          }
+        }
+        requestAnimationFrame(tick);
+      }
+
+      function startAnimation() {
+        if (hasAnimated) return;
+        hasAnimated = true;
+        const numbers = statsGrid.querySelectorAll('.stat-number');
+        numbers.forEach(function (el) {
+          const raw = el.getAttribute('data-target');
+          const target = parseFloat(raw);
+          if (isNaN(target)) return;
+          const duration = Math.min(1200, 400 + Math.abs(target) * 0.4);
+          animateStat(el, target, duration);
+        });
+      }
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) startAnimation();
+            });
+          },
+          { threshold: 0.25 }
+        );
+        observer.observe(statsGrid);
+      } else {
+        // Fallback for old browsers
+        window.addEventListener('scroll', function () {
+          const rect = statsGrid.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) startAnimation();
+        });
+      }
+    })();
+  </script>
 
 </div>
 

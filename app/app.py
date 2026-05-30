@@ -46,6 +46,8 @@ def monitor(con: duckdb.DuckDBPyConnection, query: str, parameters=None):
     finally:
         stop_time = time.perf_counter()
         duration = stop_time - start_time
+        # Uncomment to destinguish queries with different parameters
+        # query += f'\n{parameters}'
         stats = QUERY_METRICS[query]
         stats[0] += 1
         stats[1] += duration
@@ -274,8 +276,8 @@ def table():
     return render_template(
         'table.html',
         search=request.args.get('search', ''),
-        sort=request.args.get('sort', 'species_name'),
-        order=request.args.get('order', 'asc'),
+        sort=request.args.get('sort', 'priority'),
+        order=request.args.get('order', 'desc'),
         weights=weights,
     )
 
@@ -318,8 +320,8 @@ def table_data():
     # dynamically for pagination, sorting, and weight injection.
     con = get_con()
     search = request.args.get('search', '').strip()
-    sort = request.args.get('sort', 'species_name')
-    order = request.args.get('order', 'asc')
+    sort = request.args.get('sort', 'priority')
+    order = request.args.get('order', 'desc')
     page = request.args.get('page', '1')
     try:
         page = int(page)
@@ -563,16 +565,6 @@ def map_data():
     # The four lat/lon bounds are sent by the JS `getBounds()` call when
     # the current resolution is `res7` avoiding a full-table transfer.
     if resolution == 'res7' and None not in (lat_min, lat_max, lon_min, lon_max):
-        # Use buffer space around region viewed
-        buf_const = 3
-        lon_buf = buf_const * (float(lon_max) - float(lon_min))
-        lat_buf = buf_const * (float(lat_max) - float(lat_min))
-
-        lon_min = (float(lon_min) - lon_buf + 180.0) % 360.0 - 180.0
-        lon_max = (float(lon_max) + lon_buf + 180.0) % 360.0 - 180.0
-        lat_min = max(-90.0, min(90.0, float(lat_min) - lat_buf))
-        lat_max = max(-90.0, min(90.0, float(lat_max) + lat_buf))
-        
         query = f"SELECT * FROM {table_name} " \
                  "WHERE (longitude BETWEEN ? AND ?) " \
                  "AND (latitude BETWEEN ? AND ?)"
