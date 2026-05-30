@@ -48,7 +48,7 @@
   --color-gray-300: #d3d3d1;
   --color-gray-200: #e3e3e0;
   --color-gray-100: #e9e9e7;
-  --color-primary-green: oklch(0.75 0.09 130);
+  --color-primary-green: rgb(155, 186, 125);
   --color-secondary-green: oklch(0.88 0.03 125);
   --color-accent-brown: oklch(33.613% 0.02347 39.176);
   --color-light-brown: oklch(44.44% 0.03252 40.859);
@@ -135,6 +135,7 @@ ol[role="list"] {
 
 html {
   scroll-behavior: smooth;
+  animation-delay: 67ms;
 }
 
 body {
@@ -1335,3 +1336,379 @@ th.col-label {
   margin-right: var(--space-16);
 }
 
+/* ==========================================
+    TUTORIAL PAGE STYLES
+    Aligned with DIKUs ARK design system
+    ========================================== */
+
+.tutorial-container {
+    font-family: var(--font-body);
+    color: var(--color-black);
+    line-height: var(--leading-base);
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 var(--space-32);
+    overflow-x: hidden;
+}
+
+/* Typography & Headers */
+.tutorial-header {
+    text-align: center;
+    padding: var(--space-96) var(--space-16) var(--space-64);
+    animation: fadeDown 0.8s ease-out forwards;
+}
+
+.tutorial-header h1 {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-3xl);
+    font-weight: 400;
+    color: var(--color-black);
+    margin-bottom: var(--space-s);
+    letter-spacing: -0.02em;
+}
+
+.tutorial-intro {
+    font-family: var(--font-body);
+    font-size: var(--font-size-lg);
+    color: var(--color-gray-600);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: var(--leading-loose);
+}
+
+.tutorial-section {
+    margin-bottom: var(--space-5xl);
+    padding: var(--space-3xl) var(--space-64);
+}
+
+.tutorial-section h2 {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-2xl);
+    color: var(--color-black);
+    text-align: center;
+    margin-bottom: var(--space-s);
+    font-weight: 400;
+    line-height: var(--leading-snug);
+}
+
+.section-description {
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    color: var(--color-gray-600);
+    max-width: 700px;
+    margin: 0 auto var(--space-3xl);
+    line-height: var(--leading-loose);
+}
+
+/* Common Subsection Settings */
+.tutorial-subsection {
+    margin-bottom: var(--space-4xl);
+    opacity: 0;
+    animation: fadeUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.tutorial-subsection:last-child {
+    margin-bottom: 0;
+}
+
+.tutorial-content h3 {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-lg);
+    color: var(--color-black);
+    margin-bottom: var(--space-m);
+    font-weight: 600;
+}
+
+.tutorial-content p {
+    font-family: var(--font-body);
+    color: var(--color-gray-700);
+    font-size: var(--font-size-lg);
+    line-height: var(--leading-loose);
+}
+
+/* Figures & Images */
+.tutorial-figure {
+    margin: 0;
+    position: relative;
+}
+
+.tutorial-figure img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--box-shadow-md);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block;
+    border: 1px solid var(--color-gray-200);
+}
+
+.tutorial-figure:hover img {
+    transform: translateY(-4px);
+    box-shadow: var(--box-shadow-lg);
+}
+
+.tutorial-figure figcaption {
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-500);
+    margin-top: var(--space-m);
+    font-style: italic;
+}
+
+/* Interactive Elements */
+.got-it-btn {
+    background-color: var(--color-accent-brown);
+    color: white;
+    border: none;
+    padding: var(--space-12) var(--space-24);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    border-radius: var(--border-radius-base);
+    cursor: pointer;
+    margin-top: var(--space-24);
+    transition: all 0.3s ease-in-out;
+}
+
+.got-it-btn:hover {
+    background-color: var(--color-light-brown);
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow-sm);
+}
+
+.got-it-btn:active {
+    transform: translateY(0);
+}
+
+/* ==========================================
+    LAYOUT FORMATS
+    ========================================== */
+
+/* FORMAT 1: Side-by-Side (Asymmetric row) */
+.layout-side-by-side {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xl);
+}
+
+.layout-side-by-side--reverse {
+    flex-direction: row-reverse;
+}
+
+.layout-side-by-side .tutorial-content,
+.layout-side-by-side .tutorial-figure {
+    flex: 1;
+}
+
+/* FORMAT 2: Single Column (Stacked focus) */
+.layout-single-column {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.layout-single-column .tutorial-figure {
+    margin: var(--space-2xl) 0;
+}
+
+.layout-single-column .tutorial-figure img {
+    max-height: 450px;
+    object-fit: cover;
+    width: 100%;
+}
+
+/* FORMAT 3: Centralized Header Top + Split Body */
+.layout-split-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.layout-split-header h3 {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+    font-size: var(--font-size-xl);
+}
+
+.layout-split-header .split-body {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xl);
+}
+
+.layout-split-header .tutorial-content {
+    flex: 1.1;
+}
+
+.layout-split-header .tutorial-figure {
+    flex: 0.9;
+}
+
+/* Footer Styling */
+.tutorial-footer {
+    text-align: center;
+    padding: var(--space-2xl) 0 var(--space-4xl);
+    margin-top: var(--space-3xl);
+    border-top: 1px solid var(--color-tinted-cream);
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+}
+
+.tutorial-footer p {
+    font-family: var(--font-body);
+    color: var(--color-gray-700);
+    margin: 0;
+    line-height: var(--leading-loose);
+}
+
+.tutorial-footer a {
+    color: var(--color-accent-brown);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease-in-out;
+}
+
+.tutorial-footer a:hover {
+    color: var(--color-primary-green);
+}
+
+/* Keyframe Animations */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design for Mobile/Tablets */
+@media (max-width: 968px) {
+    .tutorial-container {
+        padding: 0 var(--space-16);
+    }
+
+    .tutorial-section {
+        padding: var(--space-2xl) var(--space-m);
+        margin-bottom: var(--space-3xl);
+    }
+
+    .layout-side-by-side, 
+    .layout-side-by-side--reverse,
+    .layout-split-header .split-body {
+        flex-direction: column;
+        gap: var(--space-2xl);
+        text-align: center;
+    }
+
+    .layout-split-header h3 {
+        margin-bottom: var(--space-l);
+    }
+
+    .tutorial-header h1 {
+        font-size: var(--font-size-2xl);
+    }
+
+    .tutorial-section h2 {
+        font-size: var(--font-size-xl);
+    }
+}
+
+@media (max-width: 550px) {
+    .tutorial-container {
+        padding: 0 var(--space-12);
+    }
+
+    .tutorial-header {
+        padding: var(--space-3xl) var(--space-16) var(--space-2xl);
+    }
+
+    .tutorial-section {
+        padding: var(--space-2xl) var(--space-s);
+    }
+
+    .tutorial-header h1 {
+        font-size: var(--font-size-xl);
+    }
+
+    .tutorial-intro {
+        font-size: var(--font-size-base);
+    }
+
+    .tutorial-content h3 {
+        font-size: var(--font-size-md);
+    }
+
+    .tutorial-footer {
+        padding: var(--space-l) 0 var(--space-2xl);
+    }
+}
+
+/* tutorial animations */
+.tutorial-subsection {
+    opacity: 0;
+    transform: translateY(60px);
+    transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1), 
+                transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform, opacity;
+}
+.tutorial-subsection .tutorial-content {
+    transform: translateX(-45px);
+    transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+}
+.tutorial-subsection .tutorial-figure {
+    transform: translateX(45px);
+    transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+}
+/* Mirror directions for reversed side-by-side layouts */
+.tutorial-subsection.layout-side-by-side--reverse .tutorial-content {
+    transform: translateX(45px);
+}
+.tutorial-subsection.layout-side-by-side--reverse .tutorial-figure {
+    transform: translateX(-45px);
+}
+/* Active state when elements enter the viewport */
+.tutorial-subsection.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.tutorial-subsection.is-visible .tutorial-content,
+.tutorial-subsection.is-visible .tutorial-figure {
+    transform: translateX(0);
+}
+
+/* tutorial-gifs */
+
+.feature-gif {
+    width: 100%;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 
+                0 4px 12px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    display: block;
+    transition: box-shadow 0.3s ease;
+}
+
+.feature-gif:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25), 
+                0 6px 16px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}

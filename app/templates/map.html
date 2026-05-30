@@ -362,6 +362,32 @@
             createPolygonLayer(initialData)
         ]
     });
+
+    document.addEventListener('keydown', (event) => {
+        // Stop the toggle if the user is typing inside an input or textarea
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+            return;
+        }
+
+        // Trigger when 'f' or 'F' is pressed
+        if (event.key === 'f' || event.key === 'F') {
+            const mapElement = document.getElementById('map');
+
+            if (!document.fullscreenElement) {
+                // Request fullscreen on the map container
+                if (mapElement.requestFullscreen) {
+                    mapElement.requestFullscreen().catch(err => {
+                        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+                    });
+                }
+            } else {
+                // Exit fullscreen if already active
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+    });
 </script>
 
 {% endblock %}

@@ -1,33 +1,231 @@
 {% extends 'layout.html' %}
 
+{% block head %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	// 1. Force the page to always reset to the top on restart/refresh
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);	
+
+    // 3. Bidirectional Intersection Observer (tracks scrolling down AND up)
+    const subsections = document.querySelectorAll('.tutorial-subsection');
+    
+    const observerOptions = {
+        root: null,
+        rootMargin: '-5% 0px -5% 0px', 
+        threshold: 0.1 
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const el = entry.target;
+            
+            if (entry.isIntersecting) {
+                // Apply inline animation-delay settings on entry
+                const inlineDelay = el.style.animationDelay;
+                if (inlineDelay) {
+                    el.style.transitionDelay = inlineDelay;
+                    el.querySelectorAll('.tutorial-content, .tutorial-figure').forEach(child => {
+                        child.style.transitionDelay = inlineDelay;
+                    });
+                }
+                el.classList.add('is-visible');
+            } else {
+                // Strip the transition delay on exit so elements fade out instantly/cleanly
+                el.style.transitionDelay = '0s';
+                el.querySelectorAll('.tutorial-content, .tutorial-figure').forEach(child => {
+                    child.style.transitionDelay = '0s';
+                });
+                el.classList.remove('is-visible');
+            }
+        });
+    }, observerOptions);
+
+    subsections.forEach(sub => observer.observe(sub));
+
+    // 4. Handle "Got it" click tracking to advance to the next major section
+    const gotItButtons = document.querySelectorAll('.got-it-btn');
+    gotItButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const currentSection = button.closest('.tutorial-section');
+            if (currentSection) {
+                const nextSection = currentSection.nextElementSibling;
+                
+                if (nextSection && nextSection.classList.contains('tutorial-section')) {
+                    nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    const footer = document.querySelector('.tutorial-footer');
+                    if (footer) {
+                        footer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+
 {% block body %}
 
-<h1>Tutorial</h1>
-<h2 class="page-description">Learn how to use the map</h2>
-<br><br>
+<div class="tutorial-container">
+    <header class="tutorial-header">
+        <h1>Tutorial</h1>
+        <p class="tutorial-intro">Learn how to use the table and map to explore species prioritization data.</p>
+    </header>
 
-<h2>The Map</h2>
-<h3 class="page-description">Basic controls</h3>
-<ul>
-	<li></li>
-	<li></li>
-	<li></li>
-	<li></li>
-	<li></li>
-	<li></li>
-</ul>
+    <section class="tutorial-section">
+        <h2>The Table</h2>
+        <p class="section-description">Explore species data row-by-row with filtering, sorting, and custom scoring.</p>
 
-<h2>The Table</h2>
-<h3 class="page-description">Basic controls</h3>
-<ul>
-	<li>Use the arrow keys <span class="key-hint">&larr;</span> <span class="key-hint">&rarr;</span> to switch between pages</li>
-	<li>Use the weight function to select parameters and generate a custom priority score for every species</li>
-	<li>Click on a column name to sort the table in ascending order with respect to that column, click again for descending order</li>
-	<li>Use the search function to search for species of families using extended regular expressions</li>
-	<li></li>
-	<li></li>
-	<li></li>
-	<li></li>
-</ul>
+        <div class="tutorial-subsection layout-side-by-side" style="animation-delay: 0.1s;">
+            <div class="tutorial-content">
+                <h3>Searching & Filtering</h3>
+                <p>Use the search box at the top of the table to filter species by name, family, or any other field. Results update instantly as you type, so you can quickly zero in on the species you're interested in.</p>
+            </div>
+            <figure class="tutorial-figure">
+				<video class="feature-gif" autoplay loop muted>
+					<source src="/static/imgs/feature_sliders.mov">
+				</video>
+                {# <img src="/static/imgs/feature.gif" alt="Search and filter demonstration"> #}
+                <figcaption>Type a species or family name to narrow results.</figcaption>
+            </figure>
+        </div>
+
+        <div class="tutorial-subsection layout-single-column" style="animation-delay: 0.2s;">
+            <div class="tutorial-content">
+                <h3>Sorting Columns</h3>
+            </div>
+            <figure class="tutorial-figure">
+                <img src="/static/imgs/feature.gif" alt="Sorting demonstration">
+                <figcaption>Sort by threat level, DNA status, or priority score.</figcaption>
+            </figure>
+            <div class="tutorial-content">
+                <p>Click any column header to sort the table. The first click sorts in ascending order, and clicking again reverses the direction. This helps you quickly find the highest-priority species or group by threat category.</p>
+            </div>
+        </div>
+
+        <div class="tutorial-subsection layout-split-header" style="animation-delay: 0.3s;">
+            <h3>Adjusting Scoring Weights</h3>
+            <div class="split-body">
+                <div class="tutorial-content">
+                    <p>Open the sliders panel to customize how each IUCN threat level and DNA sampling status contributes to the priority score. Want to prioritize critically endangered species over data deficient ones? Drag the sliders. Your adjustments recalculate the entire table in real-time, so you can explore different strategies instantly.</p>
+					{#
+                    <button class="got-it-btn" onclick="this.textContent='Great!'">Got it!</button>
+					#}
+                </div>
+                <figure class="tutorial-figure">
+                    <img src="/static/imgs/feature.gif" alt="Slider adjustment demonstration">
+                    <figcaption>Change slider weights and see priorities recalculate.</figcaption>
+                </figure>
+            </div>
+        </div>
+
+        <div class="tutorial-subsection layout-side-by-side layout-side-by-side--reverse" style="animation-delay: 0.4s;">
+            <div class="tutorial-content">
+                <h3>Sharing Your Configuration</h3>
+                <p>When you've configured weights that you want to share with colleagues or save for later, just copy the URL from your browser. The entire state—search filters, sort order, and all slider values—is encoded in the link. Anyone who opens it will see your exact setup.</p>
+            </div>
+            <figure class="tutorial-figure">
+                <img src="/static/imgs/feature.gif" alt="URL sharing demonstration">
+                <figcaption>Your slider values are encoded in the link.</figcaption>
+            </figure>
+        </div>
+
+        <div class="tutorial-subsection layout-single-column" style="animation-delay: 0.5s;">
+            <div class="tutorial-content">
+                <h3>Pagination</h3>
+            </div>
+            <figure class="tutorial-figure">
+                <img src="/static/imgs/feature.gif" alt="Page switching demonstration">
+                <figcaption>Use keyboard arrows or on-screen buttons to move between pages.</figcaption>
+            </figure>
+            <div class="tutorial-content">
+                <p>Navigate between pages using the arrow buttons at the bottom, or use your keyboard (← and → keys) for faster navigation. Each page displays 10 species, so you can steadily work through the full dataset without overwhelming your screen.</p>
+            </div>
+        </div>
+
+		<div class="section-divider">
+			<span>#</span>
+		</div>
+    </section>
+
+
+    <section class="tutorial-section">
+        <h2>The Map</h2>
+        <p class="section-description">Visualize species distribution and priority across Denmark's hexagonal grid.</p>
+
+        <div class="tutorial-subsection layout-side-by-side" style="animation-delay: 0.6s;">
+            <div class="tutorial-content">
+                <h3>Zooming & Panning</h3>
+                <p>Scroll your mouse wheel to zoom in and out. Drag the map to pan across Denmark. The map intelligently switches between coarse hexagon resolution (when zoomed far out) and fine resolution (when zoomed in) to balance detail and performance.</p>
+            </div>
+            <figure class="tutorial-figure">
+                <img src="/static/imgs/feature.gif" alt="Zoom and pan demonstration">
+                <figcaption>Zoom smoothly switches between coarse and fine hexagon resolutions.</figcaption>
+            </figure>
+        </div>
+
+        <div class="tutorial-subsection layout-split-header" style="animation-delay: 0.7s;">
+            <h3>Color Intensity</h3>
+            <div class="split-body">
+                <div class="tutorial-content">
+                    <p>Each hexagon's color represents the priority score for species in that area. Dark colors indicate lower priority, while bright yellow-green indicates higher priority. The color scale dynamically adjusts to your current slider weights, so you can immediately see how your scoring changes the geographic distribution of priorities.</p>
+					{#
+                    <button class="got-it-btn" onclick="this.textContent='Perfect!'">Got it!</button>
+					#}
+                </div>
+                <figure class="tutorial-figure">
+                    <img src="/static/imgs/feature.gif" alt="Color scale demonstration">
+                    <figcaption>Brighter colors show regions with higher-priority species.</figcaption>
+                </figure>
+            </div>
+        </div>
+
+        <div class="tutorial-subsection layout-single-column" style="animation-delay: 0.8s;">
+            <div class="tutorial-content">
+                <h3>Hovering & Details</h3>
+            </div>
+            <figure class="tutorial-figure">
+                <img src="/static/imgs/feature.gif" alt="Tooltip demonstration">
+                <figcaption>Detailed stats appear when you hover over any hexagon.</figcaption>
+            </figure>
+            <div class="tutorial-content">
+                <p>Hover your mouse over any hexagon to see a detailed tooltip. It shows threat counts by category, missing DNA levels at each taxonomic rank, and the raw score breakdown. This lets you understand exactly why a region has its current priority ranking.</p>
+            </div>
+        </div>
+
+        <div class="tutorial-subsection layout-side-by-side layout-side-by-side--reverse" style="animation-delay: 0.9s;">
+            <div class="tutorial-content">
+                <h3>Adjusting Weights in Real-Time</h3>
+                <p>Open the sliders panel while viewing the map and drag any weight slider. Watch the hexagon colors shift instantly across the entire map as the scoring function recalculates. This is a powerful way to explore how different prioritization strategies would affect your sampling strategy geographically.</p>
+            </div>
+            <figure class="tutorial-figure">
+                <img src="/static/imgs/feature.gif" alt="Real-time weight adjustment">
+                <figcaption>Move sliders to see priority recalculated across the entire map.</figcaption>
+            </figure>
+        </div>
+
+        <div class="tutorial-subsection layout-single-column" style="animation-delay: 1s;">
+            <div class="tutorial-content">
+                <h3>Fullscreen Mode</h3>
+            </div>
+            <figure class="tutorial-figure">
+                <img src="/static/imgs/feature.gif" alt="Fullscreen demonstration">
+                <figcaption>Maximize the map for detailed exploration.</figcaption>
+            </figure>
+            <div class="tutorial-content">
+                <p>Click the fullscreen icon in the top-right corner of the map to expand it to your entire screen. This maximizes your workspace and makes it easier to spot patterns and hotspots across the hexagonal grid.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="tutorial-footer">
+        <p><strong>Ready to explore?</strong> Start with the <a href="/data/table/">table</a> or jump to the <a href="/data/map/">map</a>.</p>
+    </footer>
+
+</div>
 
 {% endblock %}

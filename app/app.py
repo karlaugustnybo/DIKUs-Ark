@@ -424,14 +424,14 @@ def table_data():
     """
     params = []
     if search:
-        base += " WHERE species_name ILIKE ? OR family ILIKE ?"
-        like = f"%{search}%"
+        base += " WHERE regexp_full_match(species_name, ?) OR regexp_full_match(family, ?)"
+        like = f"{search}"
         params = [like, like]
 
     # Total row count (needed for page count calculation).
     count_sql = "SELECT COUNT(*) FROM merged_species"
     if search:
-        count_sql += " WHERE species_name ILIKE ? OR family ILIKE ?"
+        count_sql += " WHERE regexp_full_match(species_name, ?) OR regexp_full_match(family, ?)"
 
     total = con.execute(count_sql, params).fetchone()[0]
     total_pages = max(1, (total + per_page - 1) // per_page)
@@ -592,6 +592,9 @@ def map_data():
     data, max_score = build_data(df, weights)
     return jsonify(data=data, max_score=max_score, resolution=resolution)
 
+@app.route('/tutorial/')
+def tutorial():
+    return render_template('tutorial.html')
 
 # ---------------------------------------------------------------------------
 #  Entry point
