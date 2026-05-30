@@ -27,7 +27,10 @@ Tech stack
     • H3 + NumPy + Matplotlib – geo polygons & scoring heat-map
 """
 
+from functools import lru_cache
 from flask import Flask, render_template, request, url_for, jsonify
+from flask_compress import Compress
+from flask_caching import Cache
 import duckdb
 import numpy as np
 import matplotlib
@@ -72,8 +75,22 @@ DB_PATH = os.path.join(__dir__, '..', 'denmark_prototype', 'denmark.duckdb')
 
 app = Flask(__name__)
 
+# Compress JSON responses automatically
+Compress(app)
+
+# Simple in-memory response cache (60s default, keyed on query string).
+# On production swap CACHE_TYPE to 'RedisCache' or 'FileSystemCache'.
+cache = Cache(app, config={
+    "CACHE_TYPE": "SimpleCache",
+    "CACHE_DEFAULT_TIMEOUT": 60,
+})
+
 # Matplotlib colormap used for the heat-map polygons.
 viridis = matplotlib.colormaps["viridis"]
+
+# Pre-computed 256-color Viridis LUT (RGB only, uint8).
+# Replaces per-request Matplotlib colormap calls with a fast lookup.
+VIRIDIS_LUT = (viridis(np.linspace(0, 1, 256))[:, :3] * 255).astype(np.uint8)
 
 # Create main connection to derive cursors from
 MAIN_CON = duckdb.connect(DB_PATH, read_only=True)
@@ -104,105 +121,147 @@ def get_con():
     return MAIN_CON.cursor()
 
 
-# ---------------------------------------------------------------------------
-# 2. Data-building helpers (shared by map & table)
-# ---------------------------------------------------------------------------
+@lru_cache(maxsize=300_000)
+def h3_contour(h3_index: str):
+    """Return a closed Deck.gl-compatible contour ring for an H3 cell.
+
+    The result is cached because ``h3.cell_to_boundary`` is deterministic
+    and relatively expensive when called inside a tight loop over tens of
+    thousands of rows.
+    """
+    boundary = h3.cell_to_boundary(h3_index)
+    coords = [[round(lng, 7), round(lat, 7)] for lat, lng in boundary]
+    if coords[0] != coords[-1]:
+        coords.append(coords[0])   # close the ring
+    return coords
+
+
 def build_data(df, weights):
     """
     Compute per-hexagon scores, viridis colours, and H3 lat/lng boundaries.
 
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        Raw rows from ``h3_res3_metrics`` or ``h3_res7_metrics``.
-    weights : dict
-        User-supplied slider values mapping category → float.
-
-    Returns
-    -------
-    records : list[dict]
-        Each record has:
-        - h3_index : str
-        - score    : float   (raw weighted sum)
-        - frac     : float   (score / max_score, 0-1)
-        - color    : [r,g,b,a]
-        - contour  : [[lng,lat], ...] closed ring for Deck.gl PolygonLayer
-        - details  : dict of the raw constituent counts
-    max_score : float
-        Maximum score across all rows (used for normalisation).
+    Optimisation summary
+    --------------------
+    • Replaced ``df.iterrows()`` with vectorised NumPy arrays.
+    • Replaced per-request Matplotlib calls with a pre-computed 256-colour
+      Lookup Table (LUT).
+    • Cached ``h3.cell_to_boundary`` via ``@lru_cache``.
     """
     w = weights
-    # 1. Weighted linear sum of all contributing counts.
-    #    The last two (fam, cov) safely default to zero arrays when
-    #    the columns are absent (e.g. H3 tables not yet updated).
+
+    # 1. Pull every needed column into a native NumPy array ( avoids
+    #    expensive Pandas Series creation in iterrows/itertuples ).
+    cols = {
+        'crit_endangered_count': df['crit_endangered_count'].to_numpy(dtype=np.float32),
+        'endangered_count':      df['endangered_count'].to_numpy(dtype=np.float32),
+        'vulnerable_count':      df['vulnerable_count'].to_numpy(dtype=np.float32),
+        'near_threatened_count': df['near_threatened_count'].to_numpy(dtype=np.float32),
+        'data_deficient_count':  df['data_deficient_count'].to_numpy(dtype=np.float32),
+        'least_concern_count':   df['least_concern_count'].to_numpy(dtype=np.float32),
+        'missing_species_dna':   df['missing_species_dna'].to_numpy(dtype=np.float32),
+        'missing_genus_dna':     df['missing_genus_dna'].to_numpy(dtype=np.float32),
+    }
+
     missing_family_dna = (
-        df['missing_family_dna'].values
+        df['missing_family_dna'].to_numpy(dtype=np.float32)
         if 'missing_family_dna' in df.columns
         else np.zeros(len(df), dtype=np.float32)
     )
     dna_coverage_score = (
-        df['dna_coverage_score'].values
+        df['dna_coverage_score'].to_numpy(dtype=np.float32)
         if 'dna_coverage_score' in df.columns
         else np.zeros(len(df), dtype=np.float32)
     )
-    scores = (
-        df['crit_endangered_count'].values * w['cr']
-        + df['endangered_count'].values * w['en']
-        + df['vulnerable_count'].values * w['vu']
-        + df['near_threatened_count'].values * w['nt']
-        + df['data_deficient_count'].values * w['dd']
-        + df['least_concern_count'].values * w['lc']
-        + df['missing_species_dna'].values * w['sp']
-        + df['missing_genus_dna'].values * w['gen']
-        + missing_family_dna * w['fam']
-        + dna_coverage_score * w['cov']
-    ).astype(np.float32)
 
-    # 2. Normalise so the colour scale spans 0-1 across the whole dataset.
-    # Guard: when every cell has a score of 0 (all-zero weights) we set
-    # s_max to 1.0 so we don't divide by zero — every cell stays dark.
-    s_max = scores.max() if len(scores) > 0 and scores.max() > 0 else 1.0
+    # 2. Weighted linear sum entirely in NumPy.
+    scores = (
+        cols['crit_endangered_count'] * w['cr']
+        + cols['endangered_count']      * w['en']
+        + cols['vulnerable_count']      * w['vu']
+        + cols['near_threatened_count'] * w['nt']
+        + cols['data_deficient_count']  * w['dd']
+        + cols['least_concern_count']   * w['lc']
+        + cols['missing_species_dna']   * w['sp']
+        + cols['missing_genus_dna']     * w['gen']
+        + missing_family_dna             * w['fam']
+        + dna_coverage_score             * w['cov']
+    )
+
+    s_max = scores.max() if scores.size > 0 and scores.max() > 0 else 1.0
     fracs = scores / s_max
 
-    # 3. Map fractions to the viridis RGBA ramp (Matplotlib).
-    rgba = viridis(fracs)
-    rgb = (rgba[:, :3] * 255).astype(np.uint8)
+    # 3. LUT-based colour (no per-request Matplotlib call).
+    color_idx = np.clip((fracs * 255).astype(np.int16), 0, 255)
+    rgb = VIRIDIS_LUT[color_idx]
 
-    # 4. Convert each H3 cell index to a closed geo-polygon ring.
-    records = []
-    for i, row in df.iterrows():
-        h3_index = str(row['h3_index'])
-        # h3.cell_to_boundary returns ((lat, lng), ...).
-        # Deck.gl PolygonLayer expects [lng, lat] — so we swap.
-        boundary = h3.cell_to_boundary(h3_index)
-        coords = [[p[1], p[0]] for p in boundary]
-        if coords[0] != coords[-1]:
-            coords.append(coords[0])   # close the ring
+    # 4. Build records using pre-cached contours.
+    h3_indexes = df['h3_index'].astype(str).to_numpy()
 
-        records.append({
-            'h3_index': h3_index,
+    has_family = 'missing_family_dna' in df.columns
+    has_coverage = 'dna_coverage_score' in df.columns
+
+    # Pre-cast detail columns to int for fast scalar access
+    detail_cols = {
+        'CR': cols['crit_endangered_count'].astype(np.int32),
+        'EN': cols['endangered_count'].astype(np.int32),
+        'VU': cols['vulnerable_count'].astype(np.int32),
+        'NT': cols['near_threatened_count'].astype(np.int32),
+        'DD': cols['data_deficient_count'].astype(np.int32),
+        'LC': cols['least_concern_count'].astype(np.int32),
+        'Missing Species DNA': cols['missing_species_dna'].astype(np.int32),
+        'Missing Genus DNA': cols['missing_genus_dna'].astype(np.int32),
+        'Missing Family DNA': (
+            df['missing_family_dna'].to_numpy(dtype=np.float32).astype(np.int32)
+            if has_family
+            else np.zeros(len(df), dtype=np.int32)
+        ),
+        'DNA Coverage Score': (
+            df['dna_coverage_score'].to_numpy(dtype=np.float32).astype(np.int32)
+            if has_coverage
+            else np.zeros(len(df), dtype=np.int32)
+        ),
+    }
+
+    records = [
+        {
+            'h3_index': h3_indexes[i],
             'score': float(scores[i]),
             'frac': float(fracs[i]),
-            'color': [int(rgb[i][0]), int(rgb[i][1]), int(rgb[i][2]), 50],
-            'contour': coords,
+            'color': [
+                int(rgb[i][0]),
+                int(rgb[i][1]),
+                int(rgb[i][2]),
+                50,
+            ],
+            'contour': h3_contour(h3_indexes[i]),
             'details': {
-                'CR': int(row['crit_endangered_count']),
-                'EN': int(row['endangered_count']),
-                'VU': int(row['vulnerable_count']),
-                'NT': int(row['near_threatened_count']),
-                'DD': int(row['data_deficient_count']),
-                'LC': int(row['least_concern_count']),
-                'Missing Species DNA': int(row['missing_species_dna']),
-                'Missing Genus DNA': int(row['missing_genus_dna']),
-                # Future-proof: include missing-family and coverage
-                # scores in the tooltip when the H3 tables gain them.
-                'Missing Family DNA': int(
-                    row.get('missing_family_dna', 0)),
-                'DNA Coverage Score': int(
-                    row.get('dna_coverage_score', 0)),
+                'CR': int(detail_cols['CR'][i]),
+                'EN': int(detail_cols['EN'][i]),
+                'VU': int(detail_cols['VU'][i]),
+                'NT': int(detail_cols['NT'][i]),
+                'DD': int(detail_cols['DD'][i]),
+                'LC': int(detail_cols['LC'][i]),
+                'Missing Species DNA': int(detail_cols['Missing Species DNA'][i]),
+                'Missing Genus DNA': int(detail_cols['Missing Genus DNA'][i]),
+                'Missing Family DNA': int(detail_cols['Missing Family DNA'][i]),
+                'DNA Coverage Score': int(detail_cols['DNA Coverage Score'][i]),
             }
-        })
+        }
+        for i in range(len(df))
+    ]
+
     return records, float(s_max)
+
+
+def read_weights():
+    """Parse weight overrides from the current Flask request query string."""
+    weights = {}
+    for key, default in DEFAULT_WEIGHTS.items():
+        try:
+            weights[key] = float(request.args.get(key, default))
+        except (ValueError, TypeError):
+            weights[key] = default
+    return weights
 
 
 # ---------------------------------------------------------------------------
@@ -489,6 +548,17 @@ def table_data():
 #  MAP routes
 # ---------------------------------------------------------------------------
 
+# Explicit column list for H3 metric tables.  Avoids pulling unneeded
+# columns and keeps memory / payload tight.
+MAP_COLUMNS = (
+    "h3_index, latitude, longitude, "
+    "crit_endangered_count, endangered_count, vulnerable_count, "
+    "near_threatened_count, data_deficient_count, least_concern_count, "
+    "missing_species_dna, missing_genus_dna, "
+    "missing_family_dna, dna_coverage_score"
+)
+
+
 @app.route('/data/map/', methods=['GET', 'POST'])
 def map():
     """
@@ -498,14 +568,7 @@ def map():
     scored, coloured, and serialised into the template as JSON so that
     Deck.gl can draw the initial polygon layer immediately.
     """
-    # Pull weight overrides from the query string using robust
-    # float-conversion fallback (identical logic in table_data).
-    weights = {}
-    for key, default in DEFAULT_WEIGHTS.items():
-        try:
-            weights[key] = float(request.args.get(key, default))
-        except (ValueError, TypeError):
-            weights[key] = default
+    weights = read_weights()
 
     # H3 resolution: res3 (coarse) by default.  res7 (fine) is
     # switched automatically by JS when zoom > 7.
@@ -513,13 +576,10 @@ def map():
     if resolution not in ('res3', 'res7'):
         resolution = 'res3'
 
-    # Map each resolution to its DuckDB table name.
-    # `get_con()` is not yet called — the full query string is built
-    # below after the table_name is known.
     table_name = 'h3_res3_metrics' if resolution == 'res3' else 'h3_res7_metrics'
 
     con = get_con()
-    df = con.execute(f"SELECT * FROM {table_name}").df()
+    df = con.execute(f"SELECT {MAP_COLUMNS} FROM {table_name}").df()
     con.close()
 
     data, max_score = build_data(df, weights)
@@ -533,6 +593,7 @@ def map():
 
 
 @app.route('/api/map-data/', methods=['GET'])
+@cache.cached(query_string=True)
 def map_data():
     """
     JSON endpoint used by the map page when the user zooms past level 7
@@ -541,13 +602,11 @@ def map_data():
     Returns a fresh set of polygons that match the requested resolution
     and optional bounding box (lat/lon min/max), then scored/coloured
     using the current weights.
+
+    Responses are cached in-memory for 60 seconds keyed on the full
+    query string (weights + resolution + bounds).
     """
-    weights = {}
-    for key, default in DEFAULT_WEIGHTS.items():
-        try:
-            weights[key] = float(request.args.get(key, default))
-        except (ValueError, TypeError):
-            weights[key] = default
+    weights = read_weights()
 
     resolution = request.args.get('resolution', 'res3')
     if resolution not in ('res3', 'res7'):
@@ -565,18 +624,20 @@ def map_data():
     # The four lat/lon bounds are sent by the JS `getBounds()` call when
     # the current resolution is `res7` avoiding a full-table transfer.
     if resolution == 'res7' and None not in (lat_min, lat_max, lon_min, lon_max):
-        query = f"SELECT * FROM {table_name} " \
-                 "WHERE (longitude BETWEEN ? AND ?) " \
-                 "AND (latitude BETWEEN ? AND ?)"
+        query = (
+            f"SELECT {MAP_COLUMNS} FROM {table_name} "
+            "WHERE (longitude BETWEEN ? AND ?) "
+            "AND (latitude BETWEEN ? AND ?)"
+        )
         df = monitor(con, query, [
-            float(lon_min), 
+            float(lon_min),
             float(lon_max),
-            float(lat_min), 
+            float(lat_min),
             float(lat_max)
         ]).df()
     else:
         # Full dataset for res3 — coarse polygons are lightweight enough
-        df = monitor(con, f"SELECT * FROM {table_name}").df()
+        df = monitor(con, f"SELECT {MAP_COLUMNS} FROM {table_name}").df()
     con.close()
 
     # build_data() returns `(records, max_score)` where records is a
@@ -593,8 +654,7 @@ def tutorial():
 # ---------------------------------------------------------------------------
 if __name__ == '__main__':
     app.run(debug=True)
-
-# Close main con connection and print stats 
-# from monitored queries.
-MAIN_CON.close()
-print_stats()
+    # When the dev server terminates, close the shared read-only
+    # connection and emit query-monitoring stats.
+    MAIN_CON.close()
+    print_stats()

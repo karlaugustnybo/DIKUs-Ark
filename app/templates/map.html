@@ -173,7 +173,6 @@
 
     let currentResolution = 'res3';
     let debounceTimer = null;
-    let fetchNonce = 0;
     let lastZoom = null;
 
     let currentViewState = {
@@ -353,7 +352,7 @@
 
         // Create new abort controller and extract its signal
         fetchController = new AbortController;
-        signal = fetchController.signal;
+        const signal = fetchController.signal;
 
         const params = getWeights();
         try {
@@ -377,6 +376,7 @@
             }
         }
     }
+
 
     const baseTileLayer = new deck.TileLayer({
         id: 'carto-light',
