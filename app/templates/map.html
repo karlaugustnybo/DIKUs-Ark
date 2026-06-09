@@ -1,0 +1,1059 @@
+{# ==========================================================
+   MAP VIEW  —  Ark-IV
+   ========================================================== #}
+
+{% extends 'layout.html' %}
+
+{% block head %}
+<script src="https://unpkg.com/h3-js@4.4.0"></script>
+<script src="https://unpkg.com/deck.gl@^9.0.0/dist.min.js"></script>
+<script src="https://unpkg.com/@deck.gl/geo-layers@^9.0.0/dist.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@deck.gl/widgets@9/dist/stylesheet.css">
+{% endblock %}
+
+{% block body %}
+
+<h1>Explore The Map</h1>
+<p class="page-description">See where in the world there is the highest need for DNA-sequencing, discover target-areas local to yourself, or make your own custom scoring function.</p>
+
+<div id="controls" class="sliders-wrapper">
+
+    <div class="system-filter no-margin-top">
+        <div class="pill-tabs" id="system-tabs">
+            <span class="pill-indicator" aria-hidden="true"></span>
+            <button type="button" class="pill-tab is-active" data-value="">All</button>
+            <button type="button" class="pill-tab" data-value="Terrestrial">Terrestrial</button>
+            <button type="button" class="pill-tab" data-value="Freshwater">Freshwater</button>
+            <button type="button" class="pill-tab" data-value="Marine">Marine</button>
+        </div>
+    </div>
+
+    <div class="sliders-dropdown">
+        <button type="button" class="dropdown-toggle" id="iucn-btn"
+                onclick="toggleMapDropdown('iucn-panel', 'iucn-btn')">
+            IUCN Category Weights
+            <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m19.5 8.25l-7.5 7.5l-7.5-7.5"/>
+            </svg>
+        </button>
+        <div id="iucn-panel" class="dropdown-panel js-hidden">
+            <div class="dropdown-grid">
+                <div class="weight-row">
+                        <label for="cr">Critically Endangered</label>
+                    <div class="weight-controls">
+                        <input type="range" id="cr" name="cr"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.cr }}">
+                        <input type="number" id="num-cr" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.cr }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                        <label for="en">Endangered</label>
+                    <div class="weight-controls">
+                        <input type="range" id="en" name="en"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.en }}">
+                        <input type="number" id="num-en" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.en }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                        <label for="vu">Vulnerable</label>
+                    <div class="weight-controls">
+                        <input type="range" id="vu" name="vu"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.vu }}">
+                        <input type="number" id="num-vu" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.vu }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                        <label for="nt">Near Threatened</label>
+                    <div class="weight-controls">
+                        <input type="range" id="nt" name="nt"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.nt }}">
+                        <input type="number" id="num-nt" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.nt }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                        <label for="dd">Data Deficient</label>
+                    <div class="weight-controls">
+                        <input type="range" id="dd" name="dd"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.dd }}">
+                        <input type="number" id="num-dd" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.dd }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                        <label for="lc">Least Concern</label>
+                    <div class="weight-controls">
+                        <input type="range" id="lc" name="lc"
+                               min="0" max="10" step="0.1"
+                               value="{{ weights.lc }}">
+                        <input type="number" id="num-lc" class="weight-num"
+                               min="0" max="10" step="0.1"
+                               value="{{ weights.lc }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sliders-dropdown">
+        <button type="button" class="dropdown-toggle" id="dna-btn"
+                onclick="toggleMapDropdown('dna-panel', 'dna-btn')">
+            DNA &amp; Coverage Weights
+            <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m19.5 8.25l-7.5 7.5l-7.5-7.5"/>
+            </svg>
+        </button>
+        <div id="dna-panel" class="dropdown-panel js-hidden">
+            <div class="dropdown-grid">
+                <div class="weight-row">
+                    <label for="sp">Missing Species DNA</label>
+                    <div class="weight-controls">
+                        <input type="range" id="sp" name="sp"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.sp }}">
+                        <input type="number" id="num-sp" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.sp }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                    <label for="gen">Missing Genus DNA</label>
+                    <div class="weight-controls">
+                        <input type="range" id="gen" name="gen"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.gen }}">
+                        <input type="number" id="num-gen" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.gen }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                    <label for="fam">Missing Family DNA</label>
+                    <div class="weight-controls">
+                        <input type="range" id="fam" name="fam"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.fam }}">
+                        <input type="number" id="num-fam" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.fam }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                    <label for="cov">DNA Coverage Weight</label>
+                    <div class="weight-controls">
+                        <input type="range" id="cov" name="cov"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.cov }}">
+                        <input type="number" id="num-cov" class="weight-num"
+                               min="0" max="10" step="0.5"
+                               value="{{ weights.cov }}">
+                    </div>
+                </div>
+                <div class="weight-row">
+                    <label for="samp">Already Sampled</label>
+                    <div class="weight-controls">
+                        <input type="range" id="samp" name="samp"
+                               min="0" max="10" step="0.1"
+                               value="{{ weights.samp }}">
+                        <input type="number" id="num-samp" class="weight-num"
+                               min="0" max="10" step="0.1"
+                               value="{{ weights.samp }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="map"></div>
+
+<div id="cell-details" class="cell-details js-hidden">
+    <div class="cell-details-header">
+        <h2 id="cell-title">Cell details</h2>
+        <button type="button" class="cell-close" onclick="closeCellDetails()">
+            Close
+        </button>
+    </div>
+    <div id="cell-stats" class="cell-stats"></div>
+    <div class="cell-table-wrapper">
+        <table id="cell-species-table" class="cell-species-table">
+            <thead>
+                <tr>
+                    <th><a href="#" class="cell-sort-link" data-sort="species_name">Species Name</a></th>
+                    <th><a href="#" class="cell-sort-link" data-sort="family">Family</a></th>
+                    <th><a href="#" class="cell-sort-link" data-sort="threat_score">IUCN Status</a></th>
+                    <th><a href="#" class="cell-sort-link" data-sort="threat_score">Threat Score</a></th>
+                    <th><a href="#" class="cell-sort-link" data-sort="dna_level">Missing DNA Level</a></th>
+                    <th><a href="#" class="cell-sort-link" data-sort="priority">Priority</a></th>
+                </tr>
+            </thead>
+            <tbody id="cell-species-body"></tbody>
+        </table>
+    </div>
+    <div class="pagination js-hidden" id="cell-pagination">
+        <span id="cell-page-info" class="page-info"></span>
+        <div class="pagination-buttons">
+            <button id="cell-prev-btn" class="btn-secondary">
+                Previous
+            </button>
+            <button id="cell-next-btn" class="btn-secondary">
+                Next
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // -------------------------------------------------------------------------
+    // Server-injected data
+    // -------------------------------------------------------------------------
+    const turboLUT = {{ turbo_lut | tojson }};
+    let currentRawData = {{ raw_data | tojson }};
+    const initialWeights = {{ weights | tojson }};
+
+    // -------------------------------------------------------------------------
+    // State
+    // -------------------------------------------------------------------------
+    let currentResolution = 'res3';
+    let currentSystem = '';
+    const currentWeights = { ...initialWeights };
+    let weightsRevision = 0;
+    let debounceTimer = null;
+    let fetchController = null;
+    let lastZoom = null;
+    let selectedH3 = null;
+    let hoveredH3 = null;
+    let cellSpeciesData = [];
+    let cellPage = 1;
+    const cellRowsPerPage = 10;
+    let cellSort = 'priority';
+    let cellOrder = 'desc';
+
+    const bufConst = 3;
+    const edgePaddingConst = 1;
+    if (edgePaddingConst > bufConst) {
+        throw new RangeError(
+            `Configuration fault: edgePaddingConst (${edgePaddingConst}) cannot exceed bufConst (${bufConst}).`
+        );
+    }
+
+    let renderedBounds = [0, 0, 0, 0];
+    let currentViewState = {
+        longitude: 10,
+        latitude: 56,
+        zoom: 4,
+        maxZoom: 19,
+        minZoom: 0
+    };
+
+    // -------------------------------------------------------------------------
+    // Score & colour helpers (client-side)
+    // -------------------------------------------------------------------------
+    function computeScore(details) {
+        const w = currentWeights;
+        return (
+            details.CR * w.cr
+            + details.EN * w.en
+            + details.VU * w.vu
+            + details.NT * w.nt
+            + details.DD * w.dd
+            + details.LC * w.lc
+            + details['Missing Species DNA'] * w.sp
+            + details['Missing Genus DNA'] * w.gen
+            + details['Missing Family DNA'] * w.fam
+        );
+    }
+
+    function computeColor(score, minScore, maxScore) {
+        const frac = (maxScore - minScore) > 0 ? (score - minScore) / (maxScore - minScore) : (score > 0 ? 1 : 0);
+        const idx = Math.min(255, Math.max(0, Math.floor(frac * 255)));
+        const [r, g, b] = turboLUT[idx];
+        return [r, g, b, 50];
+    }
+
+    function recolorAll() {
+        if (!currentRawData || currentRawData.length === 0) return;
+        
+        let minScore = Infinity;
+        let maxScore = -Infinity;
+        
+        // Compute scores and find min/max
+        for (const r of currentRawData) {
+            const s = computeScore(r.details);
+            r.score = s;
+            if (s < minScore) minScore = s;
+            if (s > maxScore) maxScore = s;
+        }
+        
+        for (const r of currentRawData) {
+            r.color = computeColor(r.score, minScore, maxScore);
+        }
+    }
+
+    // Initial colours
+    recolorAll();
+
+    // -------------------------------------------------------------------------
+    // Base tile layer
+    // -------------------------------------------------------------------------
+    const baseTileLayer = new deck.TileLayer({
+        id: 'carto-light',
+        data: 'https://basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+        refinementStrategy: 'best-available',
+        maxCacheSize: 200,
+        minZoom: 0,
+        maxZoom: 19,
+        tileSize: 256,
+        wrapToBounds: false,
+        repeatX: true,
+        renderSubLayers: props => {
+            const { bbox } = props.tile;
+            return new deck.BitmapLayer(props, {
+                data: null,
+                image: props.data,
+                bounds: [bbox.west, bbox.south, bbox.east, bbox.north],
+            });
+        },
+    });
+
+    // -------------------------------------------------------------------------
+    // H3 layer factory + layer management
+    // -------------------------------------------------------------------------
+    function createH3Layer() {
+        return new deck.H3HexagonLayer({
+            id: 'h3-hexagons',
+            data: currentRawData,
+            getHexagon: d => d.h3_index,
+            getFillColor: d => {
+                if (d.h3_index === selectedH3 || d.h3_index === hoveredH3) {
+                    return [255, 255, 255, 50];
+                }
+                return d.color;
+            },
+            pickable: true,
+            extruded: true,
+            getElevation: currentResolution === 'res3' ? 2000 : 500,
+            autoHighlight: false,
+            onHover: info => {
+                const newHovered = (info && info.object) ? info.object.h3_index : null;
+                if (newHovered !== hoveredH3) {
+                    hoveredH3 = newHovered;
+                    rebuildLayers();
+                }
+            },
+            onClick: info => {
+                if (info && info.object) {
+                    selectedH3 = info.object.h3_index;
+                    rebuildLayers();
+                    loadCellDetails(info.object.h3_index);
+                }
+            },
+            updateTriggers: {
+                getFillColor: [weightsRevision, selectedH3, hoveredH3],
+            },
+        });
+    }
+
+    function rebuildLayers() {
+        deckgl.setProps({ layers: [baseTileLayer, createH3Layer()] });
+    }
+
+    // -------------------------------------------------------------------------
+    // Fetch helpers
+    // -------------------------------------------------------------------------
+    function snapVal(val, step) {
+        return Math.floor(val / step) * step;
+    }
+
+    function getMapParams() {
+        const params = new URLSearchParams();
+        params.append('resolution', currentResolution);
+        if (currentSystem) {
+            params.append('system', currentSystem);
+        }
+        if (currentResolution === 'res7') {
+            try {
+                const viewport = deckgl.viewManager.getViewports()[0];
+                const [lonMin, latMin, lonMax, latMax] = viewport.getBounds();
+
+                const lonBuf = bufConst * (lonMax - lonMin);
+                const latBuf = bufConst * (latMax - latMin);
+
+                const rawLonMin = (lonMin - lonBuf + 180.0) % 360.0 - 180.0;
+                const rawLonMax = (lonMax + lonBuf + 180.0) % 360.0 - 180.0;
+                const rawLatMin = latMin - latBuf;
+                const rawLatMax = latMax + latBuf;
+
+                const step = 0.5;
+                const sLatMin = snapVal(rawLatMin, step);
+                const sLatMax = snapVal(rawLatMax, step) + step;
+                const sLonMin = snapVal(rawLonMin, step);
+                const sLonMax = snapVal(rawLonMax, step) + step;
+
+                renderedBounds = [sLonMin, sLatMin, sLonMax, sLatMax];
+
+                params.append('lat_min', sLatMin);
+                params.append('lat_max', sLatMax);
+                params.append('lon_min', sLonMin);
+                params.append('lon_max', sLonMax);
+            } catch (e) {}
+        }
+        return params;
+    }
+
+    async function fetchAndUpdateLayer() {
+        if (fetchController) fetchController.abort();
+        fetchController = new AbortController();
+        const signal = fetchController.signal;
+
+        const params = getMapParams();
+        try {
+            const resp = await fetch('/api/map-data/?' + params.toString(), { signal });
+            const json = await resp.json();
+            currentRawData = json.data;
+            recolorAll();
+            weightsRevision++;
+            rebuildLayers();
+            fetchController = null;
+        } catch (err) {
+            if (err.name !== 'AbortError') {
+                console.error('Failed to update map data:', err);
+            }
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Deck.gl initialisation
+    // -------------------------------------------------------------------------
+    const deckgl = new deck.DeckGL({
+        container: 'map',
+        views: new deck.MapView({ repeat: true }),
+        viewState: currentViewState,
+        controller: true,
+
+        controller: {
+            doubleClickZoom: true,
+            dragPan: true,
+            dragRotate: true,
+            scrollZoom: true,
+            touchRotate: true,
+            keyboard: {
+                moveSpeed: 100,
+                rotateSpeedX: 15,
+                rotateSpeedY: 15
+            }
+        },
+
+        widgets: [
+            new deck.FullscreenWidget({ placement: 'top-right' }),
+            new deck.ZoomWidget({ placement: 'top-right' }),
+            new deck.CompassWidget({ placement: 'top-right' }),
+        ],
+
+        onViewStateChange: ({ viewState }) => {
+            currentViewState = viewState;
+            // Because viewState is also passed as a prop, we must feed
+            // the updated state back so the component stays in sync.
+            deckgl.setProps({ viewState: currentViewState });
+
+            const viewport = new deck.WebMercatorViewport(viewState);
+            if (!viewport) return;
+
+            const roundedZoom = Math.round(viewState.zoom * 10) / 10;
+            lastZoom = roundedZoom;
+
+            const desiredResolution = roundedZoom > 7 ? 'res7' : 'res3';
+            let needsFetch = desiredResolution !== currentResolution;
+
+            if (desiredResolution !== currentResolution) {
+                currentResolution = desiredResolution;
+            }
+
+            // Res3 data is always fully loaded; only res7 needs bbox checks.
+            if (currentResolution === 'res7') {
+                const currentBounds = viewport.getBounds();
+                const [viewLonMin, viewLatMin, viewLonMax, viewLatMax] = currentBounds;
+
+                const lonPad = edgePaddingConst * (viewLonMax - viewLonMin);
+                const latPad = edgePaddingConst * (viewLatMax - viewLatMin);
+
+                const padLonMin = (viewLonMin - lonPad + 180.0) % 360.0 - 180.0;
+                const padLonMax = (viewLonMax + lonPad + 180.0) % 360.0 - 180.0;
+                const padLatMin = viewLatMin - latPad;
+                const padLatMax = viewLatMax + latPad;
+
+                if (
+                    padLonMin < renderedBounds[0] ||
+                    padLatMin < renderedBounds[1] ||
+                    padLonMax > renderedBounds[2] ||
+                    padLatMax > renderedBounds[3]
+                ) {
+                    needsFetch = true;
+                }
+            }
+
+            if (needsFetch) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(fetchAndUpdateLayer, 200);
+            }
+        },
+
+        getTooltip: ({ object }) => {
+            if (!object) return null;
+            return {
+                html: '<strong style="color:var(--color-black);">H3: ' + object.h3_index + '</strong><br/>'
+                    + '<span style="color:var(--color-gray-600);">Score: ' + object.score.toFixed(2) + '</span><br/>'
+                    + '<hr style="border-color:rgba(100,100,100,0.2);margin:0.4rem 0;"/>'
+                    + '<span style="color:var(--color-gray-600);font-size:0.85em;">'
+                    + 'CR: ' + object.details.CR + ', EN: ' + object.details.EN + ', VU: ' + object.details.VU + '<br/>'
+                    + 'NT: ' + object.details.NT + ', DD: ' + object.details.DD + ', LC: ' + object.details.LC + '<br/>'
+                    + 'Missing Species DNA: ' + object.details['Missing Species DNA'] + '<br/>'
+                    + 'Missing Genus DNA: ' + object.details['Missing Genus DNA'] + '<br/>'
+                    + 'Missing Family DNA: ' + object.details['Missing Family DNA']
+                    + '</span>',
+                style: {
+                    minWidth: '200px',
+                    fontFamily: 'var(--font-sans)',
+                    backgroundColor: 'rgba(252, 251, 247, 0.97)',
+                    color: 'var(--color-black)',
+                    padding: '0.75rem 1rem',
+                    borderRadius: 'var(--border-radius-base)',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.4rem',
+                    boxShadow: 'var(--box-shadow-sm)',
+                    border: '1px solid var(--color-tinted-cream)',
+                }
+            };
+        },
+
+        layers: [baseTileLayer, createH3Layer()]
+    });
+
+    // -------------------------------------------------------------------------
+    // UI wiring (sliders, tabs, dropdowns)
+    // -------------------------------------------------------------------------
+    window.toggleMapDropdown = function(panelId, btnId) {
+        const panel = document.getElementById(panelId);
+        const btn = document.getElementById(btnId);
+        if (panel.classList.contains('js-hidden')) {
+            panel.classList.remove('js-hidden');
+            btn.classList.add('is-open');
+        } else {
+            panel.classList.add('js-hidden');
+            btn.classList.remove('is-open');
+        }
+    };
+
+    // Pill tabs
+    const tabContainer = document.getElementById('system-tabs');
+    const tabButtons = document.querySelectorAll('#system-tabs .pill-tab');
+    const tabIndicator = document.querySelector('#system-tabs .pill-indicator');
+
+    function moveIndicatorTo(tab) {
+        const containerRect = tabContainer.getBoundingClientRect();
+        const tabRect = tab.getBoundingClientRect();
+        tabIndicator.style.left  = (tabRect.left - containerRect.left) + 'px';
+        tabIndicator.style.width = tabRect.width + 'px';
+    }
+
+    function syncIndicator() {
+        const active = tabContainer.querySelector('.pill-tab.is-active');
+        if (active) moveIndicatorTo(active);
+    }
+
+    window.addEventListener('load', syncIndicator);
+    window.addEventListener('resize', syncIndicator);
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabButtons.forEach(b => b.classList.remove('is-active'));
+            btn.classList.add('is-active');
+            syncIndicator();
+            currentSystem = btn.dataset.value;
+            fetchAndUpdateLayer();
+            if (selectedH3) {
+                loadCellDetails(selectedH3, shouldScroll=false);
+            }
+        });
+    });
+
+    // Slider helpers
+    function getStepDecimals(stepStr) {
+        const s = String(stepStr);
+        const idx = s.indexOf('.');
+        return idx === -1 ? 0 : s.length - idx - 1;
+    }
+
+    function fmtNum(v, decimals) {
+        if (typeof decimals !== 'number') decimals = 2;
+        const n = parseFloat(v);
+        if (Number.isNaN(n)) return '';
+        const fixed = n.toFixed(decimals);
+        return fixed.replace(/\.?0+$/, '');
+    }
+
+    // Slider wiring — weight changes only recolor (no fetch)
+    const sliderIds = ['cr', 'en', 'vu', 'nt', 'dd', 'lc', 'sp', 'gen', 'fam', 'cov', 'samp'];
+    sliderIds.forEach(id => {
+        const rangeInput = document.getElementById(id);
+        const numInput = document.getElementById('num-' + id);
+        if (!rangeInput || !numInput) return;
+
+        numInput.value = fmtNum(numInput.value, getStepDecimals(rangeInput.step));
+
+        rangeInput.addEventListener('input', () => {
+            numInput.value = fmtNum(rangeInput.value, getStepDecimals(rangeInput.step));
+        });
+
+        rangeInput.addEventListener('change', () => {
+            numInput.value = fmtNum(rangeInput.value, getStepDecimals(rangeInput.step));
+            currentWeights[id] = parseFloat(rangeInput.value);
+            weightsRevision++;
+            recolorAll();
+            rebuildLayers();
+            if (selectedH3) {
+                cellPage = 1;
+                renderCellSpecies(cellSpeciesData);
+            }
+        });
+
+        numInput.addEventListener('change', () => {
+            let val = parseFloat(numInput.value) || 0;
+            const min = parseFloat(numInput.min);
+            const max = parseFloat(numInput.max);
+            if (val < min) val = min;
+            if (val > max) val = max;
+            rangeInput.value = val;
+            numInput.value = fmtNum(val, getStepDecimals(rangeInput.step));
+            currentWeights[id] = val;
+            weightsRevision++;
+            recolorAll();
+            rebuildLayers();
+            if (selectedH3) {
+                cellPage = 1;
+                renderCellSpecies(cellSpeciesData);
+            }
+        });
+    });
+
+    // Fullscreen shortcut
+    document.addEventListener('keydown', (event) => {
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+        if (event.key === 'f' || event.key === 'F') {
+            const mapElement = document.getElementById('map');
+            if (!document.fullscreenElement) {
+                if (mapElement.requestFullscreen) {
+                    mapElement.requestFullscreen().catch(err => {
+                        console.error('Error attempting to enable full-screen mode: ' + err.message);
+                    });
+                }
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+    });
+
+    // Keyboard shortcuts for system filters (1=All, 2=Terrestrial, 3=Freshwater, 4=Marine)
+    document.addEventListener('keydown', (event) => {
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+        
+        const filterMap = {
+            '1': '',
+            '2': 'Terrestrial',
+            '3': 'Freshwater',
+            '4': 'Marine'
+        };
+
+        if (filterMap.hasOwnProperty(event.key)) {
+            const systemValue = filterMap[event.key];
+            const correspondingBtn = Array.from(tabButtons).find(
+                btn => btn.dataset.value === systemValue
+            );
+            
+            if (correspondingBtn) {
+                correspondingBtn.click();
+            }
+        }
+    });
+
+    // -------------------------------------------------------------------------
+    // Cell details panel (click-to-inspect)
+    // -------------------------------------------------------------------------
+    let cellFetchController = null;
+
+    async function loadCellDetails(h3Index, shouldScroll=true) {
+        const panel = document.getElementById('cell-details');
+        const title = document.getElementById('cell-title');
+        const statsEl = document.getElementById('cell-stats');
+        const body = document.getElementById('cell-species-body');
+
+        panel.classList.remove('js-hidden');
+        title.textContent = 'Cell ' + h3Index;
+        statsEl.innerHTML = '<span class="cell-loading">Loading…</span>';
+        body.innerHTML = '';
+        document.getElementById('cell-pagination').classList.add('js-hidden');
+
+        if (cellFetchController) cellFetchController.abort();
+        cellFetchController = new AbortController();
+
+        const params = new URLSearchParams();
+        params.append('resolution', currentResolution);
+        params.append('h3_index', h3Index);
+        if (currentSystem) params.append('system', currentSystem);
+
+        try {
+            const resp = await fetch(
+                '/api/cell-species/?' + params.toString(),
+                { signal: cellFetchController.signal }
+            );
+            const json = await resp.json();
+            cellSpeciesData = json.species || [];
+            cellPage = 1;
+            renderCellStats(json.stats);
+            renderCellSpecies(cellSpeciesData);
+            if (shouldScroll) {
+                panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        } catch (err) {
+            if (err.name !== 'AbortError') {
+                statsEl.innerHTML =
+                    '<span class="cell-loading">Failed to load cell.</span>';
+            }
+        }
+    }
+
+    function renderCellStats(stats) {
+        const statsEl = document.getElementById('cell-stats');
+        const items = [
+            ['Total species', stats.total],
+            ['Critically Endangered', stats.CR],
+            ['Endangered', stats.EN],
+            ['Vulnerable', stats.VU],
+            ['Near Threatened', stats.NT],
+            ['Data Deficient', stats.DD],
+            ['Least Concern', stats.LC],
+            ['Missing species DNA', stats.missing_species_dna],
+            ['Missing genus DNA', stats.missing_genus_dna],
+            ['Missing family DNA', stats.missing_family_dna],
+        ];
+        statsEl.innerHTML = items
+            .map(
+                ([label, val]) =>
+                    '<div class="stat-card"><span class="stat-value">' +
+                    val +
+                    '</span><span class="stat-label">' +
+                    label +
+                    '</span></div>'
+            )
+            .join('');
+    }
+
+    function getSpeciesInfo(s) {
+        const w = currentWeights;
+        const iucnWeights = {
+            'Critically Endangered': w.cr,
+            'Endangered': w.en,
+            'Vulnerable': w.vu,
+            'Near Threatened': w.nt,
+            'Data Deficient': w.dd,
+            'Least Concern': w.lc,
+        };
+        const dnaWeights = {
+            'Missing Family': w.fam,
+            'Missing Genus': w.gen,
+            'Missing Species': w.sp,
+            'Sampled': w.samp,
+        };
+        const threat = iucnWeights[s.redlist_category] || 0;
+        const dna = dnaWeights[s.dna_level] || 0;
+        const priority = threat * dna;
+
+        let dnaLabel = s.dna_level;
+        if (s.dna_level === 'Missing Family') {
+            dnaLabel = `Missing Family (${w.fam})`;
+        } else if (s.dna_level === 'Missing Genus') {
+            dnaLabel = `Missing Genus (${w.gen})`;
+        } else if (s.dna_level === 'Missing Species') {
+            dnaLabel = `Missing Species (${w.sp})`;
+        } else if (s.dna_level === 'Sampled') {
+            dnaLabel = 'Already Sampled';
+        }
+
+        return {
+            threatScore: threat,
+            dnaScore: dna,
+            dnaLabel: dnaLabel,
+            priority: priority
+        };
+    }
+
+    function cellArrow(col) {
+        if (cellSort === col) {
+            return cellOrder === 'asc' ? ' \u2191' : ' \u2193';
+        }
+        return '';
+    }
+
+    function updateCellSortLinks() {
+        document.querySelectorAll('.cell-sort-link').forEach(a => {
+            const col = a.getAttribute('data-sort');
+            a.textContent = a.getAttribute('data-label') + cellArrow(col);
+        });
+    }
+
+    function setCellHeaders() {
+        const headers = [
+            'Species Name', 'Family', 'IUCN Status',
+            'Threat Score', 'Missing DNA Level', 'Priority'
+        ];
+        document.querySelectorAll('.cell-sort-link').forEach((a, i) => {
+            a.setAttribute('data-label', headers[i]);
+        });
+        updateCellSortLinks();
+    }
+
+    function renderCellSpecies(species) {
+        const body = document.getElementById('cell-species-body');
+        const pagination = document.getElementById('cell-pagination');
+        const pageInfo = document.getElementById('cell-page-info');
+        const prevBtn = document.getElementById('cell-prev-btn');
+        const nextBtn = document.getElementById('cell-next-btn');
+
+        const statusClasses = {
+            'Critically Endangered': 'status-cr',
+            'Endangered': 'status-en',
+            'Vulnerable': 'status-vu',
+            'Near Threatened': 'status-nt',
+            'Least Concern': 'status-lc',
+            'Data Deficient': 'status-dd',
+        };
+        const dnaClasses = {
+            'Missing Family': 'dna-missing-family',
+            'Missing Genus': 'dna-missing-genus',
+            'Missing Species': 'dna-missing-species',
+            'Sampled': 'dna-sampled',
+        };
+
+        if (!species.length) {
+            body.innerHTML =
+                '<tr><td colspan="6" class="cell-empty">No species records for this cell.</td></tr>';
+            pagination.classList.add('js-hidden');
+            return;
+        }
+
+        const statusRanks = {
+            'Critically Endangered': 1,
+            'Endangered': 2,
+            'Vulnerable': 3,
+            'Near Threatened': 4,
+            'Data Deficient': 5,
+            'Least Concern': 6,
+            'Not Assessed': 7,
+        };
+
+        const dnaRanks = {
+            'Missing Family': 1,
+            'Missing Genus': 2,
+            'Missing Species': 3,
+            'Sampled': 4,
+        };
+
+        // Sort by the selected column and direction
+        const sorted = species.slice().sort((a, b) => {
+            const infoA = getSpeciesInfo(a);
+            const infoB = getSpeciesInfo(b);
+
+            let valA, valB;
+            if (cellSort === 'species_name') {
+                valA = a.species_name;
+                valB = b.species_name;
+            } else if (cellSort === 'family') {
+                valA = a.family;
+                valB = b.family;
+            } else if (cellSort === 'threat_score') {
+                valA = infoA.threatScore;
+                valB = infoB.threatScore;
+            } else if (cellSort === 'dna_level') {
+                valA = infoA.dnaScore;
+                valB = infoB.dnaScore;
+            } else { // priority
+                valA = infoA.priority;
+                valB = infoB.priority;
+            }
+
+            let cmp = 0;
+            if (typeof valA === 'string') {
+                cmp = valA.localeCompare(valB);
+            } else {
+                cmp = valA - valB;
+            }
+
+            if (cmp !== 0) {
+                return cellOrder === 'asc' ? cmp : -cmp;
+            }
+
+            // Tie breakers
+            if (cellSort === 'threat_score' || cellSort === 'priority') {
+                const rankA = statusRanks[a.redlist_category] || 7;
+                const rankB = statusRanks[b.redlist_category] || 7;
+                if (rankA !== rankB) return rankA - rankB;
+            } else if (cellSort === 'dna_level') {
+                const rankA = dnaRanks[a.dna_level] || 4;
+                const rankB = dnaRanks[b.dna_level] || 4;
+                if (rankA !== rankB) return rankA - rankB;
+            }
+
+            return a.species_name.localeCompare(b.species_name);
+        });
+
+        // Paginate
+        const totalItems = sorted.length;
+        const totalPages = Math.ceil(totalItems / cellRowsPerPage);
+        
+        // Ensure cellPage is within bounds
+        if (cellPage < 1) cellPage = 1;
+        if (cellPage > totalPages) cellPage = totalPages;
+
+        const startIndex = (cellPage - 1) * cellRowsPerPage;
+        const endIndex = startIndex + cellRowsPerPage;
+        const pageItems = sorted.slice(startIndex, endIndex);
+
+        body.innerHTML = pageItems
+            .map(s => {
+                const info = getSpeciesInfo(s);
+                const statusCls = statusClasses[s.redlist_category] || '';
+                const dnaCls = dnaClasses[s.dna_level] || '';
+                return '<tr>' +
+                    '<td><em>' + s.species_name + '</em></td>' +
+                    '<td>' + s.family + '</td>' +
+                    '<td><span class="status-badge ' + statusCls + '">' + s.redlist_category + '</span></td>' +
+                    '<td>' + info.threatScore.toFixed(2) + '</td>' +
+                    '<td>' + info.dnaLabel + '</td>' +
+                    '<td class="priority-cell">' + info.priority.toFixed(2) + '</td>' +
+                    '</tr>';
+            })
+            .join('');
+
+        // Update pagination controls
+        pageInfo.textContent = `Page ${cellPage} of ${totalPages}`;
+        
+        prevBtn.disabled = (cellPage <= 1);
+        nextBtn.disabled = (cellPage >= totalPages);
+        prevBtn.style.opacity = prevBtn.disabled ? '0.4' : '1';
+        nextBtn.style.opacity = nextBtn.disabled ? '0.4' : '1';
+
+        if (totalPages > 1) {
+            pagination.classList.remove('js-hidden');
+        } else {
+            pagination.classList.add('js-hidden');
+        }
+
+        updateCellSortLinks();
+    }
+
+    window.closeCellDetails = function () {
+        document.getElementById('cell-details').classList.add('js-hidden');
+        selectedH3 = null;
+        rebuildLayers();
+    };
+
+    // Cell details pagination interactions
+    document.getElementById('cell-prev-btn').addEventListener('click', () => {
+        if (cellPage > 1) {
+            cellPage--;
+            renderCellSpecies(cellSpeciesData);
+        }
+    });
+
+    document.getElementById('cell-next-btn').addEventListener('click', () => {
+        const totalPages = Math.ceil(cellSpeciesData.length / cellRowsPerPage);
+        if (cellPage < totalPages) {
+            cellPage++;
+            renderCellSpecies(cellSpeciesData);
+        }
+    });
+
+    function addCellTooltip(button) {
+        if (!button) return;
+        const tooltip = document.createElement("div");
+        tooltip.textContent = "Tip: Use \u2190 \u2192 arrow keys";
+
+        tooltip.style.position = "fixed";
+        tooltip.style.background = "rgba(40, 30, 20, 0.9)";
+        tooltip.style.color = "white";
+        tooltip.style.padding = "4px 8px";
+        tooltip.style.borderRadius = "4px";
+        tooltip.style.fontSize = "12px";
+        tooltip.style.fontFamily = "var(--font-sans)";
+        tooltip.style.pointerEvents = "none";
+        tooltip.style.display = "none";
+        tooltip.style.zIndex = "9999";
+
+        document.body.appendChild(tooltip);
+
+        button.addEventListener("mouseenter", () => {
+            tooltip.style.display = "block";
+        });
+
+        button.addEventListener("mousemove", (e) => {
+            tooltip.style.left = `${e.clientX + 12}px`;
+            tooltip.style.top = `${e.clientY + 12}px`;
+        });
+
+        button.addEventListener("mouseleave", () => {
+            tooltip.style.display = "none";
+        });
+    }
+
+    addCellTooltip(document.getElementById("cell-prev-btn"));
+    addCellTooltip(document.getElementById("cell-next-btn"));
+
+    document.addEventListener("keydown", (event) => {
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+
+        // Only trigger pagination when cell-details is not hidden
+        const panel = document.getElementById('cell-details');
+        if (panel && !panel.classList.contains('js-hidden')) {
+            if (event.key === "ArrowLeft") {
+                document.getElementById("cell-prev-btn")?.click();
+            }
+            if (event.key === "ArrowRight") {
+                document.getElementById("cell-next-btn")?.click();
+            }
+        }
+    });
+
+    // Wire cell sort links click handlers
+    document.querySelectorAll('.cell-sort-link').forEach(a => {
+        a.addEventListener('click', e => {
+            e.preventDefault();
+            const col = a.getAttribute('data-sort');
+            if (cellSort === col) {
+                cellOrder = (cellOrder === 'asc') ? 'desc' : 'asc';
+            } else {
+                cellSort = col;
+                cellOrder = 'asc';
+            }
+            cellPage = 1;
+            renderCellSpecies(cellSpeciesData);
+        });
+    });
+
+    // Set header labels with arrows initially
+    setCellHeaders();
+</script>
+
+{% endblock %}

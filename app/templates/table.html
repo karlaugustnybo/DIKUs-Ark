@@ -1,0 +1,503 @@
+{# =============================================================================
+   TABLE VIEW — Ark-IV
+   =============================================================================
+   This template implements a client-side, paginated data table for the
+   /data/table/ route. Instead of a traditional full-page reload per page,
+   all pagination, sorting, and weight customisation is handled
+   asynchronously via JavaScript fetch() calls to /api/table-data/.
+   ============================================================================= #}
+
+{% extends 'layout.html' %}
+
+{% block body %}
+    <h1>Exploring The Raw Data</h1>
+    <p class="page-description">
+        Scroll through real sequencing-status and build a more detailed view of
+        each datapoint, use REGEX search or modify the scoring function.
+    </p>
+
+    <div class="sliders-wrapper">
+
+        <div class="sliders-dropdown">
+            <button type="button" class="dropdown-toggle" id="iucn-btn"
+                    onclick="toggleDropdown('iucn-panel', 'iucn-btn')">
+                IUCN Category Weights
+                <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m19.5 8.25l-7.5 7.5l-7.5-7.5"/>
+                </svg>
+            </button>
+            <div id="iucn-panel" class="dropdown-panel js-hidden">
+                <div class="dropdown-grid">
+                    <div class="weight-row">
+                        <label for="cr">Critically Endangered</label>
+                        <div class="weight-controls">
+                            <input type="range" id="cr" name="cr"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.cr }}">
+                            <input type="number" id="num-cr" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.cr }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="en">Endangered</label>
+                        <div class="weight-controls">
+                            <input type="range" id="en" name="en"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.en }}">
+                            <input type="number" id="num-en" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.en }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="vu">Vulnerable</label>
+                        <div class="weight-controls">
+                            <input type="range" id="vu" name="vu"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.vu }}">
+                            <input type="number" id="num-vu" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.vu }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="nt">Near Threatened</label>
+                        <div class="weight-controls">
+                            <input type="range" id="nt" name="nt"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.nt }}">
+                            <input type="number" id="num-nt" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.nt }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="dd">Data Deficient</label>
+                        <div class="weight-controls">
+                            <input type="range" id="dd" name="dd"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.dd }}">
+                            <input type="number" id="num-dd" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.dd }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="lc">Least Concern</label>
+                        <div class="weight-controls">
+                            <input type="range" id="lc" name="lc"
+                                   min="0" max="10" step="0.1"
+                                   value="{{ weights.lc }}">
+                            <input type="number" id="num-lc" class="weight-num"
+                                   min="0" max="10" step="0.1"
+                                   value="{{ weights.lc }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sliders-dropdown">
+            <button type="button" class="dropdown-toggle" id="dna-btn"
+                    onclick="toggleDropdown('dna-panel', 'dna-btn')">
+                DNA Weights
+                <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m19.5 8.25l-7.5 7.5l-7.5-7.5"/>
+                </svg>
+            </button>
+            <div id="dna-panel" class="dropdown-panel js-hidden">
+                <div class="dropdown-grid">
+                    <div class="weight-row">
+                        <label for="sp">Missing Species DNA</label>
+                        <div class="weight-controls">
+                            <input type="range" id="sp" name="sp"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.sp }}">
+                            <input type="number" id="num-sp" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.sp }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="gen">Missing Genus DNA</label>
+                        <div class="weight-controls">
+                            <input type="range" id="gen" name="gen"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.gen }}">
+                            <input type="number" id="num-gen" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.gen }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="fam">Missing Family DNA</label>
+                        <div class="weight-controls">
+                            <input type="range" id="fam" name="fam"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.fam }}">
+                            <input type="number" id="num-fam" class="weight-num"
+                                   min="0" max="10" step="0.5"
+                                   value="{{ weights.fam }}">
+                        </div>
+                    </div>
+                    <div class="weight-row">
+                        <label for="samp">Already Sampled</label>
+                        <div class="weight-controls">
+                            <input type="range" id="samp" name="samp"
+                                   min="0" max="10" step="0.1"
+                                   value="{{ weights.samp }}">
+                            <input type="number" id="num-samp" class="weight-num"
+                                   min="0" max="10" step="0.1"
+                                   value="{{ weights.samp }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <form method="get" action="/data/table/" class="search-form" id="search-form">
+        <input type="text" id="search-input" name="search"
+               value="{{ search }}"
+               placeholder="Search using REGEX...">
+        <button type="submit" class="btn-primary">
+            Search
+        </button>
+    </form>
+
+    <table id="species-table">
+        <thead>
+            <tr>
+                <th><a href="#" data-sort="species_name">Species Name</a></th>
+                <th><a href="#" data-sort="family">Family</a></th>
+                <th><a href="#" data-sort="threat_score">IUCN Status</a></th>
+                <th><a href="#" data-sort="threat_score">Threat Score</a></th>
+                <th><a href="#" data-sort="dna_level">Missing DNA Level</a></th>
+                <th><a href="#" data-sort="priority">Priority</a></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <div class="pagination js-hidden" id="pagination">
+        <span id="page-info" class="page-info"></span>
+        <div class="pagination-buttons">
+            <button id="prev-btn" class="btn-secondary">
+                Previous
+            </button>
+            <button id="next-btn" class="btn-secondary">
+                Next
+            </button>
+        </div>
+    </div>
+
+    <script>
+    function toggleDropdown(panelId, btnId) {
+        const panel = document.getElementById(panelId);
+        const btn   = document.getElementById(btnId);
+        if (panel.classList.contains('js-hidden')) {
+            panel.classList.remove('js-hidden');
+            btn.classList.add('is-open');
+        } else {
+            panel.classList.add('js-hidden');
+            btn.classList.remove('is-open');
+        }
+    }
+
+    (function() {
+        let page = 1;
+        let totalPages = 1;
+        const search =
+              new URLSearchParams(window.location.search).get('search') || '';
+
+        let sort = '{{ sort }}';
+        let order = '{{ order }}';
+
+        const tbody      = document.querySelector('#species-table tbody');
+        const pageInfo   = document.getElementById('page-info');
+        const pagination = document.getElementById('pagination');
+        const prevBtn    = document.getElementById('prev-btn');
+        const nextBtn    = document.getElementById('next-btn');
+
+        const sliderIds = ['cr','en','vu','nt','dd','lc','sp','gen','fam','samp'];
+
+        function getStepDecimals(stepStr) {
+            const s = String(stepStr);
+            const idx = s.indexOf('.');
+            return idx === -1 ? 0 : s.length - idx - 1;
+        }
+
+        function fmtNum(v, decimals) {
+            if (typeof decimals !== 'number') decimals = 2;
+            const n = parseFloat(v);
+            if (Number.isNaN(n)) return '';
+            const fixed = n.toFixed(decimals);
+            return fixed.replace(/\.?0+$/, '');
+        }
+
+        function easeInOutCubic(t) {
+            return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+        }
+
+        function animateValue(el, from, to, duration) {
+            const start = parseFloat(from);
+            const end   = parseFloat(to);
+            if (Number.isNaN(start)) return;
+            const decimals = getStepDecimals(el.step || '1');
+            const startTime = performance.now();
+
+            function tick(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = easeInOutCubic(progress);
+                const current = start + (end - start) * eased;
+                el.value = fmtNum(current, decimals);
+                if (progress < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        // --- Slider interactions ----------------------------------------
+        sliderIds.forEach(id => {
+            const rangeInput = document.getElementById(id);
+            const numInput   = document.getElementById('num-' + id);
+            if (!rangeInput || !numInput) return;
+
+            // Normalise number display on load
+            numInput.value = fmtNum(numInput.value, getStepDecimals(rangeInput.step));
+
+            // During drag: show fine-grained value for responsiveness
+            rangeInput.addEventListener('input', () => {
+                numInput.value = fmtNum(rangeInput.value, getStepDecimals(rangeInput.step));
+            });
+
+            // On release: smooth-glide number to snapped slider value
+            rangeInput.addEventListener('change', () => {
+                animateValue(numInput, numInput.value, rangeInput.value, 150);
+                triggerWeightUpdate();
+            });
+
+            // Typing in number box: ease slider to the typed value
+            numInput.addEventListener('change', () => {
+                let val = parseFloat(numInput.value) || 0;
+                const min = parseFloat(numInput.min);
+                const max = parseFloat(numInput.max);
+                if (val < min) val = min;
+                if (val > max) val = max;
+                // Tween both fields
+                animateValue(rangeInput, rangeInput.value, val, 200);
+                animateValue(numInput, numInput.value, val, 200);
+                triggerWeightUpdate();
+            });
+        });
+
+        function debounce(fn, ms) {
+            let timer;
+            return function(...args) {
+                clearTimeout(timer);
+                timer = setTimeout(() => fn.apply(this, args), ms);
+            };
+        }
+
+        const triggerWeightUpdate = debounce(() => {
+            page = 1;
+            fetchData();
+        }, 250);
+
+        function getWeightsParams() {
+            const params = new URLSearchParams();
+            sliderIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) params.append(id, el.value);
+            });
+            return params;
+        }
+
+        function arrow(col) {
+            if (sort === col) {
+                return order === 'asc' ? ' \u2191' : ' \u2193';
+            }
+            return '';
+        }
+
+        function updateSortLinks() {
+            document.querySelectorAll('th a').forEach(a => {
+                const col = a.getAttribute('data-sort');
+                a.textContent = a.getAttribute('data-label') + arrow(col);
+            });
+        }
+
+        function setHeaders() {
+            const headers = [
+                'Species Name', 'Family', 'IUCN Status',
+                'Threat Score', 'Missing DNA Level', 'Priority'
+            ];
+            document.querySelectorAll('th a').forEach((a, i) => {
+                a.setAttribute('data-label', headers[i]);
+            });
+            updateSortLinks();
+        }
+
+        async function fetchData() {
+            const weights = getWeightsParams();
+            let url = `/api/table-data/?page=${page}&sort=${sort}` +
+                      `&order=${order}` +
+                      (search ? '&search=' + encodeURIComponent(search) : '');
+            if (weights.toString()) {
+                url += '&' + weights.toString();
+            }
+
+            const res  = await fetch(url);
+            const data = await res.json();
+            totalPages = data.total_pages;
+
+            const statusClasses = {
+                'Critically Endangered': 'status-cr',
+                'Endangered': 'status-en',
+                'Vulnerable': 'status-vu',
+                'Near Threatened': 'status-nt',
+                'Least Concern': 'status-lc',
+                'Data Deficient': 'status-dd',
+            };
+            tbody.innerHTML = '';
+            data.rows.forEach((row, rowIdx) => {
+                const tr = document.createElement('tr');
+                row.forEach((cell, idx) => {
+                    const td = document.createElement('td');
+                    if (idx === 2) {
+                        const cls = statusClasses[cell] || '';
+                        const span = document.createElement('span');
+                        span.className = 'status-badge ' + cls;
+                        span.textContent = cell;
+                        td.appendChild(span);
+                    } else {
+                        td.textContent = cell;
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+
+            pageInfo.textContent = `Page ${data.page} of ${data.total_pages}`;
+            page = data.page;
+
+            prevBtn.disabled = (page <= 1);
+            nextBtn.disabled = (page >= totalPages);
+            prevBtn.style.opacity = prevBtn.disabled ? '0.4' : '1';
+            nextBtn.style.opacity = nextBtn.disabled ? '0.4' : '1';
+
+            pagination.style.display = (totalPages > 1) ? 'block' : 'none';
+
+            updateSortLinks();
+        }
+
+        document.querySelectorAll('th a').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                const col = a.getAttribute('data-sort');
+                if (sort === col) {
+                    order = (order === 'asc') ? 'desc' : 'asc';
+                } else {
+                    sort = col;
+                    order = 'asc';
+                }
+                page = 1;
+                fetchData();
+            });
+        });
+
+        // add quick controls for sorting faster
+        document.addEventListener("keydown", (event) => {
+            // Don't trigger pagination if user is typing in the search input
+            if (event.target.id === "search-input") return;
+            
+            if (event.key === "ArrowLeft") {
+                document.getElementById("prev-btn")?.click();
+            }
+            if (event.key === "ArrowRight") {
+                document.getElementById("next-btn")?.click();
+            }
+
+            // Map number keys 1-5 to column sorting
+            const columnMap = {
+                '1': 'species_name',
+                '2': 'family',
+                '3': 'threat_score',
+                '4': 'dna_level',
+                '5': 'priority'
+            };
+
+            if (columnMap[event.key]) {
+                const links = document.querySelectorAll('th a');
+                links.forEach(link => {
+                    if (link.getAttribute('data-sort') === columnMap[event.key]) {
+                        link.click();
+                    }
+                });
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (page > 1) { page--; fetchData(); }
+        });
+        nextBtn.addEventListener('click', () => {
+            if (page < totalPages) { page++; fetchData(); }
+        });
+
+        setHeaders();
+        fetchData();
+    })();
+
+    document.addEventListener("keydown", (event) => {
+        // Don't trigger pagination if user is typing in the search input
+        if (event.target.id === "search-input") return;
+        
+        if (event.key === "ArrowLeft") {
+            document.getElementById("prev-btn")?.click();
+        }
+        if (event.key === "ArrowRight") {
+            document.getElementById("next-btn")?.click();
+        }
+    });
+
+    const prevBtnEl = document.getElementById("prev-btn");
+    const nextBtnEl = document.getElementById("next-btn");
+
+    function addTooltip(button) {
+        const tooltip = document.createElement("div");
+        tooltip.textContent = "Tip: Use \u2190 \u2192 arrow keys";
+
+        tooltip.style.position = "fixed";
+        tooltip.style.background = "rgba(40, 30, 20, 0.9)";
+        tooltip.style.color = "white";
+        tooltip.style.padding = "4px 8px";
+        tooltip.style.borderRadius = "4px";
+        tooltip.style.fontSize = "12px";
+        tooltip.style.fontFamily = "var(--font-sans)";
+        tooltip.style.pointerEvents = "none";
+        tooltip.style.display = "none";
+        tooltip.style.zIndex = "9999";
+
+        document.body.appendChild(tooltip);
+
+        button.addEventListener("mouseenter", () => {
+            tooltip.style.display = "block";
+        });
+
+        button.addEventListener("mousemove", (e) => {
+            tooltip.style.left = `${e.clientX + 12}px`;
+            tooltip.style.top = `${e.clientY + 12}px`;
+        });
+
+        button.addEventListener("mouseleave", () => {
+            tooltip.style.display = "none";
+        });
+    }
+
+    if (prevBtnEl) addTooltip(prevBtnEl);
+    if (nextBtnEl) addTooltip(nextBtnEl);
+    </script>
+{% endblock %}

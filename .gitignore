@@ -1,0 +1,31 @@
+# macOS
+.DS_Store
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv/
+venv/
+
+# logs
+*.log
+
+# Tutorial
+app/Tutorial.md
+
+# Monitoring
+app/monitor.py
+
+# Databases
+denmark_prototype/
+
+# Data files (except specific ones)
+data/**
+!data/Ark-IV.duckdb
+!data/precomputed_cache.duckdb

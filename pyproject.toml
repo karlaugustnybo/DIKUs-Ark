@@ -1,0 +1,23 @@
+[project]
+name = "ark-iv"
+version = "0.1.0"
+description = "Priority map for the EBP."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "tol-sdk>=2.1.2",
+    "flask>=3.1.1",
+    "flask-caching>=2.3.1",
+    "flask-compress>=1.14",
+    "duckdb>=1.5.2",
+    "flask-scss>=0.5",
+    "numpy>=1.26",
+    "matplotlib>=3.8",
+    "marimo>=0.23.8",
+    "pyarrow>=24.0.0",
+    "lonboard>=0.16.0",
+    "pandas>=3.0.3",
+    "h3>=4.4.2",
+    "geopandas>=1.0.0",
+    "shapely>=2.0",
+]

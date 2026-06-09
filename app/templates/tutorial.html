@@ -1,0 +1,376 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	// 1. Force the page to always reset to the top on restart/refresh
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);	
+
+    // 3. Bidirectional Intersection Observer (tracks scrolling down AND up)
+    const subsections = document.querySelectorAll('.tutorial-subsection');
+    
+    const observerOptions = {
+        root: null,
+        rootMargin: '-5% 0px -5% 0px', 
+        threshold: 0.1 
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const el = entry.target;
+            
+            if (entry.isIntersecting) {
+                // Apply inline animation-delay settings on entry
+                const inlineDelay = el.style.animationDelay;
+                if (inlineDelay) {
+                    el.style.transitionDelay = inlineDelay;
+                    el.querySelectorAll('.tutorial-content, .tutorial-figure').forEach(child => {
+                        child.style.transitionDelay = inlineDelay;
+                    });
+                }
+                el.classList.add('is-visible');
+            } else {
+                // Strip the transition delay on exit so elements fade out instantly/cleanly
+                el.style.transitionDelay = '0s';
+                el.querySelectorAll('.tutorial-content, .tutorial-figure').forEach(child => {
+                    child.style.transitionDelay = '0s';
+                });
+                el.classList.remove('is-visible');
+            }
+        });
+    }, observerOptions);
+
+    subsections.forEach(sub => observer.observe(sub));
+
+    // 4. Handle "Got it" click tracking to advance to the next major section
+    const gotItButtons = document.querySelectorAll('.got-it-btn');
+    gotItButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const currentSection = button.closest('.tutorial-section');
+            if (currentSection) {
+                const nextSection = currentSection.nextElementSibling;
+                
+                if (nextSection && nextSection.classList.contains('tutorial-section')) {
+                    nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    const footer = document.querySelector('.tutorial-footer');
+                    if (footer) {
+                        footer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+
+{% block body %}
+
+<div class="tutorial-container">
+    <header class="tutorial-header">
+        <h1>Tutorial</h1>
+        <p class="tutorial-intro">Learn how to use the table and map to explore species prioritization data.</p>
+    </header>
+
+    <section class="tutorial-section">
+        <h2>The Table</h2>
+        <p class="section-description">Explore species data row-by-row with regular-expression search, filtering, sorting, and custom scoring.</p>
+
+        <div class="tutorial-subsection layout-side-by-side" style="animation-delay: 0.1s;">
+            <div class="tutorial-content">
+                <h3>Searching & Filtering</h3>
+                <p>Use the search box at the top of the table to filter species by name, family, or any other field using regular expressions. Results update instantly as you type, so you can quickly zero in on the species you're interested in.</p>
+            </div>
+            <figure class="tutorial-figure">
+				<video class="feature-gif" autoplay loop muted>
+					<source src="/static/imgs/feat_search.mov">
+				</video>
+                <figcaption>Type a species or family name to narrow results.</figcaption>
+            </figure>
+        </div>
+
+        <div class="tutorial-subsection layout-single-column" style="animation-delay: 0.2s;">
+            <div class="tutorial-content">
+                <h3>Sorting Columns</h3>
+            </div>
+                <figure class="tutorial-figure">
+                    <video class="feature-gif" autoplay loop muted>
+                        <source src="/static/imgs/feat_sorting_2.mov">
+                    </video>
+                    <figcaption>Sort by threat level, DNA status, or priority score.</figcaption>
+                </figure>
+            <div class="tutorial-content">
+                <p>Click any column header to sort the table. The first click sorts in ascending order, and clicking again reverses the direction. This helps you quickly find the highest-priority species or group by threat category. <br><br> Tip: Use the number keys 1-5 to sort the columns more easily.</p>
+            </div>
+        </div>
+
+        <div class="tutorial-subsection layout-split-header" style="animation-delay: 0.3s;">
+            <h3>Adjusting Scoring Weights</h3>
+            <div class="split-body">
+                <div class="tutorial-content">
+                    <p>Open the sliders panel to customize how each IUCN threat level and DNA sampling status contributes to the priority score. When you change the weights, the priority calculation will update in real-time, allowing you to quickly fine-tune each parameter to match your own personal prioritization tendencies as closely as possible.
+                    </p>
+					{#
+                    <button class="got-it-btn" onclick="this.textContent='Great!'">Got it!</button>
+					#}
+                </div>
+                <figure class="tutorial-figure">
+                    <video class="feature-gif" autoplay loop muted>
+                        <source src="/static/imgs/feat_sliders.mov">
+                    </video>
+                    <figcaption>Change slider weights and see priorities recalculate.</figcaption>
+                </figure>
+            </div>
+        </div>
+
+        <div class="tutorial-subsection layout-side-by-side layout-side-by-side--reverse" style="animation-delay: 0.4s;">
+            <div class="tutorial-content">
+                <h3>Sharing Your Configuration</h3>
+                <p>Feature in progress...</p>
+            </div>
+            <figure class="tutorial-figure">
+                <video class="feature-gif" autoplay loop muted>
+                    <source src="/static/imgs/feat_sliders.mov">
+                </video>
+                <figcaption>Your slider values are encoded in the link.</figcaption>
+            </figure>
+        </div>
+
+        <div class="tutorial-subsection layout-single-column" style="animation-delay: 0.5s;">
+            <div class="tutorial-content">
+                <h3>Pagination</h3>
+            </div>
+            <figure class="tutorial-figure">
+                <video class="feature-gif" autoplay loop muted>
+                    <source src="/static/imgs/feat_pagination.mov">
+                </video>
+                <figcaption>Use keyboard arrows or on-screen buttons to move between pages.</figcaption>
+            </figure>
+            <div class="tutorial-content">
+                <p>Move between pages using the arrow buttons at the bottom, or use your keyboard (← and → keys) for faster navigation.</p>
+            </div>
+        </div>
+
+        <div class="tutorial-subsection layout-single-column" style="animation-delay: 0.5s;">
+            <h3>Table View Shortcuts</h3>
+            <div class="tutorial-table-wrapper" style="width: 100%; overflow-x: auto;">
+                <table class="tutorial-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%">Shortcut</th>
+                            <th style="width: 60%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><kbd>&larr;</kbd></td>
+                            <td>Previous data page</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>&rarr;</kbd></td>
+                            <td>Next data page</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>1</kbd></td>
+                            <td>Sort by <strong>Species Name</strong> <span style="color: #888; font-size: 0.85em;">(toggle asc/desc)</span></td>
+                        </tr>
+                        <tr>
+                            <td><kbd>2</kbd></td>
+                            <td>Sort by <strong>Family</strong> <span style="color: #888; font-size: 0.85em;">(toggle asc/desc)</span></td>
+                        </tr>
+                        <tr>
+                            <td><kbd>3</kbd></td>
+                            <td>Sort by <strong>Threat Score</strong> <span style="color: #888; font-size: 0.85em;">(toggle asc/desc)</span></td>
+                        </tr>
+                        <tr>
+                            <td><kbd>4</kbd></td>
+                            <td>Sort by <strong>Missing DNA Level</strong> <span style="color: #888; font-size: 0.85em;">(toggle asc/desc)</span></td>
+                        </tr>
+                        <tr>
+                            <td><kbd>5</kbd></td>
+                            <td>Sort by <strong>Priority</strong> <span style="color: #888; font-size: 0.85em;">(toggle asc/desc)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+		<div class="section-divider">
+			<span>#</span>
+		</div>
+    </section>
+
+
+
+
+    <section class="tutorial-section">
+        <h2>The Map</h2>
+        <p class="section-description">Visualize species distribution and priority across Denmark's hexagonal grid.</p>
+
+        <div class="tutorial-subsection layout-side-by-side" style="animation-delay: 0.6s;">
+            <div class="tutorial-content">
+                <h3>Zooming & Panning</h3>
+                <!-- <p>Scroll your mouse wheel to zoom in and out. Drag the map to pan across Denmark. The map intelligently switches between coarse hexagon resolution (when zoomed far out) and fine resolution (when zoomed in) to balance detail and performance.</p> -->
+                <p>
+                    Move around the map using the following controls: <br>
+                    Arrowkeys to move or drag the map using your mouse <br>
+                    Zoom in and out using your scroll wheel or touchpad <br>
+                    Shift + Arrowkeys to tilt and pan the map <br>
+                    Use the little compass in the menu to reset tilt or pan.
+                </p>
+            </div>
+            <figure class="tutorial-figure">
+                <video class="feature-gif" autoplay loop muted>
+                    <source src="/static/imgs/feat_movement.mov">
+                </video>
+                <figcaption>Zoom smoothly switches between coarse and fine hexagon resolutions.</figcaption>
+            </figure>
+        </div>
+
+        <div class="tutorial-subsection layout-split-header" style="animation-delay: 0.7s;">
+            <h3>Color Intensity</h3>
+            <div class="split-body">
+                <div class="tutorial-content">
+                    <p>Each hexagon's color represents the priority score for species in that area. The priority is somewhat inversely proportional to wavelength, with purple-blue-green colors being low priority while yellow-orange-red colors being high priority.</p>
+					{#
+                    <button class="got-it-btn" onclick="this.textContent='Perfect!'">Got it!</button>
+					#}
+                </div>
+                <figure class="tutorial-figure">
+                    <video class="feature-gif" autoplay loop muted>
+                        <source src="/static/imgs/feat_heat.mov">
+                    </video>
+                    <figcaption>Brighter colors show regions with higher-priority species.</figcaption>
+                </figure>
+            </div>
+        </div>
+
+        <div class="tutorial-subsection layout-single-column" style="animation-delay: 0.8s;">
+            <div class="tutorial-content">
+                <h3>Hovering & Details</h3>
+            </div>
+            <figure class="tutorial-figure">
+                <video class="feature-gif" autoplay loop muted>
+                    <source src="/static/imgs/feat_onehot.mov">
+                </video>
+                <figcaption>Detailed stats appear when you hover over any hexagon.</figcaption>
+            </figure>
+            <div class="tutorial-content">
+                <p>Hover your mouse over any hexagon to see a detailed tooltip. Clicking on a cell will display a table of stats related to that cell so you can really dive deep. Try clicking the cells around yourself and see what priorities lie in your area.</p>
+            </div>
+        </div>
+
+        <div class="tutorial-subsection layout-side-by-side layout-side-by-side--reverse" style="animation-delay: 0.9s;">
+            <div class="tutorial-content">
+                <h3>Adjusting Weights in Real-Time</h3>
+                <p>Open the sliders panel while viewing the map and drag any weight slider. Watch the hexagon colors shift instantly across the entire map as the scoring function recalculates. This is a powerful way to explore how different prioritization strategies would affect your sampling strategy geographically.</p>
+                <p>Open the sliders panel while viewing the map and drag any weight slider. The colors automatically update to fit the new weights. Try changing your configuration and watch the colors change in real-time.</p>
+            </div>
+            <figure class="tutorial-figure">
+                <video class="feature-gif" autoplay loop muted>
+                    <source src="/static/imgs/feat_heatsliders.mov">
+                </video>
+                <figcaption>Move sliders to see priority recalculated across the entire map.</figcaption>
+            </figure>
+        </div>
+
+        <div class="tutorial-subsection layout-single-column" style="animation-delay: 1s;">
+            <div class="tutorial-content">
+                <h3>Extra Functionality</h3>
+            </div>
+            <figure class="tutorial-figure">
+                <video class="feature-gif" autoplay loop muted>
+                    <source src="/static/imgs/feat_fullscreen.mov">
+                </video>
+                <figcaption>Maximize the map for detailed exploration.</figcaption>
+            </figure>
+            <div class="tutorial-content">
+                <p>The map supports additional controls making for a smoother, more interactive visual-experience. Current shortcuts include entering fullscreen on the f-key, and swtiching priority-systems on the number keys 1-4.</p>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="tutorial-subsection layout-single-column" style="animation-delay: 0.5s;">
+        <h3>Map View Shortcuts</h3>
+        <div class="tutorial-table-wrapper" style="width: 100%; overflow-x: auto;">
+            <table class="tutorial-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Shortcut / Input</th>
+                        <th style="width: 60%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><kbd>F</kbd></td>
+                        <td>Toggle full-screen presentation mode</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>1</kbd></td>
+                        <td>Switch map focus to: <strong>All Systems</strong></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>2</kbd></td>
+                        <td>Switch map focus to: <strong>Terrestrial</strong></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>3</kbd></td>
+                        <td>Switch map focus to: <strong>Freshwater</strong></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>4</kbd></td>
+                        <td>Switch map focus to: <strong>Marine</strong></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>+</kbd> / <kbd>-</kbd></td>
+                        <td>Incremental zoom in / out</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>&darr;</kbd></td>
+                        <td>Pan camera across grid array</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>Shift</kbd> / <kbd>Ctrl</kbd> + Arrow Keys</td>
+                        <td>Rotate viewport angle and pivot pitch</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>&larr;</kbd> <span style="color: #666; font-size: 0.85em;">(Cell Details open)</span></td>
+                        <td>Previous sub-page inside the active cell inspection panel</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>&rarr;</kbd> <span style="color: #666; font-size: 0.85em;">(Cell Details open)</span></td>
+                        <td>Next sub-page inside the active cell inspection panel</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mouse Drag</strong></td>
+                        <td>Fluid spatial map panning</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Shift / Ctrl + Drag</strong></td>
+                        <td>Direct manual rotation and viewpoint tilt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mouse Scroll / Pinch</strong></td>
+                        <td>Dynamic scaling (zoom in / out)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Double-Click</strong></td>
+                        <td>Targeted focus zoom step</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer class="tutorial-footer">
+        <p><strong>Ready to explore?</strong> Start with the <a href="/data/table/">table</a> or jump to the <a href="/data/map/">map</a>.</p>
+    </footer>
+
+</div>
+
+{% endblock %}
