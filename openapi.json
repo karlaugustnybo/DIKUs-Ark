@@ -1,0 +1,651 @@
+{
+  "info": {
+    "title": "Ark-IV API",
+    "version": "1.0.0",
+    "description": "Typed serving API for species and H3 cell details. Map movement is served by PMTiles."
+  },
+  "openapi": "3.1.0",
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/stats": {
+      "get": {
+        "summary": "Stats",
+        "operationId": "getStats",
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatsResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/species": {
+      "get": {
+        "summary": "SpeciesPage",
+        "operationId": "getSpecies",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "priority"
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "desc"
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1.0,
+              "default": 1
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "maximum": 100.0,
+              "minimum": 1.0,
+              "default": 10
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "cr",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 4.0
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "en",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 3.0
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "vu",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 2.0
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "nt",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 1.0
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "dd",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 2.0
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "lc",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 0.1
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "sp",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 2.0
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "gen",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 3.0
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "fam",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 4.0
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "samp",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 0.0
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "cov",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 0.0
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpeciesPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": [
+                        "null",
+                        "object",
+                        "array"
+                      ]
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "detail",
+                    "status_code"
+                  ],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/cells/{h3_index}/species": {
+      "get": {
+        "summary": "CellSpecies",
+        "operationId": "getCellSpecies",
+        "parameters": [
+          {
+            "name": "h3_index",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "resolution",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 3
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "system",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CellDetailsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": [
+                        "null",
+                        "object",
+                        "array"
+                      ]
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "detail",
+                    "status_code"
+                  ],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/exports": {
+      "get": {
+        "summary": "Exports",
+        "operationId": "getExports",
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ExportInfo"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CellDetailsResponse": {
+        "properties": {
+          "h3_index": {
+            "type": "string"
+          },
+          "species": {
+            "items": {
+              "$ref": "#/components/schemas/CellSpeciesRow"
+            },
+            "type": "array"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/CellStats"
+          }
+        },
+        "type": "object",
+        "required": [
+          "h3_index"
+        ],
+        "title": "CellDetailsResponse"
+      },
+      "CellSpeciesRow": {
+        "properties": {
+          "species_name": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          },
+          "redlist_category": {
+            "type": "string"
+          },
+          "dna_level": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dna_level",
+          "family",
+          "redlist_category",
+          "species_name"
+        ],
+        "title": "CellSpeciesRow"
+      },
+      "CellStats": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "default": 0
+          },
+          "CR": {
+            "type": "integer",
+            "default": 0
+          },
+          "EN": {
+            "type": "integer",
+            "default": 0
+          },
+          "VU": {
+            "type": "integer",
+            "default": 0
+          },
+          "NT": {
+            "type": "integer",
+            "default": 0
+          },
+          "DD": {
+            "type": "integer",
+            "default": 0
+          },
+          "LC": {
+            "type": "integer",
+            "default": 0
+          },
+          "missing_species_dna": {
+            "type": "integer",
+            "default": 0
+          },
+          "missing_genus_dna": {
+            "type": "integer",
+            "default": 0
+          },
+          "missing_family_dna": {
+            "type": "integer",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [],
+        "title": "CellStats"
+      },
+      "ExportInfo": {
+        "properties": {
+          "format": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "media_type": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "format",
+          "media_type",
+          "url"
+        ],
+        "title": "ExportInfo"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "database": {
+            "type": "string"
+          },
+          "tiles": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "database",
+          "status",
+          "tiles"
+        ],
+        "title": "HealthResponse"
+      },
+      "SpeciesPage": {
+        "properties": {
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/SpeciesRow"
+            },
+            "type": "array"
+          },
+          "page": {
+            "type": "integer",
+            "default": 1
+          },
+          "total_pages": {
+            "type": "integer",
+            "default": 1
+          },
+          "total": {
+            "type": "integer",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [],
+        "title": "SpeciesPage"
+      },
+      "SpeciesRow": {
+        "properties": {
+          "species_name": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          },
+          "redlist_category": {
+            "type": "string"
+          },
+          "threat_score": {
+            "type": "number"
+          },
+          "dna_level": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "number"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dna_level",
+          "family",
+          "priority",
+          "redlist_category",
+          "species_name",
+          "threat_score"
+        ],
+        "title": "SpeciesRow"
+      },
+      "StatsResponse": {
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "critically_endangered": {
+            "type": "integer"
+          },
+          "edge_species": {
+            "type": "integer"
+          },
+          "needs_dna_sampling": {
+            "type": "integer"
+          },
+          "res3_cells": {
+            "type": "integer"
+          },
+          "res7_cells": {
+            "type": "integer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "critically_endangered",
+          "edge_species",
+          "needs_dna_sampling",
+          "res3_cells",
+          "res7_cells",
+          "total"
+        ],
+        "title": "StatsResponse"
+      }
+    }
+  }
+}

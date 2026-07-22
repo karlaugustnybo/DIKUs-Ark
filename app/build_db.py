@@ -24,20 +24,29 @@ import shutil
 from pathlib import Path
 import geopandas as gpd
 from shapely.geometry import Polygon
+from dotenv import load_dotenv
 
 
 # ---------------------------------------------------------------------------
 # 1. Paths & initialisation
 # ---------------------------------------------------------------------------
-# __dir__ is the folder that contains this build_db.py file.
-__dir__ = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(__dir__, '..', 'data')
+# Every location is configurable in the repository-level .env file.
+ROOT = Path(__file__).resolve().parents[1]
+load_dotenv(ROOT / ".env")
+
+
+def configured_path(name, default):
+    value = Path(os.environ.get(name, default)).expanduser()
+    return value if value.is_absolute() else (ROOT / value).resolve()
+
+
+DATA_DIR = configured_path('DATA_DIR', 'data')
     
 # Two DuckDB files — tabular (species/IUCN/EDGE/GoaT/ToL) and H3 (map).
-H3_DB_PATH      = os.path.join(DATA_DIR, 'denmark_h3.duckdb')
-TABULAR_DB_PATH = os.path.join(DATA_DIR, 'denmark_tabular.duckdb')
-BORDERS_PATH    = os.path.join(DATA_DIR, 'denmark_borders.parquet')
-DB_PATH         = os.path.join(DATA_DIR, 'Ark-IV.duckdb')
+H3_DB_PATH      = configured_path('H3_DUCKDB_PATH', str(DATA_DIR / 'denmark_h3.duckdb'))
+TABULAR_DB_PATH = configured_path('TABULAR_DUCKDB_PATH', str(DATA_DIR / 'denmark_tabular.duckdb'))
+BORDERS_PATH    = configured_path('BORDERS_PATH', str(DATA_DIR / 'denmark_borders.parquet'))
+DB_PATH         = configured_path('SOURCE_DUCKDB_PATH', str(DATA_DIR / 'Ark-IV.duckdb'))
 
 # Check if DB_PATH is already in use
 if Path(DB_PATH).exists():
@@ -56,7 +65,7 @@ if Path(DB_PATH).exists():
     else:
         try:
             # Create (and potentially overwrite) backup
-            DB_BACKUP_PATH = os.path.join(DATA_DIR, 'Ark-IV_backup.duckdb')
+            DB_BACKUP_PATH = DATA_DIR / 'Ark-IV_backup.duckdb'
             if Path(DB_BACKUP_PATH).exists():
                 os.remove(DB_BACKUP_PATH)
             shutil.copy(DB_PATH, DB_BACKUP_PATH)
@@ -68,8 +77,8 @@ if Path(DB_PATH).exists():
 
 
 # Raw H3 hexagon → species list mappings (used for dynamic map queries).
-H3_RES3_PARQUET = os.path.join(DATA_DIR, 'h3_res3_species.parquet')
-H3_RES7_PARQUET = os.path.join(DATA_DIR, 'h3_res7_species.parquet')
+H3_RES3_PARQUET = configured_path('H3_RES3_PARQUET', str(DATA_DIR / 'h3_res3_species.parquet'))
+H3_RES7_PARQUET = configured_path('H3_RES7_PARQUET', str(DATA_DIR / 'h3_res7_species.parquet'))
 
 # Connection that ATTACHes both databases read-only
 MAIN_CON = duckdb.connect(DB_PATH)

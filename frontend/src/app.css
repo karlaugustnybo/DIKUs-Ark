@@ -1,0 +1,35 @@
+@import "tailwindcss";
+@import "@deck.gl/widgets/stylesheet.css";
+@import "../../app/static/styles.css";
+
+body { min-width: 320px; }
+.page-loading { padding: 4rem; color: var(--color-gray-600); }
+.error-message { color: #9f2e22; font-family: var(--font-sans); font-size: .9rem; }
+.map-shell { position: relative; }
+.map-canvas { position: absolute; inset: 0; }
+.cell-details:not(.js-hidden) { display: block; }
+.cell-details.js-hidden { display: none; }
+.table-scroll { overflow-x: auto; }
+.empty-row { padding: 2rem !important; text-align: center; color: var(--color-gray-600); }
+.nav-toggle { display: none; }
+.table-sort-link,
+.cell-sort-link {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: white;
+  font: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+.table-sort-link:hover,
+.cell-sort-link:hover { color: white; opacity: .8; }
+.pill-indicator { width: 6.875rem; }
+
+@media (max-width: 760px) {
+  .site-navbar { padding-inline: 1rem; }
+  .nav-right { gap: .6rem; }
+  .nav-right a { font-size: .74rem; }
+  #map { width: 95%; height: 70vh; }
+}

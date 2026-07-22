@@ -6,13 +6,9 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "tol-sdk>=2.1.2",
-    "flask>=3.1.1",
-    "flask-caching>=2.3.1",
-    "flask-compress>=1.14",
     "duckdb>=1.5.2",
-    "flask-scss>=0.5",
+    "rich>=13.7.0",
     "numpy>=1.26",
-    "matplotlib>=3.8",
     "marimo>=0.23.8",
     "pyarrow>=24.0.0",
     "lonboard>=0.16.0",
@@ -20,4 +16,8 @@ dependencies = [
     "h3>=4.4.2",
     "geopandas>=1.0.0",
     "shapely>=2.0",
+    "litestar>=2.18,<3",
+    "granian>=2.5,<3",
+    "asyncpg>=0.30,<1",
+    "pydantic-settings>=2.10,<3",
 ]

@@ -15,6 +15,12 @@ venv/
 
 # logs
 *.log
+.env
+frontend/.env
+frontend/.svelte-kit/
+frontend/build/
+frontend/node_modules/
+.tmp/
 
 # Tutorial
 app/Tutorial.md
@@ -29,3 +35,7 @@ denmark_prototype/
 data/**
 !data/Ark-IV.duckdb
 !data/precomputed_cache.duckdb
+!data/exports/
+!data/exports/.gitkeep
+!data/tiles/
+!data/tiles/.gitkeep

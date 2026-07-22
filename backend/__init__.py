@@ -1,0 +1,1 @@
+"""Ark-IV Litestar backend."""

@@ -1,50 +1,103 @@
 # Ark-IV
 
-## About the project
-Our data-app project is about the conservation of species by the use of DNA sequencing. Our solution helps synthesize existing data sources like the IUCN and GOAT databases in a beautiful and interactive map experience.
+Ark-IV combines IUCN, GoaT, EDGE and species-distribution data into an interactive conservation-priority map. The SvelteKit interface preserves the original visual design while moving the serving path to Litestar, Postgres and static PMTiles.
 
-## Usage
-For our project, we used the UV package manager to keep track of integrations and run the app. To install UV, simply go to their page https://docs.astral.sh/uv/getting-started/installation/ and follow their guidelines or if using Homebrew use the command below.
+## Architecture
+
+- **Browser:** SvelteKit, Tailwind CSS and deck.gl `MVTLayer`.
+- **Map:** a Tippecanoe-built `priorities.pmtiles` archive plus a small generated global score-domain JSON file. Pan and zoom read static files; they do not query the database.
+- **API:** typed Litestar endpoints served by Granian. Litestar publishes the OpenAPI contract used to generate the frontend's TypeScript types.
+- **Serving data:** Postgres with ordinary B-tree indexes on integer H3 keys.
+- **Build data:** DuckDB transforms the source database into PMTiles and Parquet. DuckDB is not used by HTTP requests.
+
+## Prerequisites
+
+- Python 3.13 and [uv](https://docs.astral.sh/uv/)
+- [Bun](https://bun.sh/) 1.3 or newer
+- Postgres 16 or newer
+- [Tippecanoe](https://github.com/felt/tippecanoe) for rebuilding PMTiles
+
+## Configuration
+
+All ports, database credentials, source locations and generated-data locations come from environment files:
+
 ```bash
-brew install uv
+cp .env.example .env
+cp frontend/.env.example frontend/.env
 ```
 
-Once UV has been installed, to run the app, you simply run the following command:
+Edit `.env` for the local Postgres connection and data locations. The frontend defaults to same-origin API/static requests in production and proxies them to the configured backend during development.
+
+## Install and build
+
+The complete one-time setup is available as a Just recipe:
 
 ```bash
-uv sync && uv run app/app.py
+cp .env.example .env
+cp frontend/.env.example frontend/.env
+just setup
 ```
 
-which will install all the required packages into a local virtual environment *ark-iv*. Afterward, you can use the webapp by going to your localhost at port 5000, or just run the following command in a split terminal:
+`POSTGRES_ADMIN_URL` must identify a local Postgres administrator. The recipe creates or repairs the application role, database ownership, and `public` schema permissions before loading data.
+
+The equivalent individual commands are:
 
 ```bash
-open http://127.0.0.1:5000
+uv sync
+cd frontend && bun install && cd ..
+just db-configure
+uv run python app/build_cache.py
+uv run python -m backend.load_postgres
 ```
 
-There is a tutorial on how to use the webapp at:
+`app/build_cache.py` reads `SOURCE_DUCKDB_PATH`, writes normalized Parquet exports and the per-system global map score domains, and invokes Tippecanoe to create `PMTILES_PATH`. Pass `--skip-tiles` when only the transfer files and score metadata are needed, or `--rebuild-aggregates` after changing the source database.
+
+## Run locally
+
+For normal development, start both the API and frontend without rebuilding or reloading anything:
+
 ```bash
-open http://127.0.0.1:5000/tutorial
+just start
 ```
 
+`just dev` is an alias for the same command. Stop both processes with `Ctrl-C`.
 
-## Databases
-We store our databases in .*duckdb* files in our *data* folder.
+To start each process separately, load the repository environment and start the API:
 
-During runtime, we use a pre-computed cache to load in the relevant data, 
+```bash
+set -a
+source .env
+set +a
+uv run granian --interface asgi --host "$API_HOST" --port "$API_PORT" --workers "$API_WORKERS" backend.app:app
+```
 
-***data/precomputed_cache.duckdb***
+In a second terminal:
 
-saving memory and compute.
+```bash
+cd frontend
+bun run dev
+```
 
-The precomputed cache is built solely from *data/Ark-IV.duckdb* which can be inspected for a more detailed understanding of the database. The script that builds this can be found at: *app/build_cache.py*. To save you from downloading too much data and also having licensing problems, the data used to build *Ark-IV.duckdb* has been gitignored, but the script can be viewed at *DIKUs-Ark/app/build_db.py*
+Open the URL printed by Vite (normally `http://127.0.0.1:5173`). API documentation is available at `/schema` on the backend.
 
-## E/R Moden Diagram:
-We can model the Ark-IV database by the following entity-relationship diagram:
+## OpenAPI type sharing
 
-<img src='readme_imgs/Ark-IV_ER.png' style='width: 70%'/>
+After changing API routes or response models, regenerate the checked-in contract and frontend declarations:
 
-The specific schemas of the ***data/Ark-IV.duckdb*** database is as follows:
+```bash
+uv run python -m backend.export_openapi
+cd frontend
+bun run generate:api
+```
 
-<img src='readme_imgs/Ark-IV_Schemas.png'/> 
+Svelte code imports types from `src/lib/api/schema.d.ts`; it does not maintain a separate set of handwritten API interfaces.
 
-However, in practice, the tables H3Res3Species relations aren't on any normal form as they have lists as elements in a reasonable manner due to duckdb.
+## Production
+
+Build the static frontend with `bun run build`. Serve the frontend, PMTiles archive and generated map metadata through a CDN/object store such as Cloudflare R2 or MinIO, and route `/api` to a multi-worker Granian deployment. The Litestar static routes are intended for local development and simple single-host deployments.
+
+## Source database
+
+`app/build_db.py` can reconstruct the DuckDB source database from the raw inputs configured in `.env`. `app/build_h3_aggregate.py` performs the large, disk-backed H3 aggregation; its input, output, scratch directory, memory and thread count are also environment-controlled.
+
+The original relational diagrams remain available in `readme_imgs/Ark-IV_ER.png` and `readme_imgs/Ark-IV_Schemas.png`.

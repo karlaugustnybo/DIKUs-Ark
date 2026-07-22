@@ -1747,7 +1747,7 @@ th.col-label {
 }
 
 .about-points p {
-    font-size: var(--font-size-1.5base);
+  font-size: var(--font-size-base);
     padding-left: 0%;
     padding-right: 0%;
     margin-top: 10px
@@ -2268,4 +2268,3 @@ th.col-label {
   margin-bottom: 0;
   padding-bottom: var(--space-48);
 }
-
