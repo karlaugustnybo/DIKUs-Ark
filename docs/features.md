@@ -39,3 +39,7 @@ Better docs.
 Table UI fixes.
 
 Hotlinks.
+
+Diferrent border selection based on regulation.
+
+Color normalization based on species count in cell. (more relevant for seeing where the environment is worst)
