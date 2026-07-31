@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field, field_validator
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -27,7 +27,11 @@ class Settings(BaseSettings):
     tile_dir: Path = ROOT / "data" / "tiles"
     pmtiles_path: Path = ROOT / "data" / "tiles" / "priorities.pmtiles"
     map_metadata_path: Path = ROOT / "data" / "tiles" / "map-metadata.json"
+    validation_report_path: Path = ROOT / "data" / "validation" / "build-validation.json"
     tippecanoe_bin: str = "tippecanoe"
+    h3_res3_parquet: Path = ROOT / "data" / "h3_res3_species.parquet"
+    h3_res7_parquet: Path = ROOT / "data" / "h3_res7_species.parquet"
+    h3_id_crosswalk_path: Path | None = None
     h3_input_dir: Path = ROOT / "data" / "h3_pairs"
     h3_encoded_dir: Path = ROOT / "data" / "h3_encoded"
     h3_aggregated_dir: Path = ROOT / "data" / "h3_aggregated"
@@ -43,6 +47,9 @@ class Settings(BaseSettings):
         "tile_dir",
         "pmtiles_path",
         "map_metadata_path",
+        "validation_report_path",
+        "h3_res3_parquet",
+        "h3_res7_parquet",
         "h3_input_dir",
         "h3_encoded_dir",
         "h3_aggregated_dir",
@@ -52,6 +59,18 @@ class Settings(BaseSettings):
     @classmethod
     def resolve_path(cls, value: Path) -> Path:
         return value if value.is_absolute() else (ROOT / value).resolve()
+
+    @field_validator("h3_id_crosswalk_path", mode="after")
+    @classmethod
+    def resolve_optional_path(cls, value: Path | None) -> Path | None:
+        if value is None:
+            return None
+        return value if value.is_absolute() else (ROOT / value).resolve()
+
+    @field_validator("h3_id_crosswalk_path", mode="before")
+    @classmethod
+    def empty_path_is_none(cls, value: object) -> object:
+        return None if value == "" else value
 
 
 @lru_cache

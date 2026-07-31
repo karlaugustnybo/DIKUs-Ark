@@ -100,4 +100,8 @@ Build the static frontend with `bun run build`. Serve the frontend, PMTiles arch
 
 `app/build_db.py` can reconstruct the DuckDB source database from the raw inputs configured in `.env`. `app/build_h3_aggregate.py` performs the large, disk-backed H3 aggregation; its input, output, scratch directory, memory and thread count are also environment-controlled.
 
+The global H3 adapter, crosswalk contract, streaming tile build, and
+losslessness reports are documented in
+[`docs/global_serving_pipeline.md`](docs/global_serving_pipeline.md).
+
 The original relational diagrams remain available in `readme_imgs/Ark-IV_ER.png` and `readme_imgs/Ark-IV_Schemas.png`.

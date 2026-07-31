@@ -83,3 +83,14 @@ start:
 
 # Alias for the fast start command.
 dev: start
+
+# Run pipeline unit tests.
+test:
+    uv run python -m unittest discover -s tests -v
+
+# Validate the configured H3 list files without requiring a crosswalk.
+validate-h3:
+    uv run python -m app.validate_h3_input \
+      --res3 "${H3_RES3_PARQUET:-data/h3_res3_species.parquet}" \
+      --res7 "${H3_RES7_PARQUET:-data/h3_res7_species.parquet}" \
+      --output "${H3_VALIDATION_REPORT_PATH:-data/validation/h3-input.json}"
