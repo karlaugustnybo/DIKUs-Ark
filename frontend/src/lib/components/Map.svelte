@@ -20,6 +20,9 @@
   type MapMetadata = { score_domains: Record<string, ScoreDomain> };
 
   const RESOLUTION_SWITCH_ZOOM = 7;
+  const RESOLUTION_PRELOAD_ZOOM = 6;
+  const BASEMAP_FALLBACK_ZOOM = 2;
+  const BASEMAP_MAX_REQUESTS = 16;
   const TILE_CACHE_SIZE = 256;
 
   let container: HTMLDivElement;
@@ -102,15 +105,21 @@
 
   function priorityLayer(cellResolution: 3 | 7, suffix: string, selected: string | null) {
     const layerName = `res${cellResolution}_${suffix}`;
+    const visible = cellResolution === currentResolution;
     return new MVTLayer<TileProperties>({
       id: `priorities-${layerName}`,
       data: 'pmtiles://ark-iv/{z}/{x}/{y}.mvt',
-      minZoom: cellResolution === 3 ? 0 : 6,
+      minZoom: cellResolution === 3 ? 0 : 7,
       maxZoom: cellResolution === 3 ? 7 : 12,
-      visibleMaxZoom: cellResolution === 3 ? RESOLUTION_SWITCH_ZOOM : null,
-      visibleMinZoom: cellResolution === 7 ? RESOLUTION_SWITCH_ZOOM + Number.EPSILON : null,
+      // Keep stable layer instances and warm the incoming resolution before
+      // it becomes visible. The offset starts with z7 tiles at view zoom 6,
+      // avoiding the much larger z6 tile and spreading uploads into chunks.
+      visible,
+      visibleMaxZoom: cellResolution === 3 ? RESOLUTION_SWITCH_ZOOM + 1 : null,
+      visibleMinZoom: cellResolution === 7 ? RESOLUTION_PRELOAD_ZOOM : null,
+      zoomOffset: cellResolution === 7 ? 1 : 0,
       maxCacheSize: 200,
-      maxRequests: 12,
+      maxRequests: cellResolution === 7 ? 6 : 12,
       // The polygons are translucent, so fallback parent and child tiles must
       // not overlap while a new zoom level is loading.
       refinementStrategy: 'no-overlap', binary: true,
@@ -128,17 +137,61 @@
     });
   }
 
+  function rasterTileUrl(template: string, z: number, x: number, y: number): string {
+    const flippedY = Math.pow(2, z) - y - 1;
+    return template
+      .replaceAll('{z}', String(z))
+      .replaceAll('{x}', String(x))
+      .replaceAll('{-y}', String(flippedY))
+      .replaceAll('{y}', String(y));
+  }
+
+  function tileBounds(z: number, x: number, y: number): [number, number, number, number] {
+    const scale = Math.pow(2, z);
+    const longitude = (tileX: number) => tileX / scale * 360 - 180;
+    const latitude = (tileY: number) =>
+      Math.atan(Math.sinh(Math.PI * (1 - 2 * tileY / scale))) * 180 / Math.PI;
+    return [longitude(x), latitude(y + 1), longitude(x + 1), latitude(y)];
+  }
+
+  function basemapFallbackLayers() {
+    const scale = Math.pow(2, BASEMAP_FALLBACK_ZOOM);
+    return Array.from({ length: scale * scale }, (_, index) => {
+      const x = index % scale;
+      const y = Math.floor(index / scale);
+      return new BitmapLayer({
+        id: `carto-fallback-${BASEMAP_FALLBACK_ZOOM}-${x}-${y}`,
+        data: null as any,
+        image: rasterTileUrl(config.basemapUrl, BASEMAP_FALLBACK_ZOOM, x, y),
+        bounds: tileBounds(BASEMAP_FALLBACK_ZOOM, x, y),
+        pickable: false,
+        parameters: { depthWriteEnabled: false }
+      });
+    });
+  }
+
   function layers() {
     const suffix = currentSystem.toLowerCase() || 'all';
     const basemap = new TileLayer({
       id: 'carto-light', data: config.basemapUrl, refinementStrategy: 'best-available',
-      maxCacheSize: 200, minZoom: 0, maxZoom: 19, tileSize: 256,
+      // Retina tiles are four times larger when decoded, so keep the cache
+      // bounded while the global fallback covers tiles evicted during a pan.
+      maxCacheSize: 200, maxRequests: BASEMAP_MAX_REQUESTS,
+      minZoom: 0, maxZoom: 19, tileSize: 256,
       renderSubLayers: (props: any) => {
         const { west, south, east, north } = props.tile.bbox;
-        return new BitmapLayer(props, { data: null as any, image: props.data, bounds: [west, south, east, north] });
+        return new BitmapLayer(props, {
+          data: null as any, image: props.data, bounds: [west, south, east, north],
+          parameters: { depthWriteEnabled: false }
+        });
       }
     });
-    return [basemap, priorityLayer(3, suffix, currentSelected), priorityLayer(7, suffix, currentSelected)];
+    return [
+      ...basemapFallbackLayers(),
+      basemap,
+      priorityLayer(3, suffix, currentSelected),
+      priorityLayer(7, suffix, currentSelected)
+    ];
   }
 
   function refresh() {
@@ -185,6 +238,7 @@
         if (next !== currentResolution) {
           currentResolution = next;
           resolution.set(next);
+          refresh();
         }
       },
       getTooltip: ({ object }: any) => object ? {

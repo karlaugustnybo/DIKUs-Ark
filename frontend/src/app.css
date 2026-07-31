@@ -6,7 +6,7 @@ body { min-width: 320px; }
 .page-loading { padding: 4rem; color: var(--color-gray-600); }
 .error-message { color: #9f2e22; font-family: var(--font-sans); font-size: .9rem; }
 .map-shell { position: relative; }
-.map-canvas { position: absolute; inset: 0; }
+.map-canvas { position: absolute; inset: 0; background: rgb(215 222 225); }
 .cell-details:not(.js-hidden) { display: block; }
 .cell-details.js-hidden { display: none; }
 .table-scroll { overflow-x: auto; }
