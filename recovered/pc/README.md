@@ -1,23 +1,29 @@
-# PC recovery bundle
+# Recovered PC v3 pipeline
 
-This directory contains source-only artifacts recovered from the prior PC
-workspace on 2026-08-29. It is an archival aid, not a second production
-pipeline. The current repository implementations remain authoritative.
+This directory retains the useful v3 source recovered from the prior PC
+workspace on 2026-08-29. It is historical implementation evidence and a
+benchmarking starting point, not a production pipeline. The requirements for
+its replacement are defined in `docs/data_pipeline_change_requirements.md`.
 
-## Contents
+The superseded v2 pipeline, legacy environment, diagnostics, and design notes
+were removed after recovery. They remain available in Git history on
+`codex/pc-forensics-2026-08-29` at commit `9b4ea8e`.
 
-- `pipeline_v2/`: the staged v2 global H3 pipeline and shared configuration.
-- `pipeline_v3/`: the later untracked H3 reset pipeline, benchmark kernels,
-  profiling tools, and shared metric schema.
-- `diagnostics/`: two source-only DuckDB diagnostics; no captured output.
-- `legacy_docs/`: design notes and historical pipeline documentation.
-- `environment/`: dependency and task-runner configuration from the old
-  workspace.
+## Retained contents
+
+- `pipeline_v3/config.py`: historical paths, source filters, schemas, and
+  tuning parameters.
+- `pipeline_v3/scripts/polyfill.py`: recovered geometry and H3 kernels.
+- `pipeline_v3/scripts/00_benchmark_polyfill.py`, `kernel_ab.py`, and
+  `profile_single_worker.py`: historical performance and comparison tools.
+- `pipeline_v3/scripts/01_polyfill_pairs.py`: recovered pair-generation stage.
+- `pipeline_v3/scripts/02_merge_metrics.py`, `03_derive_res3_metrics.py`,
+  `04_partition_species_lists.py`, and `_common_metrics.py`: recovered
+  aggregation and partitioning stages.
 
 No raw data, generated datasets, databases, Parquet/Arrow/PMTiles files,
 provider archives, credentials, caches, bytecode, logs, or notebook outputs
-are included. No Jupyter or marimo notebooks were present among the recoverable
-source files.
+are included.
 
 ## Sanitization
 
