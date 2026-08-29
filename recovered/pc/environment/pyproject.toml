@@ -1,0 +1,23 @@
+[project]
+name = "dikus-ark"
+version = "0.1.0"
+description = "Global DNA Gap Analysis — identifying H3 hotspots where threatened species lack genomic data"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "duckdb>=1.5.2",
+    "flask>=3.1.1",
+    "flask-caching>=2.3.0",
+    "flask-compress>=1.17.0",
+    "geopandas>=1.1.3",
+    "h3>=4.4.2",
+    "matplotlib>=3.10.9",
+    "numpy>=2.4.4",
+    "pandas>=3.0.2",
+    "polars>=1.40.1",
+    "pyarrow>=24.0.0",
+    "shapely>=2.1.2",
+    "sqlglot>=30.8.2",
+    "tol-sdk>=2.1.2",
+    "tqdm>=4.67.3",
+]
