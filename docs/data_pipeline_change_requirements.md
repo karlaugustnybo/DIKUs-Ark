@@ -240,4 +240,3 @@ The pipeline changes are complete only when an independent reviewer can verify:
 
 Passing unit tests alone is not sufficient. Acceptance requires source-backed
 validation reports and full-scale performance evidence.
-
