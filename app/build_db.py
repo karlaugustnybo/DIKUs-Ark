@@ -34,7 +34,6 @@ from typing import Any
 import duckdb
 from dotenv import load_dotenv
 
-
 ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / ".env")
 
@@ -58,6 +57,18 @@ H3_RES3_PARQUET = configured_path(
 )
 H3_RES7_PARQUET = configured_path(
     "H3_RES7_PARQUET", str(DATA_DIR / "h3_res7_species.parquet")
+)
+_species_parquet_value = os.environ.get("SPECIES_PARQUET", "").strip()
+SPECIES_PARQUET = (
+    configured_path("SPECIES_PARQUET", _species_parquet_value)
+    if _species_parquet_value
+    else None
+)
+_species_systems_value = os.environ.get("SPECIES_SYSTEMS_PARQUET", "").strip()
+SPECIES_SYSTEMS_PARQUET = (
+    configured_path("SPECIES_SYSTEMS_PARQUET", _species_systems_value)
+    if _species_systems_value
+    else None
 )
 VALIDATION_REPORT_PATH = configured_path(
     "SOURCE_VALIDATION_REPORT_PATH",
@@ -232,10 +243,14 @@ def build_h3_table(
     resolution: int,
     path: Path,
     crosswalk_path: Path | None,
+    *,
+    deep_validation: bool = True,
 ) -> dict[str, Any]:
     if not path.is_file():
         raise FileNotFoundError(f"H3 resolution-{resolution} input not found: {path}")
-    inspection = inspect_h3_input(connection, resolution, path, deep=True)
+    inspection = inspect_h3_input(
+        connection, resolution, path, deep=deep_validation
+    )
     kind = inspection["input_kind"]
     table = f"H3Res{resolution}Species"
 
@@ -356,17 +371,44 @@ def build_h3_table(
     return report
 
 
-def build_species_tables(connection: duckdb.DuckDBPyConnection) -> None:
+def build_species_tables(
+    connection: duckdb.DuckDBPyConnection,
+    species_path: Path | None = None,
+    species_systems_path: Path | None = None,
+) -> None:
+    if (species_path is None) != (species_systems_path is None):
+        raise ValueError(
+            "SPECIES_PARQUET and SPECIES_SYSTEMS_PARQUET must be provided together"
+        )
+    if species_path is not None and species_systems_path is not None:
+        connection.execute(
+            "CREATE TABLE SpecInfo AS SELECT * FROM read_parquet(?)",
+            [str(species_path)],
+        )
+        connection.execute(
+            "CREATE UNIQUE INDEX specinfo_id ON SpecInfo(gbif_accepted_id)"
+        )
+        connection.execute(
+            "CREATE TABLE SpecSystems AS SELECT * FROM read_parquet(?)",
+            [str(species_systems_path)],
+        )
+        return
+
     connection.execute(
         """
         CREATE TABLE SpecInfo (
             gbif_accepted_id VARCHAR PRIMARY KEY,
+            iucn_sis_id VARCHAR,
+            iucn_assessment_id VARCHAR,
+            gbif_taxon_id VARCHAR,
+            goat_taxon_id VARCHAR,
             species_name VARCHAR,
             family VARCHAR,
             redlist_category VARCHAR,
             has_dna_species_level BOOL,
             genus_has_dna BOOL,
             family_has_dna BOOL,
+            goat_data_deficient BOOL,
             edge_group_name VARCHAR,
             meets_ebp BOOL
         );
@@ -374,19 +416,27 @@ def build_species_tables(connection: duckdb.DuckDBPyConnection) -> None:
         INSERT INTO SpecInfo
         SELECT DISTINCT
             d.gbif_accepted_id,
+            NULL::VARCHAR AS iucn_sis_id,
+            NULL::VARCHAR AS iucn_assessment_id,
+            d.gbif_accepted_id AS gbif_taxon_id,
+            g.goat_taxon_id,
             d.species_name,
             d.family,
             d.redlist_category,
             d.has_dna_species_level,
             d.genus_has_dna,
             d.family_has_dna,
+            coalesce(g.goat_data_deficient, true),
             e.edge_group_name,
-            g.meets_ebp
+            coalesce(g.meets_ebp, false)
         FROM tabular.dna d
         LEFT JOIN tabular.edge e USING (gbif_accepted_id)
         LEFT JOIN (
             SELECT
                 gbif_accepted_id,
+                min(cast(taxon_id AS VARCHAR)) FILTER (WHERE taxon_id IS NOT NULL)
+                    AS goat_taxon_id,
+                NOT bool_or(taxon_id IS NOT NULL) AS goat_data_deficient,
                 bool_or(
                     ebp_standard_criteria IS NOT NULL
                     AND (
@@ -432,7 +482,7 @@ def validate_source_database(
         failures.append(f"SpecInfo contains {duplicate_species} duplicate IDs")
 
     resolutions: dict[str, Any] = {}
-    for resolution in (3, 7):
+    for resolution in sorted(map(int, h3_reports)):
         table = f"H3Res{resolution}Species"
         joined = connection.execute(
             f"""
@@ -493,12 +543,50 @@ def write_report(report: dict[str, Any], target: Path) -> None:
     print(f"Wrote validation report: {target}")
 
 
-def build_database(target: Path, overwrite: bool = False) -> dict[str, Any]:
+def build_database(
+    target: Path,
+    overwrite: bool = False,
+    *,
+    resolutions: tuple[int, ...] = (3, 7),
+    deep_validation: bool = True,
+    require_lossless: bool = True,
+    species_path: Path | None = None,
+    species_systems_path: Path | None = None,
+    h3_paths: dict[int, Path] | None = None,
+    crosswalk_path: Path | None = None,
+) -> dict[str, Any]:
     if target.exists() and not overwrite:
         raise FileExistsError(
             f"{target} already exists; pass --overwrite to replace it after a backup"
         )
-    for required in (TABULAR_DB_PATH, H3_RES3_PARQUET, H3_RES7_PARQUET):
+    resolutions = tuple(sorted(set(resolutions)))
+    if not resolutions or not set(resolutions) <= {3, 7}:
+        raise ValueError("resolutions must contain 3 and/or 7")
+    species_path = species_path if species_path is not None else SPECIES_PARQUET
+    species_systems_path = (
+        species_systems_path
+        if species_systems_path is not None
+        else SPECIES_SYSTEMS_PARQUET
+    )
+    h3_paths = h3_paths or {3: H3_RES3_PARQUET, 7: H3_RES7_PARQUET}
+    crosswalk_path = (
+        crosswalk_path if crosswalk_path is not None else H3_ID_CROSSWALK_PATH
+    )
+    required_paths = [h3_paths[resolution] for resolution in resolutions]
+    if species_path is None:
+        if species_systems_path is not None:
+            raise ValueError(
+                "species_path and species_systems_path must be provided together"
+            )
+        required_paths.append(TABULAR_DB_PATH)
+    else:
+        if species_systems_path is None:
+            raise ValueError(
+                "species_path and species_systems_path must be provided together"
+            )
+        required_paths.extend([species_path, species_systems_path])
+    for required in required_paths:
+        assert required is not None
         if not required.exists():
             raise FileNotFoundError(required)
 
@@ -508,21 +596,33 @@ def build_database(target: Path, overwrite: bool = False) -> dict[str, Any]:
         scratch.unlink()
     connection = duckdb.connect(str(scratch))
     try:
-        connection.execute(
-            f"ATTACH {sql_path(TABULAR_DB_PATH)} AS tabular (READ_ONLY)"
-        )
-        if H3_ID_CROSSWALK_PATH is not None:
-            crosswalk_stats = validate_crosswalk(connection, H3_ID_CROSSWALK_PATH)
-        build_species_tables(connection)
+        if species_path is None:
+            connection.execute(
+                f"ATTACH {sql_path(TABULAR_DB_PATH)} AS tabular (READ_ONLY)"
+            )
+        if crosswalk_path is not None:
+            crosswalk_stats = validate_crosswalk(connection, crosswalk_path)
+        build_species_tables(connection, species_path, species_systems_path)
         h3_reports = {
-            "3": build_h3_table(
-                connection, 3, H3_RES3_PARQUET, H3_ID_CROSSWALK_PATH
-            ),
-            "7": build_h3_table(
-                connection, 7, H3_RES7_PARQUET, H3_ID_CROSSWALK_PATH
-            ),
+            str(resolution): build_h3_table(
+                connection,
+                resolution,
+                h3_paths[resolution],
+                crosswalk_path,
+                deep_validation=deep_validation,
+            )
+            for resolution in resolutions
         }
-        report = validate_source_database(connection, h3_reports)
+        if require_lossless:
+            report = validate_source_database(connection, h3_reports)
+        else:
+            report = {
+                "version": 1,
+                "status": "deferred",
+                "validation": "Structural checks only; lossless join audit deferred",
+                "resolutions": h3_reports,
+                "failures": [],
+            }
         if crosswalk_stats is not None:
             report["crosswalk"] = crosswalk_stats
         write_report(report, VALIDATION_REPORT_PATH)
@@ -554,8 +654,34 @@ def main() -> None:
         action="store_true",
         help="Back up and replace an existing source database.",
     )
+    parser.add_argument("--target", type=Path, default=DB_PATH)
+    parser.add_argument(
+        "--resolutions", type=int, nargs="+", choices=(3, 7), default=[3, 7]
+    )
+    parser.add_argument("--species-parquet", type=Path, default=SPECIES_PARQUET)
+    parser.add_argument(
+        "--species-systems-parquet", type=Path, default=SPECIES_SYSTEMS_PARQUET
+    )
+    parser.add_argument("--h3-res3", type=Path, default=H3_RES3_PARQUET)
+    parser.add_argument("--h3-res7", type=Path, default=H3_RES7_PARQUET)
+    parser.add_argument("--crosswalk", type=Path, default=H3_ID_CROSSWALK_PATH)
+    parser.add_argument(
+        "--defer-lossless-validation",
+        action="store_true",
+        help="Run structural checks but defer duplicate and full species-join audits.",
+    )
     args = parser.parse_args()
-    build_database(DB_PATH, overwrite=args.overwrite)
+    build_database(
+        args.target,
+        overwrite=args.overwrite,
+        resolutions=tuple(args.resolutions),
+        deep_validation=not args.defer_lossless_validation,
+        require_lossless=not args.defer_lossless_validation,
+        species_path=args.species_parquet,
+        species_systems_path=args.species_systems_parquet,
+        h3_paths={3: args.h3_res3, 7: args.h3_res7},
+        crosswalk_path=args.crosswalk,
+    )
 
 
 if __name__ == "__main__":

@@ -30,38 +30,33 @@
 #   temperature is shown (via ioreg, no sudo needed).
 # ---------------------------------------------------------------------------
 
-import duckdb
+import argparse
 import os
 import re
-import time
 import shutil
-import argparse
-import threading
 import subprocess
-from pathlib import Path
-from dataclasses import dataclass, field
+import threading
+import time
 from collections import deque
+from dataclasses import dataclass, field
+from pathlib import Path
 
-from dotenv import load_dotenv
-
+import duckdb
 import psutil
+from dotenv import load_dotenv
 from rich.console import Console, Group
+from rich.layout import Layout
 from rich.live import Live
 from rich.panel import Panel
-from rich.table import Table
-from rich.text import Text
-from rich.layout import Layout
 from rich.progress import (
-    Progress,
     BarColumn,
+    Progress,
     TextColumn,
     TimeElapsedColumn,
     TimeRemainingColumn,
-    MofNCompleteColumn,
-    DownloadColumn,
-    TransferSpeedColumn,
 )
-
+from rich.table import Table
+from rich.text import Text
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -332,7 +327,7 @@ class Display:
         return layout
 
     def _render_header(self) -> Panel:
-        title = f"Ark-IV H3 Aggregation Pipeline"
+        title = "Ark-IV H3 Aggregation Pipeline"
         subtitle = f"Step {self.step_num}/{self.step_total}: [bold cyan]{self.step_name}[/bold cyan]"
         if self.phase:
             subtitle += f"  —  [dim]{self.phase}[/dim]"
@@ -483,7 +478,6 @@ def step_partition(con, display, monitor):
     # Calculate expected output size from input (rough estimate — partitioned
     # output is typically ~1.4x the input due to per-file overhead + base_cell column)
     input_size_gb = sum(f.stat().st_size for f in Path(INPUT_DIR).glob("*.parquet")) / 1e9
-    estimated_output_gb = input_size_gb * 1.5
     display.log(f"Input size: {input_size_gb:.1f} GB across {len(list(Path(INPUT_DIR).glob('*.parquet')))} files")
     display.set_phase("Partitioning by (res, base_cell)…")
 

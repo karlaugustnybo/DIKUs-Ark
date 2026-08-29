@@ -27,13 +27,14 @@ Set `H3_ID_CROSSWALK_PATH` to a Parquet file containing:
 | `match_method` | recommended | Exact name, synonym, manual, etc. |
 | `match_confidence` | recommended | Machine-readable confidence |
 | `goat_taxon_id` | recommended | Matched GoaT/NCBI taxon |
-| `gbif_accepted_id` | optional | GBIF identifier when available |
+| `gbif_accepted_concept_key` | optional | Exact GBIF taxon identifier when available |
 
 The crosswalk currently produced by `scripts/match_iucn_goat_global.py` is
 accepted directly: `iucn_sis_id` becomes the stable application ID and
 `matched_ncbi_species_taxid` supplies the GoaT link. For compatibility, the
-adapter also accepts `gbif_accepted_id` as the application target when
-`app_species_id` is absent. There must be one non-null target per source ID.
+adapter also accepts the legacy `gbif_accepted_id` column as the application
+target when `app_species_id` is absent. That legacy field is an internal app
+key, not necessarily a GBIF identifier. There must be one non-null target per source ID.
 Many-to-one targets are rejected because they would silently collapse distinct
 IUCN species inside an H3 cell.
 
@@ -98,6 +99,11 @@ to expand more than 100 million relationships.
 - Aggregation runs one H3 base cell at a time. Within each partition, every
   species list is expanded once and all four system aggregates are calculated
   in that pass.
+- Before a completed partition is published, the builder verifies source and
+  output cell counts, lossless relationship totals, H3 resolution and base-cell
+  placement, duplicate cell rows, and internal metric consistency. The
+  temporary file is deleted on failure and never replaces the last valid
+  partition. Current-schema partitions are revalidated when a build resumes.
 - Tile rows are fetched from DuckDB in bounded batches.
 - GeoJSON sequences are piped directly into Tippecanoe. The build does not call
   `fetchall()` or materialize temporary GeoJSON files.
@@ -130,8 +136,9 @@ the current merged IUCN taxonomy file and 21 do not. The missing IDs are:
 ```
 
 These are an upstream-version mismatch, not a GoaT matching problem. The
-global species-dimension build must recover/alias them or explicitly document
-their removal; the source validator will otherwise stop the build.
+global species-dimension build retains them as explicit placeholders so H3
+coverage is lossless. Their source-specific identifiers and metadata remain
+null instead of being guessed; the build report lists every placeholder.
 
 The Denmark compatibility build also completed without loss:
 

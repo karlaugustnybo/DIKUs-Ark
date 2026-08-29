@@ -33,9 +33,11 @@ denmark_prototype/
 
 # Data files (except specific ones)
 data/**
-!data/Ark-IV.duckdb
-!data/precomputed_cache.duckdb
 !data/exports/
 !data/exports/.gitkeep
 !data/tiles/
 !data/tiles/.gitkeep
+
+# Generated boundary geometry partitions are rebuildable and are not used by
+# the browser. Keep the compact catalogues and canonical runtime geometry only.
+app/static/data/boundary-geometry/

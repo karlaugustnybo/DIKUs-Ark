@@ -11,12 +11,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 from datetime import datetime, timezone
 from pathlib import Path
 
 import duckdb
-
 
 REVIEWER = "AI-review (GPT-5.6 Sol)"
 TAXONOMIC_NAME_CLASSES = (

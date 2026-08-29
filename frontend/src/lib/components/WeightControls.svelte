@@ -24,8 +24,8 @@
         <div class="weight-row">
           <label for={control.key}>{control.label}</label>
           <div class="weight-controls">
-            <input id={control.key} type="range" min="0" max="10" step={control.step ?? 0.5} value={$weights[control.key]} on:input={(event) => setWeight(control.key, event.currentTarget.value)} />
-            <input aria-label={`${control.label} value`} class="weight-num" type="number" min="0" max="10" step={control.step ?? 0.5} value={$weights[control.key]} on:input={(event) => setWeight(control.key, event.currentTarget.value)} />
+            <input id={control.key} type="range" min="0" max="10" step={control.step ?? 0.5} value={$weights[control.key]} on:change={(event) => setWeight(control.key, event.currentTarget.value)} />
+            <input aria-label={`${control.label} value`} class="weight-num" type="number" min="0" max="10" step={control.step ?? 0.5} value={$weights[control.key]} on:change={(event) => setWeight(control.key, event.currentTarget.value)} />
           </div>
         </div>
       {/each}

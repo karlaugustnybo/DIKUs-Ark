@@ -55,6 +55,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/species/suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** SpeciesSuggestions */
+        get: operations["getSpeciesSuggestions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/species/{gbif_accepted_id}/cells": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** SpeciesCells */
+        get: operations["getSpeciesCells"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/cells/{h3_index}/species": {
         parameters: {
             query?: never;
@@ -72,35 +106,32 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/exports": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Exports */
-        get: operations["getExports"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** CellBoundaryMembership */
+        CellBoundaryMembership: {
+            framework: string;
+            framework_name: string;
+            code: string;
+            name: string;
+        };
         /** CellDetailsResponse */
         CellDetailsResponse: {
             h3_index: string;
+            resolution: number;
+            boundaries?: components["schemas"]["CellBoundaryMembership"][];
             species?: components["schemas"]["CellSpeciesRow"][];
             stats?: components["schemas"]["CellStats"];
         };
         /** CellSpeciesRow */
         CellSpeciesRow: {
+            gbif_accepted_id: string;
+            iucn_sis_id: string | null;
+            iucn_assessment_id: string | null;
+            gbif_taxon_id: string | null;
+            goat_taxon_id: string | null;
             species_name: string;
             family: string;
             redlist_category: string;
@@ -128,18 +159,21 @@ export interface components {
             missing_genus_dna: number;
             /** @default 0 */
             missing_family_dna: number;
-        };
-        /** ExportInfo */
-        ExportInfo: {
-            format: string;
-            url: string;
-            media_type: string;
+            /** @default 0 */
+            goat_data_deficient: number;
         };
         /** HealthResponse */
         HealthResponse: {
             status: string;
             database: string;
             tiles: string;
+        };
+        /** SpeciesCellsResponse */
+        SpeciesCellsResponse: {
+            gbif_accepted_id: string;
+            species_name: string;
+            resolution: number;
+            cells?: string[];
         };
         /** SpeciesPage */
         SpeciesPage: {
@@ -150,15 +184,34 @@ export interface components {
             total_pages: number;
             /** @default 0 */
             total: number;
+            /** @default false */
+            suggested: boolean;
         };
         /** SpeciesRow */
         SpeciesRow: {
+            gbif_accepted_id: string;
+            iucn_sis_id: string | null;
+            iucn_assessment_id: string | null;
+            gbif_taxon_id: string | null;
+            goat_taxon_id: string | null;
             species_name: string;
             family: string;
             redlist_category: string;
             threat_score: number;
             dna_level: string;
             priority: number;
+        };
+        /** SpeciesSuggestion */
+        SpeciesSuggestion: {
+            gbif_accepted_id: string;
+            species_name: string;
+            family: string;
+        };
+        /** SpeciesSuggestions */
+        SpeciesSuggestions: {
+            rows?: components["schemas"]["SpeciesSuggestion"][];
+            /** @default false */
+            suggested: boolean;
         };
         /** StatsResponse */
         StatsResponse: {
@@ -235,8 +288,17 @@ export interface operations {
                 sp?: number;
                 gen?: number;
                 fam?: number;
+                gdd?: number;
                 samp?: number;
                 cov?: number;
+                redlist?: string;
+                dna?: string;
+                systems?: string;
+                admin0?: string;
+                admin1?: string;
+                municipality?: string;
+                eez?: string;
+                conservation_framework?: string;
             };
             header?: never;
             path?: never;
@@ -251,6 +313,83 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SpeciesPage"];
+                };
+            };
+            /** @description Bad request syntax or unsupported method */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        status_code: number;
+                        detail: string;
+                        extra?: null | {
+                            [key: string]: unknown;
+                        } | unknown[];
+                    };
+                };
+            };
+        };
+    };
+    getSpeciesSuggestions: {
+        parameters: {
+            query?: {
+                search?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Request fulfilled, document follows */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpeciesSuggestions"];
+                };
+            };
+            /** @description Bad request syntax or unsupported method */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        status_code: number;
+                        detail: string;
+                        extra?: null | {
+                            [key: string]: unknown;
+                        } | unknown[];
+                    };
+                };
+            };
+        };
+    };
+    getSpeciesCells: {
+        parameters: {
+            query?: {
+                resolution?: number;
+            };
+            header?: never;
+            path: {
+                gbif_accepted_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Request fulfilled, document follows */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpeciesCellsResponse"];
                 };
             };
             /** @description Bad request syntax or unsupported method */
@@ -306,26 +445,6 @@ export interface operations {
                             [key: string]: unknown;
                         } | unknown[];
                     };
-                };
-            };
-        };
-    };
-    getExports: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Request fulfilled, document follows */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ExportInfo"][];
                 };
             };
         };

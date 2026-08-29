@@ -2,7 +2,7 @@
   "info": {
     "title": "Ark-IV API",
     "version": "1.0.0",
-    "description": "Typed serving API for species and H3 cell details. Map movement is served by PMTiles."
+    "description": "Typed serving API for species and H3 cell details. Coarse map data uses PMTiles and fine global cells use cached on-demand tiles."
   },
   "openapi": "3.1.0",
   "servers": [
@@ -228,6 +228,18 @@
             "allowReserved": false
           },
           {
+            "name": "gdd",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 4.0
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
             "name": "samp",
             "in": "query",
             "schema": {
@@ -250,6 +262,102 @@
             "deprecated": false,
             "allowEmptyValue": false,
             "allowReserved": false
+          },
+          {
+            "name": "redlist",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "dna",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "systems",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "admin0",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "admin1",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "municipality",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "eez",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "conservation_framework",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
           }
         ],
         "responses": {
@@ -260,6 +368,173 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SpeciesPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": [
+                        "null",
+                        "object",
+                        "array"
+                      ]
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "detail",
+                    "status_code"
+                  ],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/species/suggestions": {
+      "get": {
+        "summary": "SpeciesSuggestions",
+        "operationId": "getSpeciesSuggestions",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "maximum": 20.0,
+              "minimum": 1.0,
+              "default": 8
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpeciesSuggestions"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request syntax or unsupported method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "detail": {
+                      "type": "string"
+                    },
+                    "extra": {
+                      "additionalProperties": {},
+                      "type": [
+                        "null",
+                        "object",
+                        "array"
+                      ]
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "detail",
+                    "status_code"
+                  ],
+                  "description": "Validation Exception",
+                  "examples": [
+                    {
+                      "status_code": 400,
+                      "detail": "Bad Request",
+                      "extra": {}
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/species/{gbif_accepted_id}/cells": {
+      "get": {
+        "summary": "SpeciesCells",
+        "operationId": "getSpeciesCells",
+        "parameters": [
+          {
+            "name": "gbif_accepted_id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "resolution",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 3
+            },
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "allowReserved": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request fulfilled, document follows",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpeciesCellsResponse"
                 }
               }
             }
@@ -398,37 +673,47 @@
         },
         "deprecated": false
       }
-    },
-    "/api/exports": {
-      "get": {
-        "summary": "Exports",
-        "operationId": "getExports",
-        "responses": {
-          "200": {
-            "description": "Request fulfilled, document follows",
-            "headers": {},
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/ExportInfo"
-                  },
-                  "type": "array"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": false
-      }
     }
   },
   "components": {
     "schemas": {
+      "CellBoundaryMembership": {
+        "properties": {
+          "framework": {
+            "type": "string"
+          },
+          "framework_name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "framework",
+          "framework_name",
+          "name"
+        ],
+        "title": "CellBoundaryMembership"
+      },
       "CellDetailsResponse": {
         "properties": {
           "h3_index": {
             "type": "string"
+          },
+          "resolution": {
+            "type": "integer"
+          },
+          "boundaries": {
+            "items": {
+              "$ref": "#/components/schemas/CellBoundaryMembership"
+            },
+            "type": "array"
           },
           "species": {
             "items": {
@@ -442,12 +727,56 @@
         },
         "type": "object",
         "required": [
-          "h3_index"
+          "h3_index",
+          "resolution"
         ],
         "title": "CellDetailsResponse"
       },
       "CellSpeciesRow": {
         "properties": {
+          "gbif_accepted_id": {
+            "type": "string"
+          },
+          "iucn_sis_id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "iucn_assessment_id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gbif_taxon_id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "goat_taxon_id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "species_name": {
             "type": "string"
           },
@@ -465,6 +794,11 @@
         "required": [
           "dna_level",
           "family",
+          "gbif_accepted_id",
+          "gbif_taxon_id",
+          "goat_taxon_id",
+          "iucn_assessment_id",
+          "iucn_sis_id",
           "redlist_category",
           "species_name"
         ],
@@ -511,31 +845,15 @@
           "missing_family_dna": {
             "type": "integer",
             "default": 0
+          },
+          "goat_data_deficient": {
+            "type": "integer",
+            "default": 0
           }
         },
         "type": "object",
         "required": [],
         "title": "CellStats"
-      },
-      "ExportInfo": {
-        "properties": {
-          "format": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
-          },
-          "media_type": {
-            "type": "string"
-          }
-        },
-        "type": "object",
-        "required": [
-          "format",
-          "media_type",
-          "url"
-        ],
-        "title": "ExportInfo"
       },
       "HealthResponse": {
         "properties": {
@@ -557,6 +875,32 @@
         ],
         "title": "HealthResponse"
       },
+      "SpeciesCellsResponse": {
+        "properties": {
+          "gbif_accepted_id": {
+            "type": "string"
+          },
+          "species_name": {
+            "type": "string"
+          },
+          "resolution": {
+            "type": "integer"
+          },
+          "cells": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object",
+        "required": [
+          "gbif_accepted_id",
+          "resolution",
+          "species_name"
+        ],
+        "title": "SpeciesCellsResponse"
+      },
       "SpeciesPage": {
         "properties": {
           "rows": {
@@ -576,6 +920,10 @@
           "total": {
             "type": "integer",
             "default": 0
+          },
+          "suggested": {
+            "type": "boolean",
+            "default": false
           }
         },
         "type": "object",
@@ -584,6 +932,49 @@
       },
       "SpeciesRow": {
         "properties": {
+          "gbif_accepted_id": {
+            "type": "string"
+          },
+          "iucn_sis_id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "iucn_assessment_id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gbif_taxon_id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "goat_taxon_id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "species_name": {
             "type": "string"
           },
@@ -607,12 +998,54 @@
         "required": [
           "dna_level",
           "family",
+          "gbif_accepted_id",
+          "gbif_taxon_id",
+          "goat_taxon_id",
+          "iucn_assessment_id",
+          "iucn_sis_id",
           "priority",
           "redlist_category",
           "species_name",
           "threat_score"
         ],
         "title": "SpeciesRow"
+      },
+      "SpeciesSuggestion": {
+        "properties": {
+          "gbif_accepted_id": {
+            "type": "string"
+          },
+          "species_name": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "family",
+          "gbif_accepted_id",
+          "species_name"
+        ],
+        "title": "SpeciesSuggestion"
+      },
+      "SpeciesSuggestions": {
+        "properties": {
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/SpeciesSuggestion"
+            },
+            "type": "array"
+          },
+          "suggested": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [],
+        "title": "SpeciesSuggestions"
       },
       "StatsResponse": {
         "properties": {

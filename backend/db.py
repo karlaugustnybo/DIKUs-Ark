@@ -7,8 +7,7 @@ import asyncpg
 from litestar import Litestar
 from litestar.datastructures import State
 
-from backend.config import get_settings
-
+from backend.config import ROOT, get_settings
 
 Pool = asyncpg.Pool
 
@@ -22,6 +21,7 @@ async def database_lifespan(app: Litestar) -> AsyncGenerator[None]:
         max_size=settings.db_pool_max_size,
         command_timeout=30,
     )
+    await apply_schema(pool, ROOT / "backend" / "schema.sql")
     app.state.db_pool = pool
     try:
         yield

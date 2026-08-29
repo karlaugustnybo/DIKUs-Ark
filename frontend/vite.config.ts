@@ -8,6 +8,10 @@ export default defineConfig(({ mode }) => {
   if (!target) throw new Error('BACKEND_PROXY_TARGET must be set in frontend/.env');
   return {
     plugins: [tailwindcss(), sveltekit()],
+    // MapLibre owns its worker bundle. Letting Vite prebundle the worker as a
+    // normal dependency produced stale `.vite/deps/maplibre-gl-worker.mjs`
+    // references after hot updates.
+    optimizeDeps: { exclude: ['maplibre-gl'] },
     server: {
       host: env.FRONTEND_HOST || '127.0.0.1',
       port: Number(env.FRONTEND_PORT || 5173),

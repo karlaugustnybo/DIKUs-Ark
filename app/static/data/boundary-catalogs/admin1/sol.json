@@ -1,0 +1,1 @@
+{"version":1,"framework":"admin1","source":"https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-1-states-provinces/","source_version":"5.1.1","license":"Public domain","features":[{"code":"SOL+00?","name":"Somaliland","parent_code":"SOL","region":null,"boundary_type":null,"geometry_url":"/data/boundary-geometry/admin1/sol.geojson"}]}
