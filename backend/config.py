@@ -4,6 +4,8 @@ from pathlib import Path
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from ark_pipeline.spatial.paths import municipality_geometry_path
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -30,7 +32,7 @@ class Settings(BaseSettings):
     # Country selection includes both land and the matching maritime zone.
     jurisdictions_path: Path = ROOT / "data" / "boundaries" / "country-scope.geojson"
     admin1_boundaries_path: Path = ROOT / "app" / "static" / "data" / "boundaries" / "admin1.geojson"
-    municipality_boundaries_path: Path = ROOT / "app" / "static" / "data" / "boundaries" / "municipality.geojson"
+    municipality_boundaries_path: Path = municipality_geometry_path()
     eez_boundaries_path: Path = ROOT / "data" / "boundaries" / "eez.geojson"
     conservation_boundaries_path: Path = ROOT / "app" / "static" / "data" / "boundaries" / "conservation-framework.geojson"
     boundary_frameworks_path: Path = ROOT / "app" / "static" / "data" / "boundary-frameworks.json"

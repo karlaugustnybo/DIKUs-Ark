@@ -18,8 +18,8 @@ from pathlib import Path
 import duckdb
 import h3
 
-from app.build_cache import METRICS
-from app.jurisdictions import load_jurisdiction_index
+from ark_pipeline.builders.coarse_cache import METRICS
+from ark_pipeline.spatial.boundaries import load_jurisdiction_index
 
 SYSTEM_NAMES = {
     "all": "all",
@@ -206,7 +206,7 @@ def render_tile(
             for framework, (_, selected_codes) in active_boundaries.items()
         ):
             continue
-        # The metric order is the stable order of app.build_cache.METRICS.
+        # The metric order is the stable order of ark_pipeline.builders.coarse_cache.METRICS.
         # Sending values positionally removes dozens of repeated JSON keys per
         # cell. Geometry is reconstructed by H3HexagonLayer on the GPU-friendly
         # instanced path.

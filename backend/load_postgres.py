@@ -44,7 +44,7 @@ async def load() -> None:
                 "gbif_taxon_id", "goat_taxon_id", "species_name", "family", "redlist_category",
                 "has_dna_species_level", "genus_has_dna", "family_has_dna",
                 "goat_data_deficient",
-                "edge_group_name", "meets_ebp",
+                "edge_group_name", "has_ebp_criteria_evidence",
             ]
             await connection.copy_records_to_table("species", records=rows(settings.export_dir / "species.parquet", species_columns), columns=species_columns)
             system_columns = ["gbif_accepted_id", "system"]

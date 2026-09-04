@@ -19,7 +19,7 @@ from litestar.openapi.config import OpenAPIConfig
 from litestar.params import Parameter
 from litestar.response import File
 
-from app.jurisdictions import load_jurisdiction_index
+from ark_pipeline.spatial.boundaries import load_jurisdiction_index
 from backend.config import get_settings
 from backend.db import database_lifespan, get_pool
 from backend.models import (

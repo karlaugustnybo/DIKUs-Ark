@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS species (
     family_has_dna BOOLEAN NOT NULL,
     goat_data_deficient BOOLEAN NOT NULL DEFAULT false,
     edge_group_name TEXT,
-    meets_ebp BOOLEAN
+    has_ebp_criteria_evidence BOOLEAN
 );
 ALTER TABLE species ALTER COLUMN species_name DROP NOT NULL;
 ALTER TABLE species ADD COLUMN IF NOT EXISTS iucn_sis_id TEXT;
@@ -37,6 +37,7 @@ ALTER TABLE species ADD COLUMN IF NOT EXISTS iucn_assessment_id TEXT;
 ALTER TABLE species ADD COLUMN IF NOT EXISTS gbif_taxon_id TEXT;
 ALTER TABLE species ADD COLUMN IF NOT EXISTS goat_taxon_id TEXT;
 ALTER TABLE species ADD COLUMN IF NOT EXISTS goat_data_deficient BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE species ADD COLUMN IF NOT EXISTS has_ebp_criteria_evidence BOOLEAN;
 
 CREATE TABLE IF NOT EXISTS species_systems (
     gbif_accepted_id TEXT NOT NULL REFERENCES species(gbif_accepted_id) ON DELETE CASCADE,
