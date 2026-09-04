@@ -4,6 +4,21 @@ This document describes the integration boundary between the global IUCN/GoaT
 species work and the H3/map build. The H3 validation and tile plumbing can run
 before the final crosswalk is available.
 
+The new workflow exports compatible lists directly with `just spatial` (or
+`just data-aggregate` after pair generation). Set `GLOBAL_H3_ROOT` to the
+reported `serving/current` directory and run `just global-prepare`. It uses
+registered metadata snapshots and requires a crosswalk matching those source
+versions. See [the pipeline guide](01_data_pipeline.md) for the complete sequence.
+
+After generating pairs, `just data-prepare` performs that handoff automatically:
+pair aggregation, species metadata, the coarse map, and fine metrics.
+Add `--tiles` to continue through the complete static PMTiles archive. The
+managed export is also available as `just data-tiles`; it reads the verified
+preparation record and publishes archive/metadata together under
+`GLOBAL_PREVIEW_ROOT/tiles/current/`. See [tile profiling and publication](../performance/tile_export_performance.md).
+Use `--dry-run` to inspect paths first. Subsequent serving commands still need
+`GLOBAL_H3_ROOT` set to the same source generation, as described in the guide.
+
 ## Inputs
 
 The completed global H3 aggregates have this schema:
@@ -29,7 +44,7 @@ Set `H3_ID_CROSSWALK_PATH` to a Parquet file containing:
 | `goat_taxon_id` | recommended | Matched GoaT/NCBI taxon |
 | `gbif_accepted_concept_key` | optional | Exact GBIF taxon identifier when available |
 
-The crosswalk currently produced by `scripts/match_iucn_goat_global.py` is
+The crosswalk currently produced by `ark_pipeline/cli/crosswalk_match.py` is
 accepted directly: `iucn_sis_id` becomes the stable application ID and
 `matched_ncbi_species_taxid` supplies the GoaT link. For compatibility, the
 adapter also accepts the legacy `gbif_accepted_id` column as the application
@@ -43,7 +58,7 @@ IUCN species inside an H3 cell.
 Structural validation does not need species metadata:
 
 ```bash
-uv run python -m app.validate_h3_input \
+uv run python -m ark_pipeline.cli.spatial_validate \
   --res3 "/path/to/h3_res3_species_global_merged.parquet" \
   --res7 "/path/to/h3_res7_species_global_merged.parquet" \
   --output data/validation/global-h3.json
@@ -68,18 +83,18 @@ After the crosswalk and global species tables are ready:
 H3_RES3_PARQUET=/path/to/h3_res3_species_global_merged.parquet \
 H3_RES7_PARQUET=/path/to/h3_res7_species_global_merged.parquet \
 H3_ID_CROSSWALK_PATH=/path/to/iucn_goat_crosswalk.parquet \
-uv run python app/build_db.py --overwrite
+uv run python ark_pipeline/builders/source_database.py --overwrite
 
-uv run python app/build_cache.py \
+uv run python ark_pipeline/builders/coarse_cache.py \
   --rebuild-aggregates \
   --skip-expanded-cell-species
 ```
 
-`build_db.py` writes `data/validation/source-validation.json` before replacing
+`builders/source_database.py` writes `data/validation/source-validation.json` before replacing
 the existing source database. It refuses to publish a build with unmatched
 relationships, duplicate mappings, missing species metadata, or dropped cells.
 
-`build_cache.py` writes `data/validation/build-validation.json`. It checks that
+`builders/coarse_cache.py` writes `data/validation/build-validation.json`. It checks that
 the all-system cell and relationship totals equal the normalized source after
 the `SpecInfo` join.
 
@@ -96,14 +111,23 @@ to expand more than 100 million relationships.
 - Habitat layers are derived from each species' IUCN systems.
 - IUCN IDs are retained as the global application key, so normalizing the H3
   files does not expand and regroup their 30+ billion relationships.
-- Aggregation runs one H3 base cell at a time. Within each partition, every
-  species list is expanded once and all four system aggregates are calculated
-  in that pass.
+- Fine aggregation runs one H3 base cell at a time using bounded Arrow batches.
+  Metric predicates are evaluated once per species; numeric species IDs gather
+  those flags and NumPy sums them within each list. All four ecosystem systems
+  and their exact threat/DNA joint counts use the existing metric definitions.
+  H3 IDs become strings once per output cell. This removes the full-partition
+  relationship join, string conversion, and metric hash aggregation.
+- Reuse also requires a checksum receipt matching the source partition, species
+  and system metadata, aggregation code, and dependency versions. Changing DNA
+  evidence or threat status invalidates the scores even if cell counts match.
+  Existing unreceipted partitions rebuild once.
 - Before a completed partition is published, the builder verifies source and
   output cell counts, lossless relationship totals, H3 resolution and base-cell
   placement, duplicate cell rows, and internal metric consistency. The
   temporary file is deleted on failure and never replaces the last valid
   partition. Current-schema partitions are revalidated when a build resumes.
+  Switching to the native reducer invalidates previous metric receipts once;
+  geometry/pair receipts and list exports are unaffected.
 - Tile rows are fetched from DuckDB in bounded batches.
 - GeoJSON sequences are piped directly into Tippecanoe. The build does not call
   `fetchall()` or materialize temporary GeoJSON files.
@@ -112,6 +136,12 @@ H3 polygon boundaries are still produced incrementally with the H3 C-backed
 Python package. Memory use is bounded, but a full 96-million-cell tile build
 will remain CPU- and I/O-intensive and should be benchmarked by base-cell or
 geographic slice before the production run.
+
+The native metric reducer was 3.23× faster than the previous SQL implementation
+on a 12,000-cell sample containing 3,000,214 relationships, including Parquet
+writing (median 1.10 s versus 3.55 s, three alternating runs, one thread). All
+164 metric columns matched exactly. This is a single-partition sample, not a
+global throughput estimate. See [the benchmark and reproduction command](../performance/serving_metrics_performance.md).
 
 ## Verified baseline
 

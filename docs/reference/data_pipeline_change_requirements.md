@@ -6,7 +6,7 @@ It intentionally does not prescribe an implementation. Algorithm choice,
 storage layout, orchestration, and optimization strategy belong to the person
 implementing and benchmarking the pipeline.
 
-The recovered PC v3 pipeline under `recovered/pc/pipeline_v3/` is useful
+The recovered PC v3 pipeline under `archive/pc/pipeline_v3/` is useful
 historical evidence and a reasonable starting point, but it is not the current
 production specification.
 
@@ -40,29 +40,67 @@ validation report and user-facing data documentation.
 
 The current artifacts were produced from center-point containment semantics:
 `h3.geo_to_cells()` includes cells whose center is inside the processed
-polygon. A polygon that only touches a cell boundary is therefore not included
-unless the chosen semantics explicitly say otherwise.
+polygon. That behavior is historical evidence, not the semantic definition for
+the replacement pipeline.
 
-The following questions must have unambiguous answers before a new build is
-accepted:
+For polygon range data, a species is present in a resolution-7 cell when the
+closed source range polygon and the closed cell polygon intersect at any point.
+A pure boundary-edge or corner-vertex touch counts even when the intersection
+has zero area. Presence means that the cell touches or overlaps the species'
+mapped range; it does not claim a point observation, suitable habitat, current
+occupancy, or presence throughout the cell.
 
-- whether presence means center containment, any overlap, full containment, or
-  another documented rule;
-- how exact border touches are handled;
-- how holes, multipolygons, invalid geometries, very small polygons, narrow
-  ranges, and antimeridian-crossing ranges are handled;
-- whether geometry repair is allowed to change coverage and how that change is
-  reported;
-- whether simplification is permitted in the authoritative build;
-- whether resolution 3 is calculated independently or derived from
-  resolution-7 children; and
-- what a displayed resolution-3 cell claims about the species' distribution
-  inside that large cell.
+Polygon semantics must be preserved consistently:
 
-An exact authoritative profile and an approximate fast profile may coexist,
-but their outputs, manifests, and user-visible labels must never be
-interchangeable. Any approximate profile must report measured error against the
-authoritative semantics on representative global geometries.
+- holes exclude coverage and multipolygon components contribute their union;
+- very small, narrow, fragmented, and valid non-empty ranges must not disappear
+  merely because they contain no H3 cell center;
+- antimeridian-crossing ranges have the same intersection meaning as all other
+  ranges; and
+- numerical handling of boundary-only contact must be deterministic and
+  covered by validation fixtures.
+
+Invalid geometry may be repaired only by a deterministic, documented method.
+The build must report the original validity problem, the repair applied, and
+the resulting coverage change. A repair that causes a large or unexplained
+change must fail validation rather than silently alter the range.
+
+Topology-preserving simplification is permitted in routine builds. Routine
+builds are not required to repeat a complete unsimplified global calculation
+or prove cell-set equality for every source geometry. Instead, simplification
+tolerances and routing rules must be approved through a versioned calibration
+benchmark against unsimplified geometries. The benchmark must cover
+representative and adversarial global geometries and report omitted cells,
+added cells, boundary displacement, and geometries that lose all coverage.
+Errors must be reported per geometry or species as well as globally so that
+large ranges cannot hide failures on small ranges. No valid, non-empty source
+geometry may silently lose all resolution-7 coverage.
+
+Calibration must be repeated when the algorithm, tolerance,
+geometry-processing dependencies, or source characteristics materially
+change. Acceptable false-negative and false-positive limits must be fixed from
+the first controlled calibration benchmark and recorded in the semantic
+profile. The source's spatial precision, including IUCN's 2 x 2 km Area of
+Occupancy convention where relevant, may inform that error policy but does not
+by itself prove that an arbitrary simplification or buffer is safe.
+
+Border expansion followed by center containment may be used as a conservative
+candidate-generation method or as part of a documented approximate profile. It
+must not be described as exact cell intersection: expansion can add cells that
+do not intersect the original polygon and can change holes, narrow gaps, and
+coastlines. Its measured omissions and additions must be included in the same
+calibration evidence as simplification.
+
+Resolution 3 is derived from resolution-7 membership rather than calculated
+independently from the source polygon. A displayed resolution-3 cell claims
+only that at least one resolution-7 child assigned to it intersects the
+species' mapped range. It does not claim that the species occupies the whole
+resolution-3 cell or that every location in it is suitable.
+
+An exact reference calculation and an approximate production profile may
+coexist, but their outputs, manifests, and user-visible labels must never be
+interchangeable. The reference calculation may be limited to the calibration
+corpus; it is not a mandatory full-global stage of every release build.
 
 ## Required correction of legacy v3 behavior
 
@@ -117,9 +155,18 @@ every stage. A completed build must fail when reconciliation cannot be proven.
 
 ## Identity and metadata consistency
 
-The stable application identity must remain distinct from GBIF, GoaT/NCBI,
-IUCN assessment, and other provider-specific identifiers. Name matching must
-not silently turn an ambiguous match into an authoritative crosswalk.
+The stable application species identity is the IUCN SIS/internal taxon ID used
+by the source range rows and H3 pair relations. It must remain distinct from
+the IUCN assessment ID, GBIF taxon ID, GoaT/NCBI taxon ID, and every other
+source-specific identifier. These identifiers must travel in explicitly named
+crosswalk fields and must not replace or collapse the application identity.
+
+New pipeline schemas and artifacts must use `iucn_sis_id` or an explicitly
+defined generic application-key field whose value is the IUCN SIS/internal
+taxon ID. They must not use the obsolete `gbif_accepted_id` field name for the
+application key: that legacy name is misleading and is no longer part of the
+global pipeline contract. Name matching must not silently turn an ambiguous
+match into an authoritative crosswalk.
 
 If multiple source rows disagree on taxonomy, threat status, DNA evidence, or
 another species-level field, the build must expose the conflict and apply a
@@ -205,11 +252,22 @@ private paths, and other provider-derived artifacts must remain outside Git.
 Private prebuilt packs must carry the same manifest and validation evidence as
 locally built packs.
 
-## IUCN point and bird data readiness
+## IUCN point, HydroBASINS, and bird data readiness
 
-The recovered PC code contains no implementation for IUCN point data or the
-separately provided bird data. The new pipeline must be extensible to both
-without redefining existing polygon coverage.
+The recovered PC code contained no implementation for IUCN point data,
+HydroBASINS relationship tables, or the separately provided bird data. The
+current pipeline now integrates the first two without redefining range-polygon
+coverage: points use their containing fine cell, and basin relationships join
+to a reusable v1c any-touch basin index. Source archives, receipts, normalized
+basin relationships, and audits retain their route identity before the common
+serving union. Bird integration remains unimplemented.
+
+The ordinary serving lists intentionally collapse evidence type to a distinct
+species/cell set. This is efficient for current richness and priority metrics,
+but does not yet satisfy a provenance-aware interface that lets a user render
+point, basin, and range evidence separately. That remains an explicit product
+acceptance gap rather than an implicit claim that the evidence types are
+equivalent.
 
 Before either source is accepted, the build requirements must identify:
 

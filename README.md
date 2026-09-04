@@ -14,6 +14,78 @@ artifacts are intentionally excluded. Read [the data publication
 policy](DATA_POLICY.md), [source credits](NOTICE.md), and [the publication
 checklist](docs/publication_checklist.md) before publishing or deploying data.
 
+Start with the [documentation index](docs/README.md) or the
+[pipeline guide](docs/pipeline/01_data_pipeline.md). Pipeline guides are numbered
+in reading order. Historical experiments live in a local-only, Git-ignored
+`archive/`; a normal clone does not need it.
+
+## Repository layout
+
+| Directory | Contents |
+| --- | --- |
+| `ark_pipeline/cli/` | Acquisition, spatial processing, orchestration and benchmark entry points |
+| `ark_pipeline/builders/` | Serving database, species, metrics and boundary builders |
+| `ark_pipeline/spatial/` | Coverage kernels, jurisdiction membership and boundary paths |
+| `ark_pipeline/aggregation/` | Pair reduction, species lists and native metrics |
+| `ark_pipeline/runtime/` | Resources, progress, estimates, checkpoints and provenance |
+| `backend/` | API and PostgreSQL serving |
+| `frontend/` | Svelte application and frontend tests |
+| `app/static/` | Shared browser assets and checked-in boundary catalogues |
+| `config/` | Source inventories and supported spatial profiles |
+| `scripts/` | Development ports, release checks and species-search diagnostics |
+| `tests/` | Supported Python regression tests |
+| `docs/` | Ordered pipeline guides, reference material and performance reports |
+
+`data/`, `acquisition/`, `.tmp/` and `archive/` hold ignored local artifacts.
+Do not move data roots or edit provenance receipts to accommodate code changes.
+The [pipeline code map](ark_pipeline/README.md) describes each module in stage order.
+
+## Pipeline quick start
+
+The [methodology](methodology.md) documents scientific assumptions, source-field
+lineage, geometry processing, taxonomy/DNA rules, scoring, implementation choices
+and validation limits. See the [roadmap assumption audit](docs/reference/roadmap_assumption_audit.md)
+for the decisions that still require evidence or biological review.
+
+The source workflow is documented in [data acquisition](docs/pipeline/02_data_acquisition.md),
+and the spatial-to-H3 stage in [spatial rebuild](docs/pipeline/04_spatial_rebuild.md).
+Run `just data-build` for the complete workflow from source acquisition through
+range-polygon, point, and HydroBASINS pairs, species lists, metadata,
+coarse/fine metrics and static map tiles.
+Use `just data-build --dry-run` to preview it and `just data-update` to refresh
+sources and run the same workflow. Both automatically build or reuse the
+IUCN–GoaT crosswalk from verified IUCN, GoaT and NCBI snapshots before expensive
+processing. Uncertain matches remain unresolved and are recorded for review.
+`just data-status` provides a read-only source and spatial-output summary.
+After acquisition, `just data-benchmark` runs the existing stratified polygon
+fixture through all build stages and reports stage timings and a projected total.
+That benchmark does not yet project point-CSV or HydroBASINS phases; the full
+build dashboard reports their measured work without folding it into a
+polygon-only ETA.
+Use `--workers 4` to set parallelism, `--max-per-bin 10` for a smaller stratified
+subset, or `--dry-run` to preview it. See the [benchmark guide](docs/pipeline/08_pipeline_benchmark.md).
+Both commands show a Rich dashboard with incremental progress, benchmark-informed
+ETAs, CPU/RAM and worker counts. Progress is checkpointed on Ctrl+C; repeat the
+same command to restore compatible unfinished state. Use `--ui plain` for logs
+or `--fresh` for a new dashboard history/benchmark run.
+Set `PIPELINE_WORKERS=4` in `.env`, or run `just data-build --workers 4`, to share
+one parallelism setting across the compute stages. The default `auto` reserves
+memory for the desktop. `--metric-workers`, `--duckdb-threads` and
+`--tile-threads` provide stage overrides; dry runs show all effective counts.
+After generating pairs, `just data-aggregate` builds fine/coarse species lists
+without metadata. `just data-prepare` continues through aggregation,
+metadata, the coarse map, and fine metrics using the selected spatial profile.
+It requires a current crosswalk; add `--crosswalk-mode refresh` to select the
+automatic crosswalk workflow. `just data-prepare --dry-run` shows its plan.
+Use `just data-prepare --tiles` to finish with a static PMTiles archive, or
+`just data-tiles` to resume only the export. The archive and map metadata are
+published together under `GLOBAL_PREVIEW_ROOT/tiles/current/`.
+Global ADM2 boundaries (49,308 areas across 180 available countries) are installed
+with `just data-boundaries`, also run during global map preparation. Country-sized
+catalogues keep the worldwide geometry out of browser downloads.
+The [pipeline guide](docs/pipeline/01_data_pipeline.md) explains the crosswalk and database
+handoff. `just download` and `just update` remain available for acquisition only.
+
 ## Current state
 
 - Global resolution-3 context is parsed once from a compact Arrow snapshot and
@@ -40,11 +112,11 @@ Remaining product and research work is tracked in [the roadmap](docs/roadmap.md)
 | Fine map | On-demand resolution-7 arrays from spatially sorted Parquet partitions |
 | API | Litestar served by Granian, with a checked-in OpenAPI contract |
 | Relational serving | PostgreSQL with compact cell/species and inverse species/cell arrays |
-| Build pipeline | DuckDB, GeoPandas/H3, and Tippecanoe with validation reports |
+| Build pipeline | GDAL Arrow streams, native H3/GEOS, DuckDB, and Tippecanoe with validation reports |
 
-See [the serving schema](docs/schema.md), [global serving
-pipeline](docs/global_serving_pipeline.md), and [map performance
-retrospective](docs/map-performance-retrospective.md) for the detailed design.
+See [the serving schema](docs/reference/schema.md), [global serving
+pipeline](docs/pipeline/07_global_serving_pipeline.md), and [map performance
+retrospective](docs/performance/map-performance-retrospective.md) for the detailed design.
 
 ## Prerequisites
 
@@ -68,7 +140,7 @@ just install
 just check
 ```
 
-`just check` runs Ruff, 44+ Python unit tests, Svelte/type checking, frontend
+`just check` runs Ruff, Python unit tests, Svelte/type checking, frontend
 unit tests, a production build, and the prospective-commit release guard. It
 does not require a running PostgreSQL server or the global external-data disk.
 
@@ -87,9 +159,9 @@ Keep the global raw and generated datasets under `GLOBAL_DATA_ROOT` and
 `GLOBAL_PREVIEW_ROOT`. Never weaken `.gitignore` to make a build work.
 
 The complete global source inventory and identifier contract are in
-[global source data](docs/global_source_data.md). Boundary sources, licences,
+[global source data](docs/reference/global_source_data.md). Boundary sources, licences,
 filter semantics, and rebuild commands are in [boundary
-filtering](docs/boundary_filtering.md).
+filtering](docs/reference/boundary_filtering.md).
 
 ## Build and load serving data
 
@@ -103,24 +175,26 @@ just db-load
 
 Or run `just setup` to install dependencies and perform all three steps.
 `POSTGRES_ADMIN_URL` must connect as a role allowed to create the application
-role/database. `app/build_cache.py` reads `SOURCE_DUCKDB_PATH`, writes normalized
+role/database. `ark_pipeline/builders/coarse_cache.py` reads `SOURCE_DUCKDB_PATH`, writes normalized
 Parquet exports and score domains, and invokes Tippecanoe for `PMTILES_PATH`.
 
 The database loader skips the expanded `cell_species` relation by default.
 Global runtime uses compact `cell_species_lists`; set
 `LOAD_EXPANDED_CELL_SPECIES=true` only for a deliberate compatibility workflow.
 
-To construct the mounted global profile:
+To construct the global serving profile, select `GLOBAL_H3_ROOT` and a reviewed
+crosswalk as described in the [pipeline guide](docs/pipeline/01_data_pipeline.md), then run:
 
 ```bash
-just global-build-preview
+just global-prepare
 just global-db-configure
 just global-db-load
-just global-res7-aggregate
 ```
 
 The resolution-7 aggregation is resumable and publishes only complete,
-schema-validated partitions. `RES7_WORKERS=1` and a smaller
+schema-validated partitions. Its native batch reducer was
+[3.23× faster on a 3-million-relationship sample](docs/performance/serving_metrics_performance.md),
+with identical metric output. `RES7_WORKERS=1` and a smaller
 `DUCKDB_MEMORY_LIMIT` provide a bounded mode for memory-constrained machines.
 The optional `just global-res7-tiles` creates a much larger static snapshot;
 normal serving does not require it.

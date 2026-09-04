@@ -20,7 +20,7 @@ erDiagram
         boolean family_has_dna
         boolean goat_data_deficient
         text edge_group_name
-        boolean meets_ebp
+        boolean has_ebp_criteria_evidence
     }
     SPECIES_SYSTEMS {
         text gbif_accepted_id PK,FK

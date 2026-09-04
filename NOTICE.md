@@ -43,6 +43,21 @@ non-commercial purposes and prohibit redistribution and sublicensing.
 
 - Terms: https://www.protectedplanet.net/en/legal
 
+## Product-specific licensed inputs
+
+### HydroSHEDS HydroBASINS v1c
+
+Ark-IV uses HydroBASINS standard level 1–12 polygons locally to resolve IUCN
+`HYBAS_ID` relationship tables. HydroSHEDS states that product-specific terms
+apply and that the HydroBASINS license is the agreement in its technical
+documentation. A generated basin-cell index or basin-derived serving snapshot
+must therefore be reviewed under that agreement rather than assumed to inherit
+the application's AGPL licence.
+
+- Product and citation guidance: https://www.hydrosheds.org/products/hydrobasins
+- Current site terms: https://www.hydrosheds.org/terms-of-use
+- v1 technical documentation and licence: https://data.hydrosheds.org/file/technical-documentation/HydroSHEDS_TechDoc_v1_4.pdf
+
 ## Open and redistributable sources
 
 ### GBIF Backbone Taxonomy — CC BY 4.0
@@ -69,10 +84,13 @@ Ark-IV uses the suggested wording: **Made with Natural Earth**.
 
 - Terms: https://www.naturalearthdata.com/about/terms-of-use/
 
-### geoBoundaries gbOpen — CC BY 4.0
+### geoBoundaries gbOpen
 
-Municipality preview boundaries use geoBoundaries gbOpen ADM2 data for Denmark,
-Germany, and Sweden.
+The global local-area layer uses all 180 available geoBoundaries gbOpen ADM2
+country datasets pinned in `config/geoboundaries_adm2.toml`. A small fallback
+preview retains Denmark, Germany and Sweden. Country source years, provider
+URLs and upstream licences are preserved in the inventory and generated
+country catalogues; the coverage report records source-count discrepancies.
 
 > Runfola, D. et al. 2020. geoBoundaries: A global database of political
 > administrative boundaries. PLOS ONE 15(4): e0231866.

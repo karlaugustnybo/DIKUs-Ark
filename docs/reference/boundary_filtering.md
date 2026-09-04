@@ -13,13 +13,18 @@ browser.
 | --- | --- | --- | --- |
 | Admin-0 countries and territories | Every intersected polygon | `j` | Natural Earth 10m Admin-0 |
 | Admin-1 states and provinces | Every intersected polygon | `a1` | Natural Earth 10m Admin-1 |
-| Municipalities and local areas | Every intersected polygon | `mun` | geoBoundaries gbOpen ADM2 (Denmark, Germany, Sweden) |
+| Municipalities and local areas | Every intersected polygon | `mun` | geoBoundaries gbOpen ADM2, all 180 available countries |
 | Exclusive economic zones | Every intersected polygon | `eez` | Marine Regions World EEZ v12 |
 | Terrestrial ecoregions | Every intersected polygon | `eco` | RESOLVE Ecoregions 2017 |
 
 Natural Earth is public-domain data. geoBoundaries gbOpen, Marine Regions World
-EEZ v12, and RESOLVE Ecoregions 2017 are CC BY 4.0. The checked-in municipality preview contains 426
-ADM2 units across Denmark, Germany, and Sweden. The ecoregion catalogue contains
+EEZ v12, and RESOLVE Ecoregions 2017 carry attribution requirements. The installed
+global ADM2 layer contains **49,308 areas in 180 countries**; the small checked-in
+fallback preview contains 426 units across Denmark, Germany, and Sweden.
+geoBoundaries' upstream source licences are retained in each country catalogue
+and the coverage report. ADM2 means the second administrative level, which can
+be a municipality, county, district or another local area depending on the country.
+The ecoregion catalogue contains
 all 847 terrestrial ecoregions, including biome, realm, and conservation-status
 metadata.
 
@@ -52,6 +57,34 @@ still considers every loaded record. This makes reopening a tab effectively
 immediate and avoids both re-parsing polygons and constructing thousands of
 checkbox elements merely to search names.
 
+`just data-boundaries` acquires and installs the pinned global ADM2 snapshot.
+It also runs before global map preparation, including `just data-prepare --tiles`.
+The download is registered under `geoboundaries-adm2` in the ordinary acquisition
+manifest. Individual countries are cached during interrupted downloads and
+unchanged country files can be reused from a previous snapshot.
+
+The installed geometry lives at `data/boundaries/adm2/current/municipality.geojson`.
+Both backend settings and the managed PMTiles exporter select it automatically;
+an explicit `MUNICIPALITY_BOUNDARIES_PATH` still takes precedence. Code-only
+checkouts retain the bundled preview. The ignored `app/static/data/adm2-catalogs`
+symlink exposes only country-sized, geometry-free catalogues to the frontend.
+Its descriptor replaces the preview's coverage information. Countries absent
+from the source have empty catalogues and an explicit unavailable-coverage label.
+Source codes PSE, SSD and XKX map to the existing country selector's PSX, SDS and
+KOS codes. The coverage report retains source country codes and ADM2 identifiers
+remain unchanged; geometry and catalogue parent codes match the country selector.
+The worldwide geometry is never copied into the frontend asset directory.
+
+Inputs are pinned in `config/geoboundaries_adm2.toml`, including per-country
+source commit URLs, represented years, upstream licences and reported counts.
+Provider-simplified geometry is used for map filtering. When its count disagrees
+with the API, the downloader checks the exact ID set against the pinned full
+source. The verified total is 49,308, versus the API's reported 49,363. Slovenia
+needed one area restored from its full file; Suriname uses its full dataset
+because the simplified file has inconsistent identifiers. Every such decision
+is recorded in `coverage.json` and the source metadata. These are source-version
+boundaries, not a claim that every administrative change through 2026 is covered.
+
 ## Filter semantics
 
 - Multiple selections in one framework are a union: Denmark **or** Italy.
@@ -72,7 +105,9 @@ checkbox elements merely to search names.
 - `app/static/data/boundary-frameworks.json` describes available and planned
   framework adapters.
 - `app/static/data/boundaries/*.geojson` contains build/runtime intersection
-  geometry.
+  geometry for the bundled frameworks and the municipality fallback preview.
+- `data/boundaries/adm2/current/` contains the installed global municipality
+  geometry, country catalogues, source coverage report and checksum receipt.
 - `data/boundaries/eez.geojson` and `country-scope.geojson` are ignored local
   build/runtime geometry so the Marine Regions product is not republished.
 - `app/static/data/boundary-catalogs/*.json` contains selector records without
@@ -92,7 +127,7 @@ The builder normalizes source fields, repairs invalid ecoregion geometry,
 creates catalogues, and writes reusable geometry partitions:
 
 ```bash
-uv run python app/build_boundary_frameworks.py catalogue \
+uv run python ark_pipeline/builders/boundary_frameworks.py catalogue \
   app/static/data/boundaries/admin1.geojson \
   --output app/static/data/boundary-catalogs/admin1.json \
   --partition-field parent_code \
@@ -100,15 +135,27 @@ uv run python app/build_boundary_frameworks.py catalogue \
   --partition-url-prefix /data/boundary-geometry/admin1 \
   --catalogue-partition-dir app/static/data/boundary-catalogs/admin1
 
-uv run python app/build_boundary_frameworks.py municipalities \
+uv run python ark_pipeline/builders/boundary_frameworks.py municipalities \
   path/to/DNK_ADM2.geojson path/to/DEU_ADM2.geojson path/to/SWE_ADM2.geojson
 
-uv run python app/build_boundary_frameworks.py ecoregions \
+uv run python ark_pipeline/builders/boundary_frameworks.py ecoregions \
   data/sources/Ecoregions2017.zip
 
-uv run python app/build_boundary_frameworks.py eez \
+uv run python ark_pipeline/builders/boundary_frameworks.py eez \
   data/sources/MarineRegions_EEZ_v12.zip
 ```
+
+For the global ADM2 layer, use the integrated command instead:
+
+```bash
+just data-boundaries
+just data-prepare --tiles
+```
+
+Installing boundary data does not rewrite previously built maps. Rebuild map
+metadata, coarse memberships and tiles after changing a framework, and reload
+the serving database as appropriate. Restart an already-running backend so its
+cached boundary indexes pick up the new generation. Pair generation is unaffected.
 
 After changing a framework, run `just build-data` and `just db-load` so PMTiles,
 map domains, Parquet memberships, and PostgreSQL remain in sync.

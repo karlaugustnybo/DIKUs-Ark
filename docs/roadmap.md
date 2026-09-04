@@ -1,8 +1,13 @@
 # Ark-IV roadmap
 
-This roadmap reflects the global application as of 26 August 2026. Priorities
-remain provisional and can be adjusted as the data model and conservation use
-cases are validated.
+Scientific and pipeline assumptions were reviewed on 3 September 2026; other
+feature statuses retain their earlier implementation history. Priorities remain
+provisional as the data model and conservation use cases are validated.
+
+The [methodology](../methodology.md) describes the actual scientific and
+implementation decisions across the pipeline. The [assumption audit](reference/roadmap_assumption_audit.md)
+records 20 findings with evidence and acceptance criteria. Implemented behavior
+is not automatically a scientifically validated assumption.
 
 ## Priority and status guide
 
@@ -11,6 +16,7 @@ cases are validated.
 - **P2 — Enhancement:** Useful additions that can follow the core work.
 - **P3 — Nice to have:** Polish, outreach, or longer-term ideas.
 - **Investigation:** The requirements or underlying assumptions still need to be verified.
+- **In progress:** Implementation or validation is partly complete, with remaining work identified.
 - **Proposed:** The feature is understood at a high level but has not been implemented.
 - **External:** Progress depends on feedback, funding, or another outside contribution.
 - **Completed:** The feature is already present in the current application.
@@ -20,33 +26,104 @@ cases are validated.
 
 ### Validate H3 aggregation assumptions
 
-**Priority:** P0 · **Status:** Investigation
+**Priority:** P0 · **Status:** Implemented; taxonomy validation pending
 
-Confirm how species distributions are converted into H3 cells, including whether resolution 3 cells represent presence across the whole cell, whether resolution 7 cells represent point observations or boundary detail, and whether a species is included when its polygon only touches a cell border. Also verify whether centre-point intersection, whole-cell intersection, or polygon-border expansion is used.
+The implementation is now checked: resolution 7 uses polygon any-touch
+membership, including edge/vertex contact; resolution 3 uses distinct parents
+of included fine cells. Neither is a point-observation or whole-cell occupancy
+claim. Large v3 ranges may be simplified before intersection; 2.5-degree
+computational tiles are separate from that approximation. The antimeridian
+hole-placement bug is fixed.
+
+Remaining P0 work is scientific calibration after that fix: measure per-species
+omitted/added cells and local effects against an unsimplified reference with the
+same v3 row policy, agree acceptance limits, and rebuild the timing fixture to
+include v3-only eligible rows. Review planar repair-area thresholds and the
+interpretation of coarse boundary filtering. See audit A01–A05 and A15.
 
 ### Verify complete and lossless data use
 
 **Priority:** P0 · **Status:** Investigation
 
-Trace every source field through the build and serving pipelines to confirm that all intended records are included, transformations are documented, and no relevant information is silently discarded.
+Selected pair/list relationships are reconciled, but complete source-field
+preservation is not established. The methodology now records the principal
+field transformations and omissions. Seasonal and spatial-evidence distinctions
+disappear in species unions; several assessment/genomic fields remain unused.
+Point and HydroBASINS memberships now enter the common pair pipeline, with
+source-level receipts and decision summaries, but their coordinates/basin IDs
+do not survive into serving lists. Finish a release-specific column/row lineage
+audit and distinguish acquired, integrated, and served fields. See A06 and A18.
 
 ### Refine missing-DNA priority by family coverage
 
-**Priority:** P0 · **Status:** Completed
+**Priority:** P0 · **Status:** Snapshot-validated; evidence-stage scoring pending
 
-Species, genus, and family DNA representation now use the same documented DNA-status rules. A species whose family already has qualifying genetic representation, including from a less-threatened relative, receives the lower missing-genus or missing-species weight instead of the missing-family weight; a species in an entirely unrepresented family retains the full missing-family urgency.
+The rule searches all qualifying GoaT species, validates family/genus names
+against unique rank identities in the registered NCBI taxdump, qualifies lineage
+names by family and normalized kingdom, and never treats extinction as genomic
+evidence. The fresh rebuild accepted 585 of 587 new family names, covering
+11,427 species; Gonostomatidae and Cepheidae were rejected as multi-TaxID names.
+Separate sample, project, assembly, quality and resampling score states remain an
+open biological/product choice.
+See A09–A11.
+
+### Validate taxonomy transfer, DNA evidence, and priority weights
+
+**Priority:** P0 · **Status:** Investigation
+
+All automatic crosswalk branches now share the minimum-agreement and
+maximum-conflict guard, and the downloader preserves generic field provenance.
+Measure match precision independently of coverage. Review the broad
+sample/project/assembly evidence predicate and the `has_ebp_criteria_evidence`
+criteria-text check against a versioned assembly
+standard. Keep IUCN Data Deficient separate from missing GoaT information.
+Validate score objectives and ranking sensitivity before treating configurable
+weights as conservation recommendations. Migrate the SIS-valued
+`gbif_accepted_id` compatibility alias. See A07–A13.
+
+The fresh crosswalk retains 35 safe qualifying rows with
+`goat_resampling_required=DTOL`: 11 also have qualifying chromosome/BUSCO
+assemblies and 24 have project/sample-stage evidence only. The marker is now
+preserved in species metadata. A dedicated resampling score/filter remains to be
+designed; treating it as absence of an existing genome would misclassify the 11
+assembled species.
 
 ### Add population trends
 
 **Priority:** P1 · **Status:** Proposed
 
-Display whether species populations are increasing, stable, decreasing, or unknown, and consider incorporating this signal into filtering or priority analysis.
+Population trends are present in the registered assessment table but are not
+currently used by the scoring model. Display increasing, stable, decreasing or
+unknown with assessment date/scope, and review any score contribution before
+adding it. See A18.
+
+### Reintroduce EDGE enrichment as an optional source
+
+**Priority:** P3 · **Status:** Proposed
+
+Keep EDGE out of the required update pipeline while the core IUCN spatial and
+assessment workflow is rebuilt. Reintroduce it later as optional enrichment for
+the roughly 700 affected species, with a reviewed identifier join, source
+version, and redistribution permission; its absence must never block a global
+build.
 
 ### Add IUCN point data
 
-**Priority:** P1 · **Status:** External
+**Priority:** P1 · **Status:** Integrated; evidence-type display and full-run validation pending
 
-Download and integrate the IUCN point dataset, which is separate from the polygon data currently used by Ark-IV. Display point occurrences alongside range polygons so users can distinguish recorded locations from broader distribution areas; consider the separate HydroBASINS files as a related future data source.
+The IUCN point archives, HydroBASINS relationship tables, and HydroBASINS base
+geometry are acquired, versioned, schema-checked, and included in the derived
+H3 membership pipeline. Eligible points map vectorially to their containing
+resolution-7 cell. Basin relationships are deduplicated out of core; each
+referenced v1c basin is covered once and reused across species tables. Their
+pairs are globally deduplicated with polygon pairs and therefore flow through
+the existing metrics, API, tiles, map, status view, and run dashboard.
+
+The integrated serving relation deliberately does not preserve evidence type.
+A future provenance-aware map layer is still needed if users must distinguish
+recorded point locations, basin distributions, and broader range polygons. Run
+and review an authorized full global build before treating integration as a
+validated release dataset.
 
 ### Add bird data
 
@@ -56,9 +133,12 @@ Request access to the bird dataset linked from the IUCN website but distributed 
 
 ### Create a repeatable data-update pipeline
 
-**Priority:** P2 · **Status:** Proposed
+**Priority:** P2 · **Status:** Complete
 
-Design a documented pipeline for incorporating new source releases, rebuilding derived datasets, validating changes, and publishing updated application data. The next update should account for data available as of 9 July 2026; automation and support for additional IUCN datasets can follow later.
+The documented `just download` and `just update` coordinator incorporates new
+source releases, skips current data, validates staged inputs, preserves
+immutable manifests, and pauses cleanly for provider-authorized IUCN browser
+downloads. Derived-data rebuilding and publication remain separate operations.
 
 ### Create a bring-your-own-data release profile
 
@@ -70,8 +150,8 @@ generated serving data. A normal clone should run immediately with a small,
 clearly labelled synthetic data pack, while authorized users can construct the
 real global profile from files they obtained directly from the providers.
 
-Provide a short, validated workflow equivalent to `just data-doctor`,
-`just data-build /path/to/authorized-downloads`, and `just start`. It must:
+Build on the validated `just download`, `just update`, and `just start`
+workflow. The remaining release profile must:
 
 - identify every required input, version, and official download location
   without automating acceptance of provider terms;
@@ -102,9 +182,14 @@ precomputed spatial pipeline.
 
 ### Complete global municipality coverage
 
-**Priority:** P1 · **Status:** Proposed
+**Priority:** P1 · **Status:** In progress
 
-Expand municipality and second-order administrative boundary coverage from the current Denmark, Germany, and Sweden preview to the rest of the world. Normalize names, stable codes, and parent-country relationships across sources; document licensing and regional coverage gaps; validate overlapping and disputed boundaries; then rebuild the catalogues, H3 memberships, filters, tiles, and selected-cell location context against the global dataset.
+Global ADM2 acquisition/installation and country-scoped catalogues now support
+the recorded 49,308-area snapshot across 180 available countries. The Denmark,
+Germany and Sweden preview remains a code-only fallback. Remaining work is
+coverage-gap, represented-year, overlap and disputed-boundary validation, with
+consistent rebuilt memberships, filters and serving generations. ADM2 does not
+mean municipality in every country. See A16.
 
 ## 2. Map analysis and interaction
 
@@ -324,7 +409,13 @@ Explore the combined datasets for additional conservation questions, useful deri
 
 **Priority:** P1 · **Status:** External
 
-Ask a biology or conservation professor to review the biological assumptions, scoring model, interpretation of missing DNA, and usefulness of the proposed workflows.
+Ask a biology/conservation reviewer to assess the explicit decisions in the
+[methodology](../methodology.md) and [assumption audit](reference/roadmap_assumption_audit.md):
+range-versus-occupancy interpretation, geometric error limits, taxonomic transfer,
+DNA evidence stages, extinction handling, family representation, missingness,
+priority weights and ranking sensitivity. No external review was performed by
+the code/test audit, and no reviewer has approved those choices merely because
+the implementation passes tests.
 
 ### Secure server-hosting funding
 

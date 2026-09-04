@@ -7,12 +7,12 @@ public data snapshot.
 
 - [x] Select `AGPL-3.0-only`, add the official root `LICENSE`, and declare it in
   both package manifests.
-- [ ] Record agreement from every existing copyright holder—at minimum, confirm
+- [x] Record agreement from every existing copyright holder—at minimum, confirm
   Daniel Jensen's initial contribution—before representing all existing code as
   AGPL-licensed.
 - [ ] For a binary, container, or hosted frontend release, generate and retain
   the third-party software notices for the exact resolved dependency set.
-- [ ] Confirm that every tutorial MP4 and image was created by the contributors
+- [x] Confirm that every tutorial MP4 and image was created by the contributors
   or is covered by a compatible licence.
 - [ ] Run `just check` and retain the successful output.
 - [ ] Review `git status --short` and `git diff --cached` before committing.
@@ -79,6 +79,9 @@ For IUCN-backed output, ask IUCN to confirm in writing whether this precise
 aggregation and API surface is an acceptable derivative work, and how the
 non-commercial condition and citation must be presented. Until then, keep the
 data-bearing service private even when the code repository itself is public.
+For basin-derived output, separately verify the then-current HydroBASINS product
+license, required attribution, and redistribution conditions against the exact
+basin-cell index, lists, metrics, and tiles being published.
 
 ## Release evidence
 
@@ -88,6 +91,6 @@ Attach or archive:
 - CI results and the local `just check` output;
 - source/build manifests without local absolute paths or credentials;
 - data validation and losslessness reports;
-- the map performance trace described in `docs/map-performance-retrospective.md`;
+- the map performance trace described in `docs/performance/map-performance-retrospective.md`;
 - screenshots showing the basemap attribution control; and
 - the reviewer and date for the code, data, and licence checks.
