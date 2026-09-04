@@ -55,6 +55,9 @@
   $: selectedSet = new Set(selected);
   $: totalSelected = Object.values($boundaryFilters).reduce((total, values) => total + values.length, 0);
   $: parentSelections = framework?.parent_framework ? ($boundaryFilters[framework.parent_framework] ?? []) : [];
+  $: unavailableParents = framework?.available_parent_codes
+    ? parentSelections.filter((code) => !framework?.available_parent_codes?.includes(code))
+    : [];
   $: needsParentSelection = Boolean(
     framework?.catalog_partition_url &&
     !parentSelections.length &&
@@ -197,6 +200,7 @@
       {:else if framework}
         <div class="framework-intro"><strong>{framework.name}</strong><span>{framework.description}</span></div>
         {#if framework.coverage_note}<div class="coverage-note">{framework.coverage_note}</div>{/if}
+        {#if unavailableParents.length}<div class="coverage-note">No ADM2 coverage in this release for {unavailableParents.join(', ')}.</div>{/if}
         {#if needsParentSelection}
           <div class="scope-gate">
             <span class="scope-gate-mark" aria-hidden="true"><svelte:component this={ParentFrameworkIcon} size={21} strokeWidth={1.6} /></span>

@@ -17,6 +17,7 @@ export type BoundaryFramework = {
   source_url?: string;
   license?: string;
   coverage_note?: string;
+  available_parent_codes?: string[];
   import_hint?: string;
   color: [number, number, number];
 };
@@ -61,6 +62,19 @@ export function loadBoundaryFrameworks(): Promise<BoundaryFramework[]> {
     .then(async (response) => {
       if (!response.ok) throw new Error(`Unable to load boundary frameworks (${response.status})`);
       const data = await response.json() as { frameworks: BoundaryFramework[] };
+      // Local global-data installations supply a small descriptor alongside
+      // country catalogues. Fresh code-only checkouts retain the bundled preview.
+      const adm2 = await fetch('/data/adm2-catalogs/framework.json');
+      if (adm2.ok && adm2.headers.get('content-type')?.includes('application/json')) {
+        const globalFramework = await adm2.json() as BoundaryFramework;
+        if (globalFramework.id !== 'municipality' || !globalFramework.catalog_partition_url) {
+          throw new Error('Invalid global ADM2 catalogue descriptor');
+        }
+        data.frameworks = data.frameworks.map((framework) => framework.id === 'municipality'
+          ? globalFramework : framework);
+      } else if (!adm2.ok && adm2.status !== 404) {
+        throw new Error(`Unable to load global ADM2 coverage (${adm2.status})`);
+      }
       boundaryFrameworks.set(data.frameworks);
       return data.frameworks;
     })
