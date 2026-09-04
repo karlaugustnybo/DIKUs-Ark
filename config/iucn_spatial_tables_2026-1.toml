@@ -1,0 +1,286 @@
+schema_version = 1
+red_list_version = "2026-1"
+data_last_updated = "2026-07-09"
+official_url = "https://www.iucnredlist.org/resources/spatial-data-download"
+
+# Stable local provider_filename values are assigned by the downloader after
+# Chrome completes each provider-named transfer. Archives contain CSV tables.
+
+[[files]]
+logical_name = "hydrobasins_reptiles.zip"
+provider_filename = "hydrobasins_reptiles.zip"
+format = "hydrobasin"
+bucket = "reptiles"
+label = "Reptiles"
+size = "<10MB"
+file_id = "4591738e-2d0c-4fc0-b4de-5413ec5bab26"
+
+[[files]]
+logical_name = "points_fishes_chondrichthyes.zip"
+provider_filename = "points_fishes_chondrichthyes.zip"
+format = "point"
+bucket = "fishes"
+label = "Chondrichthyes"
+size = "<1MB"
+file_id = "90c10dae-197b-45ca-8421-9a21d05d7653"
+
+[[files]]
+logical_name = "hydrobasins_fishes_chondrichthyes.zip"
+provider_filename = "hydrobasins_fishes_chondrichthyes.zip"
+format = "hydrobasin"
+bucket = "fishes"
+label = "Chondrichthyes"
+size = "<1MB"
+file_id = "3f5c69df-c25c-4fc2-901d-c5abb25cf026"
+
+[[files]]
+logical_name = "hydrobasins_fishes_eels.zip"
+provider_filename = "hydrobasins_fishes_eels.zip"
+format = "hydrobasin"
+bucket = "fishes"
+label = "Eels"
+size = "<1MB"
+file_id = "84f9a226-08cc-47ce-9da3-b8fd404a3cc8"
+
+[[files]]
+logical_name = "points_fishes_salmonids.zip"
+provider_filename = "points_fishes_salmonids.zip"
+format = "point"
+bucket = "fishes"
+label = "Salmonids"
+size = "<5MB"
+file_id = "c6a08c37-b241-4a22-973f-6083063befcf"
+
+[[files]]
+logical_name = "hydrobasins_fishes_salmonids.zip"
+provider_filename = "hydrobasins_fishes_salmonids.zip"
+format = "hydrobasin"
+bucket = "fishes"
+label = "Salmonids"
+size = "<5MB"
+file_id = "ab64962f-2f3c-43d3-97a9-2aff8f6f5807"
+
+[[files]]
+logical_name = "hydrobasins_fishes_sturgeons_paddlefishes.zip"
+provider_filename = "hydrobasins_fishes_sturgeons_paddlefishes.zip"
+format = "hydrobasin"
+bucket = "fishes"
+label = "Sturgeons and Paddlefishes"
+size = "<1MB"
+file_id = "2958049a-39d9-42c5-9f04-76654103e4b3"
+
+[[files]]
+logical_name = "points_fishes_syngnathiformes.zip"
+provider_filename = "points_fishes_syngnathiformes.zip"
+format = "point"
+bucket = "fishes"
+label = "Syngnathiform fishes"
+size = "<1MB"
+file_id = "c448db27-dd92-409f-8389-a3e0c9d4a273"
+
+[[files]]
+logical_name = "hydrobasins_fishes_syngnathiformes.zip"
+provider_filename = "hydrobasins_fishes_syngnathiformes.zip"
+format = "hydrobasin"
+bucket = "fishes"
+label = "Syngnathiform fishes"
+size = "<1MB"
+file_id = "fa137b68-1943-41d3-868c-585c3a7b747e"
+
+[[files]]
+logical_name = "points_fishes_marine.zip"
+provider_filename = "points_fishes_marine.zip"
+format = "point"
+bucket = "fishes"
+label = "Marine Fishes"
+size = "<5MB"
+file_id = "77ac1be5-772c-4385-af4c-7c395c41e114"
+
+[[files]]
+logical_name = "points_plants_birches.zip"
+provider_filename = "points_plants_birches.zip"
+format = "point"
+bucket = "plants"
+label = "Birches"
+size = "<1MB"
+file_id = "d9d4baba-5e1c-4279-8d11-841d6a7ad07a"
+
+[[files]]
+logical_name = "points_plants_magnolias.zip"
+provider_filename = "points_plants_magnolias.zip"
+format = "point"
+bucket = "plants"
+label = "Magnolias"
+size = "<1MB"
+file_id = "3890cb4f-a287-4b11-b42e-e881c668a556"
+
+[[files]]
+logical_name = "points_plants_maples.zip"
+provider_filename = "points_plants_maples.zip"
+format = "point"
+bucket = "plants"
+label = "Maples"
+size = "<1MB"
+file_id = "5b7e8287-9ba7-49e6-8419-a784dadad9b7"
+
+[[files]]
+logical_name = "points_plants_southern_beeches.zip"
+provider_filename = "points_plants_southern_beeches.zip"
+format = "point"
+bucket = "plants"
+label = "Southern beeches"
+size = "<1MB"
+file_id = "a01f0b7e-be8f-4d05-b871-bbdc8e9196fd"
+
+[[files]]
+logical_name = "points_plants_teas.zip"
+provider_filename = "points_plants_teas.zip"
+format = "point"
+bucket = "plants"
+label = "Teas"
+size = "<1MB"
+file_id = "712bc5a2-2365-4402-a4f7-f1de14c43f36"
+
+[[files]]
+logical_name = "points_plants_trees.zip"
+provider_filename = "points_plants_trees.zip"
+format = "point"
+bucket = "plants"
+label = "Trees"
+size = "<200MB"
+file_id = "120d01e5-b59b-43ad-890e-a064b2a4a855"
+
+[[files]]
+logical_name = "points_freshwater_crabs.zip"
+provider_filename = "points_freshwater_crabs.zip"
+format = "point"
+bucket = "freshwater_groups"
+label = "Freshwater Crabs"
+size = "<1MB"
+file_id = "0d35c244-7527-42fb-aedb-fb6aaab8c139"
+
+[[files]]
+logical_name = "hydrobasins_freshwater_crabs.zip"
+provider_filename = "hydrobasins_freshwater_crabs.zip"
+format = "hydrobasin"
+bucket = "freshwater_groups"
+label = "Freshwater Crabs"
+size = "<5MB"
+file_id = "a3d34f75-bc84-4d48-8e99-727ad87f5ff7"
+
+[[files]]
+logical_name = "hydrobasins_freshwater_crayfishes.zip"
+provider_filename = "hydrobasins_freshwater_crayfishes.zip"
+format = "hydrobasin"
+bucket = "freshwater_groups"
+label = "Freshwater Crayfishes"
+size = "<5MB"
+file_id = "e2ecbb8d-3b33-4169-a13d-b4f014770a73"
+
+[[files]]
+logical_name = "points_freshwater_fishes.zip"
+provider_filename = "points_freshwater_fishes.zip"
+format = "point"
+bucket = "freshwater_groups"
+label = "Freshwater Fishes"
+size = "<10MB"
+file_id = "209e8066-7532-4df6-8d0f-ef2afa32ca9d"
+
+[[files]]
+logical_name = "hydrobasins_freshwater_fishes.zip"
+provider_filename = "hydrobasins_freshwater_fishes.zip"
+format = "hydrobasin"
+bucket = "freshwater_groups"
+label = "Freshwater Fishes"
+size = "<100MB"
+file_id = "ac3e0151-b9ce-4cc2-bf8a-95c0975a7127"
+
+[[files]]
+logical_name = "points_freshwater_molluscs.zip"
+provider_filename = "points_freshwater_molluscs.zip"
+format = "point"
+bucket = "freshwater_groups"
+label = "Freshwater Molluscs"
+size = "<1MB"
+file_id = "e57eed55-aad9-46b7-a7f1-9fc41b25119a"
+
+[[files]]
+logical_name = "hydrobasins_freshwater_molluscs.zip"
+provider_filename = "hydrobasins_freshwater_molluscs.zip"
+format = "hydrobasin"
+bucket = "freshwater_groups"
+label = "Freshwater Molluscs"
+size = "<50MB"
+file_id = "d61eac28-f3a7-40a3-94d3-68dc74e87b9b"
+
+[[files]]
+logical_name = "points_freshwater_odonata.zip"
+provider_filename = "points_freshwater_odonata.zip"
+format = "point"
+bucket = "freshwater_groups"
+label = "Freshwater Odonata"
+size = "<10MB"
+file_id = "9e55ce26-8c19-46d7-9b8d-e2558f2e7ffe"
+
+[[files]]
+logical_name = "hydrobasins_freshwater_odonata.zip"
+provider_filename = "hydrobasins_freshwater_odonata.zip"
+format = "hydrobasin"
+bucket = "freshwater_groups"
+label = "Freshwater Odonata"
+size = "<50MB"
+file_id = "10b1451c-625c-4466-a109-bbc4db1c3cce"
+
+[[files]]
+logical_name = "points_freshwater_plants.zip"
+provider_filename = "points_freshwater_plants.zip"
+format = "point"
+bucket = "freshwater_groups"
+label = "Freshwater Plants"
+size = "<5MB"
+file_id = "5701067d-990f-47a9-954e-faf042c2f6b1"
+
+[[files]]
+logical_name = "hydrobasins_freshwater_plants.zip"
+provider_filename = "hydrobasins_freshwater_plants.zip"
+format = "hydrobasin"
+bucket = "freshwater_groups"
+label = "Freshwater Plants"
+size = "<100MB"
+file_id = "71a9c58d-fe7a-4987-bf94-52cac62e726e"
+
+[[files]]
+logical_name = "points_freshwater_shrimps.zip"
+provider_filename = "points_freshwater_shrimps.zip"
+format = "point"
+bucket = "freshwater_groups"
+label = "Freshwater Shrimps"
+size = "<1MB"
+file_id = "44705555-f2ac-4810-a02d-e3b8ff70b618"
+
+[[files]]
+logical_name = "hydrobasins_freshwater_shrimps.zip"
+provider_filename = "hydrobasins_freshwater_shrimps.zip"
+format = "hydrobasin"
+bucket = "freshwater_groups"
+label = "Freshwater Shrimps"
+size = "<5MB"
+file_id = "ea20281f-5f96-4efe-a6a9-45f0d06f91cc"
+
+[[files]]
+logical_name = "points_freshwater_other.zip"
+provider_filename = "points_freshwater_other.zip"
+format = "point"
+bucket = "freshwater_groups"
+label = "Freshwater Other"
+size = "<1MB"
+file_id = "ed562ae7-d67d-4887-9fe2-884471dc132d"
+
+[[files]]
+logical_name = "hydrobasins_freshwater_other.zip"
+provider_filename = "hydrobasins_freshwater_other.zip"
+format = "hydrobasin"
+bucket = "freshwater_groups"
+label = "Freshwater Other"
+size = "<1MB"
+file_id = "3fe01de8-abca-4c58-86aa-502b8867f828"

@@ -15,7 +15,7 @@ import h3
 import pyarrow.ipc as pa_ipc
 from rich.console import Console
 
-from app.build_cache import (
+from ark_pipeline.builders.coarse_cache import (
     METRICS,
     SYSTEMS,
     antimeridian_safe_polygon,
@@ -26,19 +26,20 @@ from app.build_cache import (
     stream_tile_features,
     validate_materialized_data,
 )
-from app.build_db import build_h3_table, validate_crosswalk
-from app.build_global_species import build_global_species
-from app.build_res7_preview import (
+from ark_pipeline.builders.fine_metrics import (
     BuildDisplay,
     _build_parts_parallel,
     aggregate_part,
+    build_parts,
     completed_parts,
     configure_connection,
     prepare_species,
     validate_aggregate_part,
     write_preview_metadata,
 )
-from app.jurisdictions import JurisdictionIndex, load_jurisdiction_index
+from ark_pipeline.builders.source_database import build_h3_table, validate_crosswalk
+from ark_pipeline.builders.species_metadata import build_global_species
+from ark_pipeline.spatial.boundaries import JurisdictionIndex, load_jurisdiction_index
 from backend.res7_tiles import aggregate_coverage, available_base_cells, base_cell, render_tile
 
 
@@ -156,13 +157,14 @@ class GlobalSpeciesDimensionTests(unittest.TestCase):
                 f"""
                 COPY (
                     SELECT * FROM (VALUES
-                        (101::BIGINT, 1001::BIGINT, 'Species one', 'GENUS', 'FAMILY',
-                         'Genus', 'Family', 'Endangered', '501', 'MATCHED', true),
-                        (102::BIGINT, 1002::BIGINT, 'Species two', 'GENUS', 'FAMILY',
-                         NULL, NULL, 'Least Concern', NULL, 'NO_GOAT_NCBI_CANDIDATE', false)
+                        (101::BIGINT, 1001::BIGINT, 'Species one', 'ANIMALIA', 'GENUS', 'FAMILY',
+                         'Animalia', 'Genus', 'Family', 'Endangered', '501', 'MATCHED', true),
+                        (102::BIGINT, 1002::BIGINT, 'Species two', 'ANIMALIA', 'GENUS', 'FAMILY',
+                         NULL, NULL, NULL, 'Lower Risk/least concern', NULL, 'NO_GOAT_NCBI_CANDIDATE', false)
                     ) AS rows(
                         iucn_sis_id, iucn_assessment_id, iucn_scientific_name,
-                        iucn_genus, iucn_family, ncbi_genus, ncbi_family,
+                        iucn_kingdom, iucn_genus, iucn_family,
+                        ncbi_kingdom, ncbi_genus, ncbi_family,
                         iucn_redlist_category, matched_ncbi_species_taxid,
                         match_status, safe_for_automatic_species_trait_transfer
                     )
@@ -187,10 +189,12 @@ class GlobalSpeciesDimensionTests(unittest.TestCase):
             )
             goat = root / "goat.tsv"
             goat.write_text(
-                "taxon_id\tassembly_level\tbusco_completeness\t"
+                "taxon_id\ttaxon_rank\tscientific_name\tkingdom\tfamily\tgenus\tassembly_level\tbusco_completeness\t"
                 "ebp_standard_criteria\tin_progress\tresampling_required\t"
                 "sample_acquired\tsequencing_status\n"
-                "501\tChromosome\t98\t6.7\t\t\t\tinsdc_open\n"
+                "501\tspecies\tSpecies one\tAnimalia\tFamily\tSpecies\tChromosome\t98\t6.7\t\t\t\tinsdc_open\n"
+                "601\tfamily\tFamily\tAnimalia\tFamily\t\t\t\t\t\t\t\t\n"
+                "701\tgenus\tSpecies\tAnimalia\tFamily\tSpecies\t\t\t\t\t\t\t\n"
             )
             gbif = root / "gbif.tsv"
             gbif.write_text(
@@ -233,6 +237,11 @@ class GlobalSpeciesDimensionTests(unittest.TestCase):
                 "SELECT system FROM read_parquet(?) ORDER BY system",
                 [str(output / "species_systems.parquet")],
             ).fetchall()
+            legacy_category = check.execute(
+                "SELECT redlist_category FROM read_parquet(?) "
+                "WHERE gbif_accepted_id = '102'",
+                [str(output / "species.parquet")],
+            ).fetchone()[0]
             check.close()
             self.assertEqual(
                 rows[-1],
@@ -243,6 +252,7 @@ class GlobalSpeciesDimensionTests(unittest.TestCase):
             self.assertEqual(
                 systems, [("Freshwater",), ("Marine",), ("Terrestrial",)]
             )
+            self.assertEqual(legacy_category, "Least Concern")
 
     def test_dna_status_rules_are_shared_by_species_and_lineages(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -254,23 +264,24 @@ class GlobalSpeciesDimensionTests(unittest.TestCase):
                 f"""
                 COPY (
                     SELECT * FROM (VALUES
-                        (101::BIGINT, 1001::BIGINT, 'Sampled species', 'GENUS_A', 'FAMILY_A',
-                         'Genus_A', 'Family_A', 'Endangered', '501', 'MATCHED', true),
-                        (102::BIGINT, 1002::BIGINT, 'Related target', 'GENUS_B', 'FAMILY_A',
-                         'Genus_B', 'Family_A', 'Critically Endangered', '502', 'MATCHED', true),
-                        (103::BIGINT, 1003::BIGINT, 'Weak assembly', 'GENUS_C', 'FAMILY_B',
-                         'Genus_C', 'Family_B', 'Endangered', '503', 'MATCHED', true),
-                        (104::BIGINT, 1004::BIGINT, 'In progress species', 'GENUS_D', 'FAMILY_C',
-                         'Genus_D', 'Family_C', 'Endangered', '504', 'MATCHED', true),
-                        (105::BIGINT, 1005::BIGINT, 'Unsafe match', 'GENUS_E', 'FAMILY_D',
-                         'Genus_E', 'Family_D', 'Endangered', '505', 'MATCHED', false),
-                        (106::BIGINT, 1006::BIGINT, 'Extinct representative', 'GENUS_F', 'FAMILY_E',
-                         NULL, NULL, 'Extinct', NULL, 'NO_GOAT_NCBI_CANDIDATE', false),
-                        (107::BIGINT, 1007::BIGINT, 'Extant relative', 'GENUS_G', 'FAMILY_E',
-                         NULL, NULL, 'Critically Endangered', NULL, 'NO_GOAT_NCBI_CANDIDATE', false)
+                        (101::BIGINT, 1001::BIGINT, 'Sampled species', 'ANIMALIA', 'GENUS_A', 'FAMILY_A',
+                         'Animalia', 'Genus_A', 'Family_A', 'Endangered', '501', 'MATCHED', true),
+                        (102::BIGINT, 1002::BIGINT, 'Related target', 'ANIMALIA', 'GENUS_B', 'FAMILY_A',
+                         'Animalia', 'Genus_B', 'Family_A', 'Critically Endangered', '502', 'MATCHED', true),
+                        (103::BIGINT, 1003::BIGINT, 'Weak assembly', 'ANIMALIA', 'GENUS_C', 'FAMILY_B',
+                         'Animalia', 'Genus_C', 'Family_B', 'Endangered', '503', 'MATCHED', true),
+                        (104::BIGINT, 1004::BIGINT, 'In progress species', 'ANIMALIA', 'GENUS_D', 'FAMILY_C',
+                         'Animalia', 'Genus_D', 'Family_C', 'Endangered', '504', 'MATCHED', true),
+                        (105::BIGINT, 1005::BIGINT, 'Unsafe match', 'ANIMALIA', 'GENUS_E', 'FAMILY_D',
+                         'Animalia', 'Genus_E', 'Family_D', 'Endangered', '505', 'MATCHED', false),
+                        (106::BIGINT, 1006::BIGINT, 'Extinct representative', 'ANIMALIA', 'GENUS_F', 'FAMILY_E',
+                         NULL, NULL, NULL, 'Extinct', NULL, 'NO_GOAT_NCBI_CANDIDATE', false),
+                        (107::BIGINT, 1007::BIGINT, 'Extant relative', 'ANIMALIA', 'GENUS_G', 'FAMILY_E',
+                         NULL, NULL, NULL, 'Critically Endangered', NULL, 'NO_GOAT_NCBI_CANDIDATE', false)
                     ) AS rows(
                         iucn_sis_id, iucn_assessment_id, iucn_scientific_name,
-                        iucn_genus, iucn_family, ncbi_genus, ncbi_family,
+                        iucn_kingdom, iucn_genus, iucn_family,
+                        ncbi_kingdom, ncbi_genus, ncbi_family,
                         iucn_redlist_category, matched_ncbi_species_taxid,
                         match_status, safe_for_automatic_species_trait_transfer
                     )
@@ -296,13 +307,21 @@ class GlobalSpeciesDimensionTests(unittest.TestCase):
             )
             goat = root / "goat.tsv"
             goat.write_text(
-                "taxon_id\tassembly_level\tbusco_completeness\t"
+                "taxon_id\ttaxon_rank\tscientific_name\tkingdom\tfamily\tgenus\tassembly_level\tbusco_completeness\t"
                 "ebp_standard_criteria\tin_progress\tresampling_required\t"
                 "sample_acquired\tsequencing_status\n"
-                "501\t\t\t\t\t\tvoucher\t\n"
-                "503\tScaffold\t99\t\t\t\t\tinsdc_open\n"
-                "504\t\t\t\tsequencing\t\t\t\n"
-                "505\t\t\t\t\t\tvoucher\t\n"
+                "501\tspecies\tSampled species\tAnimalia\tFamily_A\tGenus_A\t\t\t\t\t\tvoucher\t\n"
+                "503\tspecies\tWeak assembly\tAnimalia\tFamily_B\tGenus_C\tScaffold\t99\t\t\t\t\tinsdc_open\n"
+                "504\tspecies\tIn progress species\tAnimalia\tFamily_C\tGenus_D\t\t\t\tsequencing\t\t\t\n"
+                "505\tspecies\tUnsafe match\tAnimalia\tFamily_D\tGenus_E\t\t\t\t\t\tvoucher\t\n"
+                "601\tfamily\tFamily_A\tAnimalia\tFamily_A\t\t\t\t\t\t\t\t\n"
+                "602\tfamily\tFamily_B\tAnimalia\tFamily_B\t\t\t\t\t\t\t\t\n"
+                "603\tfamily\tFamily_C\tAnimalia\tFamily_C\t\t\t\t\t\t\t\t\n"
+                "604\tfamily\tFamily_D\tAnimalia\tFamily_D\t\t\t\t\t\t\t\t\n"
+                "701\tgenus\tGenus_A\tAnimalia\tFamily_A\tGenus_A\t\t\t\t\t\t\t\n"
+                "703\tgenus\tGenus_C\tAnimalia\tFamily_B\tGenus_C\t\t\t\t\t\t\t\n"
+                "704\tgenus\tGenus_D\tAnimalia\tFamily_C\tGenus_D\t\t\t\t\t\t\t\n"
+                "705\tgenus\tGenus_E\tAnimalia\tFamily_D\tGenus_E\t\t\t\t\t\t\t\n"
             )
             output = root / "output"
             build_global_species(
@@ -328,9 +347,9 @@ class GlobalSpeciesDimensionTests(unittest.TestCase):
                     ("102", False, False, True),
                     ("103", False, False, False),
                     ("104", True, True, True),
-                    ("105", False, False, False),
-                    ("106", True, True, True),
-                    ("107", False, False, True),
+                    ("105", False, True, True),
+                    ("106", False, False, False),
+                    ("107", False, False, False),
                 ],
             )
 
@@ -444,7 +463,7 @@ class ServingBuildTests(unittest.TestCase):
                 family_has_dna BOOLEAN,
                 goat_data_deficient BOOLEAN,
                 edge_group_name VARCHAR,
-                meets_ebp BOOLEAN
+                has_ebp_criteria_evidence BOOLEAN
             );
             INSERT INTO SpecInfo VALUES
                 ('gbif-1', 'iucn-1', 'assessment-1', 'gbif-1', 'goat-1',
@@ -708,7 +727,7 @@ class Resolution7PreviewTests(unittest.TestCase):
                     'Endangered'::VARCHAR AS redlist_category,
                     false AS has_dna_species_level, true AS genus_has_dna,
                     true AS family_has_dna, false AS goat_data_deficient,
-                    NULL::VARCHAR AS edge_group_name, false AS meets_ebp)
+                    NULL::VARCHAR AS edge_group_name, false AS has_ebp_criteria_evidence)
                 TO '{str(species).replace("'", "''")}' (FORMAT PARQUET);
                 COPY (SELECT '101'::VARCHAR AS gbif_accepted_id,
                     'Terrestrial'::VARCHAR AS system)
@@ -834,7 +853,7 @@ class Resolution7PreviewTests(unittest.TestCase):
                     false AS has_dna_species_level, true AS genus_has_dna,
                     true AS family_has_dna, false AS goat_data_deficient,
                     NULL::VARCHAR AS edge_group_name,
-                    false AS meets_ebp)
+                    false AS has_ebp_criteria_evidence)
                 TO '{str(species).replace("'", "''")}' (FORMAT PARQUET);
                 COPY (SELECT '101'::VARCHAR AS gbif_accepted_id,
                     'Terrestrial'::VARCHAR AS system)
@@ -880,6 +899,34 @@ class Resolution7PreviewTests(unittest.TestCase):
                 completed_parts(target.parent), {h3_base_cell: target}
             )
 
+            args = SimpleNamespace(
+                parts_dir=root, species=species, species_systems=systems,
+                output_dir=target.parent, scratch_dir=root / "scratch",
+                memory_limit="512MB", threads=1, workers=1, no_progress=True,
+                overwrite=False, base_cell=None, limit=None,
+            )
+            with patch("ark_pipeline.builders.fine_metrics.aggregate_part", wraps=aggregate_part) as rebuild:
+                build_parts(args)  # Old unreceipted output is rebuilt once.
+                self.assertEqual(rebuild.call_count, 1)
+                build_parts(args)  # Identical inputs reuse the verified output.
+                self.assertEqual(rebuild.call_count, 1)
+                with duckdb.connect() as update:
+                    changed = root / "species-updated.parquet"
+                    update.execute(
+                        "COPY (SELECT * REPLACE (true AS has_dna_species_level) "
+                        "FROM read_parquet($source)) TO $target (FORMAT PARQUET)",
+                        {"source": str(species), "target": str(changed)},
+                    )
+                changed.replace(species)
+                build_parts(args)
+                self.assertEqual(rebuild.call_count, 2)
+            with duckdb.connect() as check:
+                counts = check.execute(
+                    'SELECT "total_species__all", "priority_en_sp_count__all" FROM read_parquet(?)',
+                    [str(target)],
+                ).fetchone()
+            self.assertEqual(counts, (1, 0))  # Membership stays fixed; DNA priority changes.
+
     def test_partition_validation_rejects_dropped_species_atomically(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
@@ -898,7 +945,7 @@ class Resolution7PreviewTests(unittest.TestCase):
                     false AS has_dna_species_level, true AS genus_has_dna,
                     true AS family_has_dna, false AS goat_data_deficient,
                     NULL::VARCHAR AS edge_group_name,
-                    false AS meets_ebp)
+                    false AS has_ebp_criteria_evidence)
                 TO '{str(species).replace("'", "''")}' (FORMAT PARQUET);
                 COPY (SELECT '101'::VARCHAR AS gbif_accepted_id,
                     'Terrestrial'::VARCHAR AS system)

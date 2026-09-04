@@ -1,0 +1,70 @@
+schema_version = 1
+release = "v1c"
+product_version = "1"
+format = "standard"
+levels = "01-12"
+verified_at = "2026-08-30"
+official_url = "https://www.hydrosheds.org/products/hydrobasins"
+
+[[files]]
+logical_name = "hybas_af_lev01-12_v1c.zip"
+provider_filename = "hybas_af_lev01-12_v1c.zip"
+region = "Africa"
+expected_bytes = 549296874
+download_url = "https://data.hydrosheds.org/file/hydrobasins/standard/hybas_af_lev01-12_v1c.zip"
+
+[[files]]
+logical_name = "hybas_ar_lev01-12_v1c.zip"
+provider_filename = "hybas_ar_lev01-12_v1c.zip"
+region = "Arctic"
+expected_bytes = 144269656
+download_url = "https://data.hydrosheds.org/file/hydrobasins/standard/hybas_ar_lev01-12_v1c.zip"
+
+[[files]]
+logical_name = "hybas_as_lev01-12_v1c.zip"
+provider_filename = "hybas_as_lev01-12_v1c.zip"
+region = "Asia"
+expected_bytes = 376386706
+download_url = "https://data.hydrosheds.org/file/hydrobasins/standard/hybas_as_lev01-12_v1c.zip"
+
+[[files]]
+logical_name = "hybas_au_lev01-12_v1c.zip"
+provider_filename = "hybas_au_lev01-12_v1c.zip"
+region = "Australia"
+expected_bytes = 194799278
+download_url = "https://data.hydrosheds.org/file/hydrobasins/standard/hybas_au_lev01-12_v1c.zip"
+
+[[files]]
+logical_name = "hybas_eu_lev01-12_v1c.zip"
+provider_filename = "hybas_eu_lev01-12_v1c.zip"
+region = "Europe"
+expected_bytes = 360873795
+download_url = "https://data.hydrosheds.org/file/hydrobasins/standard/hybas_eu_lev01-12_v1c.zip"
+
+[[files]]
+logical_name = "hybas_gr_lev01-12_v1c.zip"
+provider_filename = "hybas_gr_lev01-12_v1c.zip"
+region = "Greenland"
+expected_bytes = 47908359
+download_url = "https://data.hydrosheds.org/file/hydrobasins/standard/hybas_gr_lev01-12_v1c.zip"
+
+[[files]]
+logical_name = "hybas_na_lev01-12_v1c.zip"
+provider_filename = "hybas_na_lev01-12_v1c.zip"
+region = "North America"
+expected_bytes = 316655770
+download_url = "https://data.hydrosheds.org/file/hydrobasins/standard/hybas_na_lev01-12_v1c.zip"
+
+[[files]]
+logical_name = "hybas_sa_lev01-12_v1c.zip"
+provider_filename = "hybas_sa_lev01-12_v1c.zip"
+region = "South America"
+expected_bytes = 334160720
+download_url = "https://data.hydrosheds.org/file/hydrobasins/standard/hybas_sa_lev01-12_v1c.zip"
+
+[[files]]
+logical_name = "hybas_si_lev01-12_v1c.zip"
+provider_filename = "hybas_si_lev01-12_v1c.zip"
+region = "Siberia"
+expected_bytes = 291137752
+download_url = "https://data.hydrosheds.org/file/hydrobasins/standard/hybas_si_lev01-12_v1c.zip"

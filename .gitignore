@@ -3,6 +3,10 @@
 
 # Python-generated files
 __pycache__/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
 *.py[oc]
 build/
 dist/
@@ -16,22 +20,25 @@ venv/
 # logs
 *.log
 .env
+.env.*
+!.env.example
 frontend/.env
+frontend/.env.*
+!frontend/.env.example
 frontend/.svelte-kit/
 frontend/build/
 frontend/node_modules/
 .tmp/
 
-# Tutorial
-app/Tutorial.md
-
-# Monitoring
-app/monitor.py
+# Local-only history, experiments and retired workflows. Never publish.
+/archive/
 
 # Databases
 denmark_prototype/
 
 # Data files (except specific ones)
+# Local acquisition snapshots/manifests are generated data too.
+/acquisition/
 data/**
 !data/exports/
 !data/exports/.gitkeep
@@ -41,3 +48,5 @@ data/**
 # Generated boundary geometry partitions are rebuildable and are not used by
 # the browser. Keep the compact catalogues and canonical runtime geometry only.
 app/static/data/boundary-geometry/
+# Installed global ADM2 catalogues point to an ignored, versioned local build.
+app/static/data/adm2-catalogs

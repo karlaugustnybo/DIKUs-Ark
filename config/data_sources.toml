@@ -1,0 +1,161 @@
+schema_version = 1
+
+[profiles.metadata]
+description = "Species metadata and identifier inputs used by the global preview."
+required_sources = [
+  "iucn-red-list-tabular",
+  "goat-species",
+  "ncbi-taxonomy",
+  "gbif-backbone",
+]
+
+[profiles.authorized]
+description = "All source inputs needed before rebuilding global spatial products."
+required_sources = [
+  "iucn-red-list-tabular",
+  "iucn-spatial",
+  "iucn-spatial-tables",
+  "hydrobasins",
+  "goat-species",
+  "ncbi-taxonomy",
+  "gbif-backbone",
+  "geoboundaries-adm2",
+]
+
+[profiles.boundaries]
+description = "Global ADM2 map-filter boundaries, acquired independently of IUCN pairs."
+required_sources = ["geoboundaries-adm2"]
+
+[profiles.monitor]
+description = "Cheap release checks and public inputs refreshed by the monthly acquisition run."
+required_sources = [
+  "iucn-assessment-catalog",
+  "goat-species",
+  "ncbi-taxonomy",
+  "gbif-backbone",
+]
+
+[[sources]]
+id = "geoboundaries-adm2"
+provider = "geoBoundaries"
+description = "All available gbOpen ADM2 areas, with pinned country releases and provider-simplified map geometry."
+access = "public-command"
+update_policy = "when-provider-releases"
+required = true
+official_url = "https://www.geoboundaries.org/api.html"
+terms_url = "https://www.geoboundaries.org/api.html"
+inventory_file = "config/geoboundaries_adm2.toml"
+output_file = "geoboundaries-adm2.zip"
+metadata_file = "geoboundaries-adm2.metadata.json"
+command = ["uv", "run", "python", "-m", "ark_pipeline.cli.sources_download_adm2", "{output}", "--previous", "{previous}"]
+archive_required_suffixes = [".geojson", ".json"]
+
+[[sources]]
+id = "iucn-red-list-tabular"
+provider = "IUCN"
+description = "Authorized Red List taxonomy and assessment export."
+access = "manual"
+update_policy = "when-provider-releases"
+release = "2026-1"
+required = true
+official_url = "https://www.iucnredlist.org/search"
+terms_url = "https://www.iucnredlist.org/terms/terms-of-use"
+required_files = ["assessments.csv", "taxonomy.csv"]
+column_requirements = [
+  { file = "assessments.csv", columns = ["assessmentId", "internalTaxonId", "scientificName", "redlistCategory", "systems"] },
+  { file = "taxonomy.csv", columns = ["internalTaxonId", "scientificName", "kingdomName", "familyName", "genusName", "speciesName"] },
+]
+
+[[sources]]
+id = "iucn-assessment-catalog"
+provider = "IUCN"
+description = "Versioned catalogue of current Red List assessments fetched through API v4."
+access = "authenticated-command"
+update_policy = "monthly"
+interval_days = 28
+required = false
+official_url = "https://api.iucnredlist.org/"
+terms_url = "https://www.iucnredlist.org/terms/terms-of-use"
+token_env = "IUCN_REDLIST_KEY"
+output_file = "iucn_assessment_catalog.jsonl"
+metadata_file = "iucn_assessment_catalog.metadata.json"
+command = ["uv", "run", "python", "ark_pipeline/cli/sources_download_iucn.py", "{output}", "--previous", "{previous}", "--previous-metadata", "{previous_metadata}"]
+
+[[sources]]
+id = "iucn-spatial"
+provider = "IUCN"
+description = "Authorized Red List polygon archives acquired through the logged-in website flow."
+access = "browser-assisted"
+update_policy = "when-provider-releases"
+required = true
+official_url = "https://www.iucnredlist.org/resources/spatial-data-download"
+terms_url = "https://www.iucnredlist.org/terms/terms-of-use"
+inventory_file = "config/iucn_spatial_2026-1.toml"
+allowed_suffixes = [".zip"]
+
+[[sources]]
+id = "iucn-spatial-tables"
+provider = "IUCN"
+description = "Authorized Red List point and freshwater HydroBASIN table archives."
+access = "browser-assisted"
+update_policy = "when-provider-releases"
+required = true
+official_url = "https://www.iucnredlist.org/resources/spatial-data-download"
+terms_url = "https://www.iucnredlist.org/terms/terms-of-use"
+inventory_file = "config/iucn_spatial_tables_2026-1.toml"
+allowed_suffixes = [".zip"]
+
+[[sources]]
+id = "hydrobasins"
+provider = "HydroSHEDS"
+description = "HydroBASINS v1c standard basin polygons, levels 1-12, for all nine regions used by IUCN hybas_id tables."
+access = "public-download"
+update_policy = "when-provider-releases"
+required = true
+official_url = "https://www.hydrosheds.org/products/hydrobasins"
+terms_url = "https://data.hydrosheds.org/file/technical-documentation/HydroSHEDS_TechDoc_v1_4.pdf"
+inventory_file = "config/hydrobasins_v1c.toml"
+allowed_suffixes = [".zip"]
+archive_required_suffixes = [".shp", ".dbf", ".shx"]
+
+[[sources]]
+id = "goat-species"
+provider = "Genomes on a Tree"
+description = "Current GoaT Eukaryota lineage, including ENA additions, and required sequencing-evidence export."
+access = "public-command"
+update_policy = "monthly"
+interval_days = 28
+required = true
+official_url = "https://goat.genomehubs.org/"
+terms_url = "https://github.com/genomehubs/goat-data/blob/main/LICENSE"
+output_file = "tol_species_all_ranks.tsv"
+command = ["bun", "ark_pipeline/cli/sources_download_goat.mjs", "{output}"]
+column_requirements = [
+  { file = "tol_species_all_ranks.tsv", columns = ["taxon_id", "taxon_rank", "scientific_name", "species", "genus", "family", "order", "class", "phylum", "kingdom", "domain", "assembly_level", "bioproject", "busco_completeness", "ebp_standard_criteria", "in_progress", "insdc_submitted", "published", "resampling_required", "sample_acquired", "sample_available", "sample_collected", "sequencing_status", "sequencing_status_ebp", "other_priority", "family_representative"] },
+]
+
+[[sources]]
+id = "ncbi-taxonomy"
+provider = "NCBI"
+description = "NCBI Taxonomy dump used for names, synonyms, merged IDs, and deleted IDs."
+access = "public-download"
+update_policy = "monthly"
+interval_days = 28
+required = true
+official_url = "https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz"
+terms_url = "https://www.ncbi.nlm.nih.gov/home/about/policies/"
+download_url = "https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz"
+output_file = "taxdump.tar.gz"
+extract_members = ["names.dmp", "nodes.dmp", "merged.dmp", "delnodes.dmp"]
+
+[[sources]]
+id = "gbif-backbone"
+provider = "GBIF Secretariat"
+description = "Final 2023 GBIF Backbone archive retained for stable legacy GBIF identifiers."
+access = "public-download"
+update_policy = "pinned-discontinued"
+required = true
+official_url = "https://www.gbif.org/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c"
+terms_url = "https://creativecommons.org/licenses/by/4.0/"
+download_url = "https://hosted-datasets.gbif.org/datasets/backbone/current/backbone.zip"
+output_file = "backbone.zip"

@@ -1,0 +1,2351 @@
+schema_version = 1
+release = "gbOpen-ADM2-16adf4a45756"
+verified_at = "2026-09-02"
+geometry = "provider-simplified"
+official_url = "https://www.geoboundaries.org/api/current/gbOpen/ALL/ADM2/"
+
+[[files]]
+logical_name = "geoboundaries-adm2.zip"
+
+[[files]]
+logical_name = "geoboundaries-adm2.metadata.json"
+
+[[countries]]
+iso = "AFG"
+name = "Afghanistan"
+boundary_id = "AFG-ADM2-17698898"
+area_type = "wuleswali"
+year = "2014"
+units = 398
+source_license = "Public Domain"
+source_url = "hub.arcgis.com/datasets/2b63527870ef416bacf83bcaf388685f_0?geometry=53.805%2C30.812%2C81.556%2C37.181"
+license_url = "hub.arcgis.com/datasets/2b63527870ef416bacf83bcaf388685f_0?geometry=53.805%2C30.812%2C81.556%2C37.181"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AFG/ADM2/geoBoundaries-AFG-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AFG/ADM2/geoBoundaries-AFG-ADM2.geojson"
+
+[[countries]]
+iso = "AGO"
+name = "Angola"
+boundary_id = "AGO-ADM2-91424787"
+area_type = "Municipality"
+year = "2006"
+units = 158
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AGO/ADM2/geoBoundaries-AGO-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AGO/ADM2/geoBoundaries-AGO-ADM2.geojson"
+
+[[countries]]
+iso = "ALB"
+name = "Albania"
+boundary_id = "ALB-ADM2-67620474"
+area_type = "rrethe"
+year = "2021"
+units = 37
+source_license = "Creative Commons Attribution 2.5 Generic"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ALB/ADM2/geoBoundaries-ALB-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ALB/ADM2/geoBoundaries-ALB-ADM2.geojson"
+
+[[countries]]
+iso = "ARG"
+name = "Argentina"
+boundary_id = "ARG-ADM2-61730980"
+area_type = "departments"
+year = "2020"
+units = 526
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/argentina-administrative-level-0-boundaries"
+license_url = "data.humdata.org/dataset/argentina-administrative-level-0-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ARG/ADM2/geoBoundaries-ARG-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ARG/ADM2/geoBoundaries-ARG-ADM2.geojson"
+
+[[countries]]
+iso = "ARM"
+name = "Armenia"
+boundary_id = "ARM-ADM2-60910142"
+area_type = "Municipal Communities"
+year = "2020"
+units = 39
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/armenia-administrative-boundaries"
+license_url = "data.humdata.org/dataset/armenia-administrative-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ARM/ADM2/geoBoundaries-ARM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ARM/ADM2/geoBoundaries-ARM-ADM2.geojson"
+
+[[countries]]
+iso = "AUS"
+name = "Australia"
+boundary_id = "AUS-ADM2-25037944"
+area_type = "Local Government Areas"
+year = "2022"
+units = 547
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files/LGA_2022_AUST_GDA94_SHP.zip"
+license_url = "www.abs.gov.au/website-privacy-copyright-and-disclaimer#copyright-and-creative-commons"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AUS/ADM2/geoBoundaries-AUS-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AUS/ADM2/geoBoundaries-AUS-ADM2.geojson"
+
+[[countries]]
+iso = "AUT"
+name = "Austria"
+boundary_id = "AUT-ADM2-14549572"
+area_type = "Unknown"
+year = "2017"
+units = 94
+source_license = "Creative Commons Attribution-ShareAlike 2.0"
+source_url = "www.bev.gv.at/portal/page?_pageid=713,2639317&_dad=portal&_schema=PORTAL"
+license_url = "twitter.com/WMgeoLab/status/1253487894313959424"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AUT/ADM2/geoBoundaries-AUT-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AUT/ADM2/geoBoundaries-AUT-ADM2.geojson"
+
+[[countries]]
+iso = "AZE"
+name = "Azerbaijan"
+boundary_id = "AZE-ADM2-54616110"
+area_type = "Unknown"
+year = "2020"
+units = 79
+source_license = "Creative Commons Attribution-ShareAlike 3.0 Unported"
+source_url = "en.wikipedia.org/wiki/Administrative_divisions_of_Azerbaijan#/media/File"
+license_url = "en.wikipedia.org/wiki/Administrative_divisions_of_Azerbaijan"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AZE/ADM2/geoBoundaries-AZE-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AZE/ADM2/geoBoundaries-AZE-ADM2.geojson"
+
+[[countries]]
+iso = "BDI"
+name = "Burundi"
+boundary_id = "BDI-ADM2-21766830"
+area_type = "Unknown"
+year = "2007"
+units = 119
+source_license = "Public Domain"
+source_url = "geo.nyu.edu/catalog/stanford-th822mn7301"
+license_url = "geo.nyu.edu/catalog/stanford-th822mn7301#iso-metadata-reference-info"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BDI/ADM2/geoBoundaries-BDI-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BDI/ADM2/geoBoundaries-BDI-ADM2.geojson"
+
+[[countries]]
+iso = "BEL"
+name = "Belgium"
+boundary_id = "BEL-ADM2-21686613"
+area_type = "Unknown"
+year = "2015"
+units = 11
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "statbel.fgov.be/en/open-data/statistical-sectors"
+license_url = "statbel.fgov.be/en/open-data"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BEL/ADM2/geoBoundaries-BEL-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BEL/ADM2/geoBoundaries-BEL-ADM2.geojson"
+
+[[countries]]
+iso = "BEN"
+name = "Benin"
+boundary_id = "BEN-ADM2-17685819"
+area_type = "Commune"
+year = "2007"
+units = 77
+source_license = "Public Domain"
+source_url = "earthworks.stanford.edu/catalog/stanford-rq343zx0554"
+license_url = "earthworks.stanford.edu/catalog/stanford-rq343zx0554"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BEN/ADM2/geoBoundaries-BEN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BEN/ADM2/geoBoundaries-BEN-ADM2.geojson"
+
+[[countries]]
+iso = "BFA"
+name = "Burkina Faso"
+boundary_id = "BFA-ADM2-67063806"
+area_type = "Province"
+year = "2017"
+units = 45
+source_license = "Creative Commons Attribution 4.0 (CC BY 4.0)"
+source_url = "datacatalog.worldbank.org/dataset/burkina-faso-administrative-boundaries-2017"
+license_url = "datacatalog.worldbank.org/public-licenses#cc-by"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BFA/ADM2/geoBoundaries-BFA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BFA/ADM2/geoBoundaries-BFA-ADM2.geojson"
+
+[[countries]]
+iso = "BGD"
+name = "Bangladesh"
+boundary_id = "BGD-ADM2-16705992"
+area_type = "district"
+year = "2020"
+units = 64
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/administrative-boundaries-of-bangladesh-as-of-2015"
+license_url = "data.humdata.org/dataset/administrative-boundaries-of-bangladesh-as-of-2015"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BGD/ADM2/geoBoundaries-BGD-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BGD/ADM2/geoBoundaries-BGD-ADM2.geojson"
+
+[[countries]]
+iso = "BGR"
+name = "Bulgaria"
+boundary_id = "BGR-ADM2-11073933"
+area_type = "Municipality"
+year = "2019"
+units = 265
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BGR/ADM2/geoBoundaries-BGR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BGR/ADM2/geoBoundaries-BGR-ADM2.geojson"
+
+[[countries]]
+iso = "BHS"
+name = "Bahamas"
+boundary_id = "BHS-ADM2-86173395"
+area_type = "Second Schedule Districts & Third Schedule Districts"
+year = "2017"
+units = 34
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BHS/ADM2/geoBoundaries-BHS-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BHS/ADM2/geoBoundaries-BHS-ADM2.geojson"
+
+[[countries]]
+iso = "BIH"
+name = "Bosnia and Herzegovina"
+boundary_id = "BIH-ADM2-40542155"
+area_type = "gbOpen"
+year = "2013"
+units = 12
+source_license = "Public Domain"
+source_url = "en.wikipedia.org/wiki/Cantons_of_the_Federation_of_Bosnia_and_Herzegovina"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/f549eab/releaseData/gbOpen/BIH/ADM2/geoBoundaries-BIH-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/f549eab/releaseData/gbOpen/BIH/ADM2/geoBoundaries-BIH-ADM2.geojson"
+
+[[countries]]
+iso = "BLR"
+name = "Belarus"
+boundary_id = "BLR-ADM2-67162791"
+area_type = "Raion"
+year = "2005"
+units = 118
+source_license = "Creative Commons Attribution 3.0 License"
+source_url = "sedac.ciesin.columbia.edu/data/collection/gpw-v3/maps/gallery/search?facets=region"
+license_url = "creativecommons.org/licenses/by/3.0/"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BLR/ADM2/geoBoundaries-BLR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BLR/ADM2/geoBoundaries-BLR-ADM2.geojson"
+
+[[countries]]
+iso = "BLZ"
+name = "Belize"
+boundary_id = "BLZ-ADM2-1456440"
+area_type = "Constituencies"
+year = "2008"
+units = 31
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "en.wikipedia.org/wiki/Public_domain"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BLZ/ADM2/geoBoundaries-BLZ-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BLZ/ADM2/geoBoundaries-BLZ-ADM2.geojson"
+
+[[countries]]
+iso = "BOL"
+name = "Bolivia (Plurinational State of)"
+boundary_id = "BOL-ADM2-80513517"
+area_type = "Unknown"
+year = "2015"
+units = 110
+source_license = "Public Domain"
+source_url = "geo.gob.bo/geonetwork/srv/spa/catalog.search#/metadata/aeeb85a9-23df-48d4-a4e5-dd19e8b206db"
+license_url = "geo.gob.bo/geonetwork/srv/spa/catalog.search#/metadata/aeeb85a9-23df-48d4-a4e5-dd19e8b206db"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BOL/ADM2/geoBoundaries-BOL-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BOL/ADM2/geoBoundaries-BOL-ADM2.geojson"
+
+[[countries]]
+iso = "BRA"
+name = "Brazil"
+boundary_id = "BRA-ADM2-56859067"
+area_type = "municipality"
+year = "2020"
+units = 5570
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/brazil-administrative-level-0-boundaries"
+license_url = "data.humdata.org/dataset/brazil-administrative-level-0-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BRA/ADM2/geoBoundaries-BRA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BRA/ADM2/geoBoundaries-BRA-ADM2.geojson"
+
+[[countries]]
+iso = "BRN"
+name = "Brunei Darussalam"
+boundary_id = "BRN-ADM2-61948251"
+area_type = "Mukim"
+year = "2006"
+units = 38
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BRN/ADM2/geoBoundaries-BRN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BRN/ADM2/geoBoundaries-BRN-ADM2.geojson"
+
+[[countries]]
+iso = "BTN"
+name = "Bhutan"
+boundary_id = "BTN-ADM2-84629894"
+area_type = "Gewog"
+year = "2020"
+units = 205
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/bhutan-administrative-boundaries-levels-0-2"
+license_url = "data.humdata.org/dataset/bhutan-administrative-boundaries-levels-0-2"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BTN/ADM2/geoBoundaries-BTN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BTN/ADM2/geoBoundaries-BTN-ADM2.geojson"
+
+[[countries]]
+iso = "BWA"
+name = "Botswana"
+boundary_id = "BWA-ADM2-55941954"
+area_type = "Unknown"
+year = "2015"
+units = 25
+source_license = "Public Domain"
+source_url = "geoportal.rcmrd.org/layers/servir%3Abotswana_adm2#more"
+license_url = "geoportal.rcmrd.org/layers/servir%3Abotswana_adm2#license-more-above"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BWA/ADM2/geoBoundaries-BWA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BWA/ADM2/geoBoundaries-BWA-ADM2.geojson"
+
+[[countries]]
+iso = "CAF"
+name = "Central African Republic"
+boundary_id = "CAF-ADM2-33826404"
+area_type = "Sub-Prefectures"
+year = "2015"
+units = 72
+source_license = "Creative Commons Attribution 3.0 License"
+source_url = "data2.unhcr.org/en/documents/details/32968"
+license_url = "data2.unhcr.org/en/documents/details/32968"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CAF/ADM2/geoBoundaries-CAF-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CAF/ADM2/geoBoundaries-CAF-ADM2.geojson"
+
+[[countries]]
+iso = "CAN"
+name = "Canada"
+boundary_id = "CAN-ADM2-811477"
+area_type = "Divisions"
+year = "2022"
+units = 76
+source_license = "Open Government Canada 2.0"
+source_url = "open.canada.ca/data/en/dataset/ef70dc3b-1069-4037-9bce-61f47e628a1d"
+license_url = "www.statcan.gc.ca/en/reference/licence"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CAN/ADM2/geoBoundaries-CAN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CAN/ADM2/geoBoundaries-CAN-ADM2.geojson"
+
+[[countries]]
+iso = "CHE"
+name = "Switzerland"
+boundary_id = "CHE-ADM2-98125504"
+area_type = "District"
+year = "2022"
+units = 169
+source_license = "Federal Office of Topography swisstopo License"
+source_url = "www.swisstopo.admin.ch/en/geodata/landscape/boundaries3d.html"
+license_url = "www.swisstopo.admin.ch/en/home/meta/conditions/geodata/ogd.html"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CHE/ADM2/geoBoundaries-CHE-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CHE/ADM2/geoBoundaries-CHE-ADM2.geojson"
+
+[[countries]]
+iso = "CHL"
+name = "Chile"
+boundary_id = "CHL-ADM2-35621905"
+area_type = "Unknown"
+year = "2017"
+units = 56
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CHL/ADM2/geoBoundaries-CHL-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CHL/ADM2/geoBoundaries-CHL-ADM2.geojson"
+
+[[countries]]
+iso = "CHN"
+name = "China"
+boundary_id = "CHN-ADM2-17275852"
+area_type = "County Level"
+year = "2017"
+units = 2391
+source_license = "Open Data Commons Public Domain Dedication and License (PDDL) v1.0"
+source_url = "github.com/justinelliotmeyers/-1_400-/blob/master/%E4%B8%AD%E5%9B%BD%E5%8E%BF%E7%95%8C.shp"
+license_url = "revolutionarygis.wordpress.com/2014/01/18/china-prefecture-shapefile-and-china-province-shapefile/"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CHN/ADM2/geoBoundaries-CHN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CHN/ADM2/geoBoundaries-CHN-ADM2.geojson"
+
+[[countries]]
+iso = "CIV"
+name = "Côte d'Ivoire"
+boundary_id = "CIV-ADM2-98640826"
+area_type = "régions de Côte d'Ivoire"
+year = "2016"
+units = 33
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "datacatalog.worldbank.org/dataset/cote-divoire-administrative-boundaries-2016"
+license_url = "datacatalog.worldbank.org/public-licenses#cc-by"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CIV/ADM2/geoBoundaries-CIV-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CIV/ADM2/geoBoundaries-CIV-ADM2.geojson"
+
+[[countries]]
+iso = "CMR"
+name = "Cameroon"
+boundary_id = "CMR-ADM2-32672807"
+area_type = "department"
+year = "2016"
+units = 60
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "africaopendata.org/dataset/cameroon-maps"
+license_url = "africaopendata.org/dataset/cameroon-maps"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CMR/ADM2/geoBoundaries-CMR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CMR/ADM2/geoBoundaries-CMR-ADM2.geojson"
+
+[[countries]]
+iso = "COD"
+name = "Democratic Republic of the Congo"
+boundary_id = "COD-ADM2-63176286"
+area_type = "territory, city"
+year = "2019"
+units = 189
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/drc-administrative-boundaries-levels-0-2"
+license_url = "data.humdata.org/dataset/drc-administrative-boundaries-levels-0-2"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/COD/ADM2/geoBoundaries-COD-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/COD/ADM2/geoBoundaries-COD-ADM2.geojson"
+
+[[countries]]
+iso = "COG"
+name = "Congo"
+boundary_id = "COG-ADM2-1427508"
+area_type = "Unknown"
+year = "2007"
+units = 46
+source_license = "Public Domain"
+source_url = "geo.nyu.edu/catalog/stanford-hz799nq4536"
+license_url = "geo.nyu.edu/catalog/stanford-hz799nq4536"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/COG/ADM2/geoBoundaries-COG-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/COG/ADM2/geoBoundaries-COG-ADM2.geojson"
+
+[[countries]]
+iso = "COL"
+name = "Colombia"
+boundary_id = "COL-ADM2-7082276"
+area_type = "Unknown"
+year = "2020"
+units = 1122
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "geoportal.dane.gov.co/servicios/descarga-y-metadatos/descarga-mgn-marco-geoestadistico-nacional/"
+license_url = "geoportal.dane.gov.co/?descarga-marco-geoestadistico-nacional"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/COL/ADM2/geoBoundaries-COL-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/COL/ADM2/geoBoundaries-COL-ADM2.geojson"
+
+[[countries]]
+iso = "COM"
+name = "Comoros"
+boundary_id = "COM-ADM2-10938185"
+area_type = "Prefecture"
+year = "2019"
+units = 17
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "data.humdata.org/dataset/comoros-administrative-level-0-3-boundaries"
+license_url = "data.humdata.org/dataset/comoros-administrative-level-0-3-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/COM/ADM2/geoBoundaries-COM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/COM/ADM2/geoBoundaries-COM-ADM2.geojson"
+
+[[countries]]
+iso = "CPV"
+name = "Cabo Verde"
+boundary_id = "CPV-ADM2-66160863"
+area_type = "freguesia"
+year = "2020"
+units = 32
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/cape-verde-administrative-boundaries"
+license_url = "data.humdata.org/dataset/cape-verde-administrative-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CPV/ADM2/geoBoundaries-CPV-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CPV/ADM2/geoBoundaries-CPV-ADM2.geojson"
+
+[[countries]]
+iso = "CRI"
+name = "Costa Rica"
+boundary_id = "CRI-ADM2-36466004"
+area_type = "Cantons"
+year = "2020"
+units = 83
+source_license = "CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CRI/ADM2/geoBoundaries-CRI-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CRI/ADM2/geoBoundaries-CRI-ADM2.geojson"
+
+[[countries]]
+iso = "CUB"
+name = "Cuba"
+boundary_id = "CUB-ADM2-75667366"
+area_type = "Unknown"
+year = "2017"
+units = 168
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CUB/ADM2/geoBoundaries-CUB-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CUB/ADM2/geoBoundaries-CUB-ADM2.geojson"
+
+[[countries]]
+iso = "CYP"
+name = "Cyprus"
+boundary_id = "CYP-ADM2-46923920"
+area_type = "Unknown"
+year = "2009"
+units = 612
+source_license = "Creative Commons Attribution-ShareAlike 3.0 Unported"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CYP/ADM2/geoBoundaries-CYP-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CYP/ADM2/geoBoundaries-CYP-ADM2.geojson"
+
+[[countries]]
+iso = "CZE"
+name = "Czechia"
+boundary_id = "CZE-ADM2-57006924"
+area_type = "District"
+year = "2010"
+units = 77
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "creativecommons.org/share-your-work/public-domain"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CZE/ADM2/geoBoundaries-CZE-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CZE/ADM2/geoBoundaries-CZE-ADM2.geojson"
+
+[[countries]]
+iso = "DEU"
+name = "Germany"
+boundary_id = "DEU-ADM2-9070358"
+area_type = "Government District"
+year = "2021"
+units = 38
+source_license = "Data license Germany - Attribution - Version 2.0"
+source_url = "gdz.bkg.bund.de/index.php/default/digitale-geodaten/verwaltungsgebiete/nuts-gebiete-1-250-000-stand-31-12-nuts250-31-12.html"
+license_url = "www.govdata.de/dl-de/by-2-0"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DEU/ADM2/geoBoundaries-DEU-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DEU/ADM2/geoBoundaries-DEU-ADM2.geojson"
+
+[[countries]]
+iso = "DJI"
+name = "Djibouti"
+boundary_id = "DJI-ADM2-41766387"
+area_type = "Districts"
+year = "2020"
+units = 11
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/djibouti-administrative-levels-0-2-boundaries"
+license_url = "data.humdata.org/dataset/djibouti-administrative-levels-0-2-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DJI/ADM2/geoBoundaries-DJI-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DJI/ADM2/geoBoundaries-DJI-ADM2.geojson"
+
+[[countries]]
+iso = "DNK"
+name = "Denmark"
+boundary_id = "DNK-ADM2-71786716"
+area_type = "kommune"
+year = "2018"
+units = 98
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DNK/ADM2/geoBoundaries-DNK-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DNK/ADM2/geoBoundaries-DNK-ADM2.geojson"
+
+[[countries]]
+iso = "DOM"
+name = "Dominican Republic"
+boundary_id = "DOM-ADM2-3306468"
+area_type = "Municipalities"
+year = "2020"
+units = 155
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "haiti.caribbeangeoportal.com/datasets/caribgeoportal"
+license_url = "creativecommons.org/licenses/by/4.0/"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DOM/ADM2/geoBoundaries-DOM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DOM/ADM2/geoBoundaries-DOM-ADM2.geojson"
+
+[[countries]]
+iso = "DZA"
+name = "Algeria"
+boundary_id = "DZA-ADM2-36490775"
+area_type = "the People's Democratic Republic of Algeria"
+year = "2012"
+units = 48
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DZA/ADM2/geoBoundaries-DZA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DZA/ADM2/geoBoundaries-DZA-ADM2.geojson"
+
+[[countries]]
+iso = "ECU"
+name = "Ecuador"
+boundary_id = "ECU-ADM2-8360857"
+area_type = "Cantons"
+year = "2019"
+units = 224
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/ecuador-admin-level-2-boundaries"
+license_url = "data.humdata.org/dataset/ecuador-admin-level-2-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ECU/ADM2/geoBoundaries-ECU-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ECU/ADM2/geoBoundaries-ECU-ADM2.geojson"
+
+[[countries]]
+iso = "EGY"
+name = "Egypt"
+boundary_id = "EGY-ADM2-37247803"
+area_type = "marakiz and aqsam"
+year = "2020"
+units = 365
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/egypt-administrative-boundaries-levels-0-3"
+license_url = "data.humdata.org/dataset/egypt-administrative-boundaries-levels-0-3"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/EGY/ADM2/geoBoundaries-EGY-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/EGY/ADM2/geoBoundaries-EGY-ADM2.geojson"
+
+[[countries]]
+iso = "ERI"
+name = "Eritrea"
+boundary_id = "ERI-ADM2-51966322"
+area_type = "districts"
+year = "2020"
+units = 58
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/eritrea-admin-level-1-boundaries"
+license_url = "data.humdata.org/dataset/eritrea-admin-level-1-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ERI/ADM2/geoBoundaries-ERI-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ERI/ADM2/geoBoundaries-ERI-ADM2.geojson"
+
+[[countries]]
+iso = "ESP"
+name = "Spain"
+boundary_id = "ESP-ADM2-93216281"
+area_type = "Province"
+year = "2018"
+units = 52
+source_license = "National Institute of Statistics (INE) Data License"
+source_url = "opendata.esri.es/datasets/inmigraci%C3%B3n-por-provincias-?geometry=-117.728%2C22.781%2C105.778%2C47.535"
+license_url = "www.ine.es/ss/Satellite?L=0&c=Page&cid=1254735849170&p=1254735849170&pagename=Ayuda%2FINELayout"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ESP/ADM2/geoBoundaries-ESP-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ESP/ADM2/geoBoundaries-ESP-ADM2.geojson"
+
+[[countries]]
+iso = "EST"
+name = "Estonia"
+boundary_id = "EST-ADM2-1311010"
+area_type = "Unknown"
+year = "2017"
+units = 215
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/EST/ADM2/geoBoundaries-EST-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/EST/ADM2/geoBoundaries-EST-ADM2.geojson"
+
+[[countries]]
+iso = "ETH"
+name = "Ethiopia"
+boundary_id = "ETH-ADM2-57463737"
+area_type = "Unknown"
+year = "2016"
+units = 74
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "africaopendata.org/dataset/ethiopia-shapefiles"
+license_url = "africaopendata.org/dataset/ethiopia-shapefiles"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ETH/ADM2/geoBoundaries-ETH-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ETH/ADM2/geoBoundaries-ETH-ADM2.geojson"
+
+[[countries]]
+iso = "FIN"
+name = "Finland"
+boundary_id = "FIN-ADM2-99834313"
+area_type = "Unknown"
+year = "2016"
+units = 70
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FIN/ADM2/geoBoundaries-FIN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FIN/ADM2/geoBoundaries-FIN-ADM2.geojson"
+
+[[countries]]
+iso = "FJI"
+name = "Fiji"
+boundary_id = "FJI-ADM2-14151628"
+area_type = "Provinces"
+year = "2020"
+units = 15
+source_license = "Creative Commons Attribution 4.0 (CC BY 4.0)"
+source_url = "pacificdata.org/data/geographic_data/2007_fji_phc_admin_boundaries/resource/5880cadb-2287-4eac-9f3d-8b321730e6cd"
+license_url = "pacificdata.org/data/geographic_data/2007_fji_phc_admin_boundaries/resource/5880cadb-2287-4eac-9f3d-8b321730e6cd"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FJI/ADM2/geoBoundaries-FJI-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FJI/ADM2/geoBoundaries-FJI-ADM2.geojson"
+
+[[countries]]
+iso = "FRA"
+name = "France"
+boundary_id = "FRA-ADM2-29444166"
+area_type = "Department"
+year = "2022"
+units = 96
+source_license = "Etalab Open License 2.0"
+source_url = "geoservices.ign.fr/adminexpress"
+license_url = "geoservices.ign.fr/sites/default/files/2021-11/IGNF_ADMIN_EXPRESS_3-1.html"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FRA/ADM2/geoBoundaries-FRA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FRA/ADM2/geoBoundaries-FRA-ADM2.geojson"
+
+[[countries]]
+iso = "FSM"
+name = "Micronesia (Fed. States of)"
+boundary_id = "FSM-ADM2-79324940"
+area_type = "Municipality"
+year = "2019"
+units = 75
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/fsm-2010-administrative-level-0-2-boundaries"
+license_url = "Data https"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FSM/ADM2/geoBoundaries-FSM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FSM/ADM2/geoBoundaries-FSM-ADM2.geojson"
+
+[[countries]]
+iso = "GAB"
+name = "Gabon"
+boundary_id = "GAB-ADM2-22940354"
+area_type = "Department"
+year = "2018"
+units = 49
+source_license = "Creative Commons Attribution 3.0 License"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GAB/ADM2/geoBoundaries-GAB-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GAB/ADM2/geoBoundaries-GAB-ADM2.geojson"
+
+[[countries]]
+iso = "GBR"
+name = "United Kingdom"
+boundary_id = "GBR-ADM2-9080712"
+area_type = "Counties and Unitary Authorities"
+year = "2019"
+units = 216
+source_license = "Open Government Licence v3.0"
+source_url = "geoportal.statistics.gov.uk/datasets/b216b4c8a4e74f6fb692a1785255d777_0?geometry=-19.125%2C53.451%2C14.252%2C57.788"
+license_url = "geoportal.statistics.gov.uk/datasets/b216b4c8a4e74f6fb692a1785255d777_0?geometry=-19.125%2C53.451%2C14.252%2C57.788"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GBR/ADM2/geoBoundaries-GBR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GBR/ADM2/geoBoundaries-GBR-ADM2.geojson"
+
+[[countries]]
+iso = "GEO"
+name = "Georgia"
+boundary_id = "GEO-ADM2-92138335"
+area_type = "Municipality"
+year = "2007"
+units = 68
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GEO/ADM2/geoBoundaries-GEO-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GEO/ADM2/geoBoundaries-GEO-ADM2.geojson"
+
+[[countries]]
+iso = "GHA"
+name = "Ghana"
+boundary_id = "GHA-ADM2-2480657"
+area_type = "Districts"
+year = "2019"
+units = 260
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "hub.arcgis.com/datasets/USAID-Ghana-HPNO"
+license_url = "creativecommons.org/licenses/by/4.0/"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GHA/ADM2/geoBoundaries-GHA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GHA/ADM2/geoBoundaries-GHA-ADM2.geojson"
+
+[[countries]]
+iso = "GIN"
+name = "Guinea"
+boundary_id = "GIN-ADM2-49546643"
+area_type = "prefecture"
+year = "2017"
+units = 34
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "ckan.ev.openindustry.in/pt_BR/dataset/guinea-geodatabase/resource/4ed92c38-a5ea-4c53-a4c8-1b01f2fcec32?inner_span=True"
+license_url = "data.humdata.org/dataset/guinea-geodatabase"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GIN/ADM2/geoBoundaries-GIN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GIN/ADM2/geoBoundaries-GIN-ADM2.geojson"
+
+[[countries]]
+iso = "GMB"
+name = "Gambia"
+boundary_id = "GMB-ADM2-56634734"
+area_type = "District"
+year = "2020"
+units = 48
+source_license = "Creative Commons Attribution 4.0 (CC BY 4.0)"
+source_url = "blogs.worldbank.org/opendata/hidden-potential-mobile-phone-data-insights-covid-19-gambia"
+license_url = "datacatalog.worldbank.org/search/dataset/0038034"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GMB/ADM2/geoBoundaries-GMB-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GMB/ADM2/geoBoundaries-GMB-ADM2.geojson"
+
+[[countries]]
+iso = "GNB"
+name = "Guinea-Bissau"
+boundary_id = "GNB-ADM2-13655514"
+area_type = "Unknown"
+year = "2017"
+units = 39
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GNB/ADM2/geoBoundaries-GNB-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GNB/ADM2/geoBoundaries-GNB-ADM2.geojson"
+
+[[countries]]
+iso = "GNQ"
+name = "Equatorial Guinea"
+boundary_id = "GNQ-ADM2-11065452"
+area_type = "Unknown"
+year = "2013"
+units = 31
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "gnq-data.forest-atlas.org/datasets/equatorial-guinea-gis-data-2013"
+license_url = "gnq-data.forest-atlas.org/datasets/equatorial-guinea-gis-data-2013"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GNQ/ADM2/geoBoundaries-GNQ-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GNQ/ADM2/geoBoundaries-GNQ-ADM2.geojson"
+
+[[countries]]
+iso = "GRC"
+name = "Greece"
+boundary_id = "GRC-ADM2-26713481"
+area_type = "Unknown"
+year = "2016"
+units = 14
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "data.humdata.org/dataset/gree"
+license_url = "data.humdata.org/dataset/gree"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GRC/ADM2/geoBoundaries-GRC-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GRC/ADM2/geoBoundaries-GRC-ADM2.geojson"
+
+[[countries]]
+iso = "GTM"
+name = "Guatemala"
+boundary_id = "GTM-ADM2-79465075"
+area_type = "Municipio"
+year = "2021"
+units = 342
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/guatemala-administrative-level-0-national-1-departments-and-2-municipalities"
+license_url = "data.humdata.org/dataset/guatemala-administrative-level-0-national-1-departments-and-2-municipalities"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GTM/ADM2/geoBoundaries-GTM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GTM/ADM2/geoBoundaries-GTM-ADM2.geojson"
+
+[[countries]]
+iso = "GUM"
+name = "Guam"
+boundary_id = "GUM-ADM2-77769853"
+area_type = "Village"
+year = "2021"
+units = 19
+source_license = "Public Domain"
+source_url = "www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html"
+license_url = "www.census.gov/about/policies/open-gov/open-data.html"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GUM/ADM2/geoBoundaries-GUM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GUM/ADM2/geoBoundaries-GUM-ADM2.geojson"
+
+[[countries]]
+iso = "GUY"
+name = "Guyana"
+boundary_id = "GUY-ADM2-73187651"
+area_type = "Neighbourhood Councils"
+year = "2019"
+units = 27
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/organization/ocha-fiss?q=guy&ext_page_size=25"
+license_url = "data.humdata.org/dataset/guyana-administrative-level-0-1-and-2-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GUY/ADM2/geoBoundaries-GUY-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GUY/ADM2/geoBoundaries-GUY-ADM2.geojson"
+
+[[countries]]
+iso = "HND"
+name = "Honduras"
+boundary_id = "HND-ADM2-27666195"
+area_type = "Municipalities"
+year = "2019"
+units = 299
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "datos.gob.hn/en/dataset/limites-municipales/resource/0a086bb7-1e3e-4cb0-b7d8-e21a8417dc5f"
+license_url = "creativecommons.org/licenses/by/4.0/"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/905b0ba/releaseData/gbOpen/HND/ADM2/geoBoundaries-HND-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/905b0ba/releaseData/gbOpen/HND/ADM2/geoBoundaries-HND-ADM2.geojson"
+
+[[countries]]
+iso = "HRV"
+name = "Croatia"
+boundary_id = "HRV-ADM2-41942358"
+area_type = "Municipalities and Towns"
+year = "2021"
+units = 560
+source_license = "Creative Commons Attribution-ShareAlike 2.0"
+source_url = "osm-boundaries.com/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/HRV/ADM2/geoBoundaries-HRV-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/HRV/ADM2/geoBoundaries-HRV-ADM2.geojson"
+
+[[countries]]
+iso = "HTI"
+name = "Haiti"
+boundary_id = "HTI-ADM2-57096268"
+area_type = "Unknown"
+year = "2017"
+units = 42
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/HTI/ADM2/geoBoundaries-HTI-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/HTI/ADM2/geoBoundaries-HTI-ADM2.geojson"
+
+[[countries]]
+iso = "HUN"
+name = "Hungary"
+boundary_id = "HUN-ADM2-29324351"
+area_type = "Unknown"
+year = "2017"
+units = 198
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/HUN/ADM2/geoBoundaries-HUN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/HUN/ADM2/geoBoundaries-HUN-ADM2.geojson"
+
+[[countries]]
+iso = "IDN"
+name = "Indonesia"
+boundary_id = "IDN-ADM2-22746128"
+area_type = "regency, city"
+year = "2020"
+units = 519
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/indonesia-administrative-boundary-polygons-lines-and-places-levels-0-4b"
+license_url = "data.humdata.org/dataset/indonesia-administrative-boundary-polygons-lines-and-places-levels-0-4b"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IDN/ADM2/geoBoundaries-IDN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IDN/ADM2/geoBoundaries-IDN-ADM2.geojson"
+
+[[countries]]
+iso = "IND"
+name = "India"
+boundary_id = "IND-ADM2-76128533"
+area_type = "District"
+year = "2021"
+units = 736
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "geonode.pathwaysdata.com/layers/geonode"
+license_url = "geonode.pathwaysdata.com/layers/geonode"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IND/ADM2/geoBoundaries-IND-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IND/ADM2/geoBoundaries-IND-ADM2.geojson"
+
+[[countries]]
+iso = "IRL"
+name = "Ireland"
+boundary_id = "IRL-ADM2-5873133"
+area_type = "Local Electoral Areas"
+year = "2015"
+units = 166
+source_license = "Creative Commons Attribution 4.0 (CC BY 4.0)"
+source_url = "data.gov.ie/dataset/local-electoral-areas-boundaries-generalised-20m-osi-national-administrative-boundaries-20152?package_type=dataset"
+license_url = "data-osi.opendata.arcgis.com/datasets/OSi"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IRL/ADM2/geoBoundaries-IRL-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IRL/ADM2/geoBoundaries-IRL-ADM2.geojson"
+
+[[countries]]
+iso = "IRN"
+name = "Iran (Islamic Republic of)"
+boundary_id = "IRN-ADM2-26516999"
+area_type = "Shahrestan"
+year = "2017"
+units = 432
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IRN/ADM2/geoBoundaries-IRN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IRN/ADM2/geoBoundaries-IRN-ADM2.geojson"
+
+[[countries]]
+iso = "IRQ"
+name = "Iraq"
+boundary_id = "IRQ-ADM2-34846034"
+area_type = "Districts"
+year = "2021"
+units = 101
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/iraq-admin-level-1-boundaries"
+license_url = "data.humdata.org/dataset/iraq-admin-level-1-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IRQ/ADM2/geoBoundaries-IRQ-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IRQ/ADM2/geoBoundaries-IRQ-ADM2.geojson"
+
+[[countries]]
+iso = "ISL"
+name = "Iceland"
+boundary_id = "ISL-ADM2-244011"
+area_type = "Municipalities"
+year = "2016"
+units = 74
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "gatt.lmi.is/geonetwork/srv/eng/catalog.search#/metadata/%7B7CF6A33E-2588-42A8-A483-0B6F729B528A%7D"
+license_url = "gatt.lmi.is/geonetwork/srv/eng/catalog.search#/metadata/%7B7CF6A33E-2588-42A8-A483-0B6F729B528A%7D"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ISL/ADM2/geoBoundaries-ISL-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ISL/ADM2/geoBoundaries-ISL-ADM2.geojson"
+
+[[countries]]
+iso = "ISR"
+name = "Israel"
+boundary_id = "ISR-ADM2-584046"
+area_type = "Subdistrict"
+year = "2021"
+units = 15
+source_license = "CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "creativecommons.org/publicdomain/zero/1.0/deed.en"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ISR/ADM2/geoBoundaries-ISR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ISR/ADM2/geoBoundaries-ISR-ADM2.geojson"
+
+[[countries]]
+iso = "ITA"
+name = "Italy"
+boundary_id = "ITA-ADM2-23120603"
+area_type = "Unknown"
+year = "2023"
+units = 20
+source_license = "Creative Commons Attribution 3.0 License"
+source_url = "www.istat.it/it/archivio/222527"
+license_url = "www.istat.it/it/note-legali"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ITA/ADM2/geoBoundaries-ITA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ITA/ADM2/geoBoundaries-ITA-ADM2.geojson"
+
+[[countries]]
+iso = "JAM"
+name = "Jamaica"
+boundary_id = "JAM-ADM2-35162164"
+area_type = "community"
+year = "2017"
+units = 827
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "github.com/justinelliotmeyers/official_jamaica_administrative_boundary_shapefile"
+license_url = "github.com/justinelliotmeyers/official_jamaica_administrative_boundary_shapefile/blob/master/Source_License.txt"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/JAM/ADM2/geoBoundaries-JAM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/JAM/ADM2/geoBoundaries-JAM-ADM2.geojson"
+
+[[countries]]
+iso = "JOR"
+name = "Jordan"
+boundary_id = "JOR-ADM2-86222999"
+area_type = "Nahias"
+year = "2006"
+units = 52
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/JOR/ADM2/geoBoundaries-JOR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/JOR/ADM2/geoBoundaries-JOR-ADM2.geojson"
+
+[[countries]]
+iso = "JPN"
+name = "Japan"
+boundary_id = "JPN-ADM2-22064153"
+area_type = "Subprefectures"
+year = "2017"
+units = 1745
+source_license = "Creative Commons Attribution-ShareAlike 2.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/JPN/ADM2/geoBoundaries-JPN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/JPN/ADM2/geoBoundaries-JPN-ADM2.geojson"
+
+[[countries]]
+iso = "KAZ"
+name = "Kazakhstan"
+boundary_id = "KAZ-ADM2-9891525"
+area_type = "District"
+year = "2017"
+units = 174
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KAZ/ADM2/geoBoundaries-KAZ-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KAZ/ADM2/geoBoundaries-KAZ-ADM2.geojson"
+
+[[countries]]
+iso = "KEN"
+name = "Kenya"
+boundary_id = "KEN-ADM2-3690345"
+area_type = "Sub-Counties"
+year = "2020"
+units = 290
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/ken-administrative-boundaries"
+license_url = "data.humdata.org/dataset/ken-administrative-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KEN/ADM2/geoBoundaries-KEN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KEN/ADM2/geoBoundaries-KEN-ADM2.geojson"
+
+[[countries]]
+iso = "KGZ"
+name = "Kyrgyzstan"
+boundary_id = "KGZ-ADM2-92254566"
+area_type = "Raions"
+year = "2010"
+units = 41
+source_license = "Creative Commons Attribution-ShareAlike 3.0 Unported"
+source_url = "en.wikipedia.org/wiki/Districts_of_Kyrgyzstan#/media/File"
+license_url = "creativecommons.org/licenses/by-sa/3.0/legalcode"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KGZ/ADM2/geoBoundaries-KGZ-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KGZ/ADM2/geoBoundaries-KGZ-ADM2.geojson"
+
+[[countries]]
+iso = "KHM"
+name = "Cambodia"
+boundary_id = "KHM-ADM2-14789045"
+area_type = "Unknown"
+year = "2014"
+units = 197
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "opendevelopmentcambodia.net/dataset/?id=administrative-boundaries-of-cambodia-2014"
+license_url = "opendevelopmentcambodia.net/dataset/?id=administrative-boundaries-of-cambodia-2014"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KHM/ADM2/geoBoundaries-KHM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KHM/ADM2/geoBoundaries-KHM-ADM2.geojson"
+
+[[countries]]
+iso = "KIR"
+name = "Kiribati"
+boundary_id = "KIR-ADM2-32618148"
+area_type = "Unknown"
+year = "2017"
+units = 24
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KIR/ADM2/geoBoundaries-KIR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KIR/ADM2/geoBoundaries-KIR-ADM2.geojson"
+
+[[countries]]
+iso = "KOR"
+name = "Republic of Korea"
+boundary_id = "KOR-ADM2-91817680"
+area_type = "Si, Kun (districts and city districts)"
+year = "2020"
+units = 229
+source_license = "Creative Commons Attribution 3.0 License"
+source_url = "www.citypopulation.de/en/southkorea/admin/"
+license_url = "www.citypopulation.de/en/help/termsofuse/"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KOR/ADM2/geoBoundaries-KOR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KOR/ADM2/geoBoundaries-KOR-ADM2.geojson"
+
+[[countries]]
+iso = "KWT"
+name = "Kuwait"
+boundary_id = "KWT-ADM2-36326507"
+area_type = "Areas"
+year = "2011"
+units = 138
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "www.openstreetmap.org/relation/305099#map=9/29.3171/47.7787"
+license_url = "www.openstreetmap.org/relation/305099#map=9/29.3171/47.7787"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KWT/ADM2/geoBoundaries-KWT-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KWT/ADM2/geoBoundaries-KWT-ADM2.geojson"
+
+[[countries]]
+iso = "LAO"
+name = "Lao People's Democratic Republic"
+boundary_id = "LAO-ADM2-54806243"
+area_type = "Districts"
+year = "2019"
+units = 148
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/lao-admin-boundaries"
+license_url = "data.humdata.org/dataset/lao-admin-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LAO/ADM2/geoBoundaries-LAO-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LAO/ADM2/geoBoundaries-LAO-ADM2.geojson"
+
+[[countries]]
+iso = "LBN"
+name = "Lebanon"
+boundary_id = "LBN-ADM2-6925839"
+area_type = "Districts (Aqdya)"
+year = "2021"
+units = 26
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LBN/ADM2/geoBoundaries-LBN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LBN/ADM2/geoBoundaries-LBN-ADM2.geojson"
+
+[[countries]]
+iso = "LBR"
+name = "Liberia"
+boundary_id = "LBR-ADM2-62588387"
+area_type = "Districts"
+year = "2021"
+units = 136
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/liberia-admin-level-2-boundaries"
+license_url = "data.humdata.org/dataset/liberia-admin-level-2-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LBR/ADM2/geoBoundaries-LBR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LBR/ADM2/geoBoundaries-LBR-ADM2.geojson"
+
+[[countries]]
+iso = "LCA"
+name = "Saint Lucia"
+boundary_id = "LCA-ADM2-8701671"
+area_type = "Communities"
+year = "2019"
+units = 547
+source_license = "Creative Commons Attribution 4.0 (CC BY 4.0)"
+source_url = "data.govt.lc/dataset/st-lucia-communities"
+license_url = "data.govt.lc/dataset/st-lucia-communities"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LCA/ADM2/geoBoundaries-LCA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LCA/ADM2/geoBoundaries-LCA-ADM2.geojson"
+
+[[countries]]
+iso = "LKA"
+name = "Sri Lanka"
+boundary_id = "LKA-ADM2-46371173"
+area_type = "Unknown"
+year = "2017"
+units = 25
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LKA/ADM2/geoBoundaries-LKA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LKA/ADM2/geoBoundaries-LKA-ADM2.geojson"
+
+[[countries]]
+iso = "LSO"
+name = "Lesotho"
+boundary_id = "LSO-ADM2-5366337"
+area_type = "constituencies"
+year = "2020"
+units = 78
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/lesotho-administrative-level-0-2-boundaries"
+license_url = "data.humdata.org/dataset/lesotho-administrative-level-0-2-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LSO/ADM2/geoBoundaries-LSO-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LSO/ADM2/geoBoundaries-LSO-ADM2.geojson"
+
+[[countries]]
+iso = "LTU"
+name = "Lithuania"
+boundary_id = "LTU-ADM2-59024439"
+area_type = "Unknown"
+year = "2017"
+units = 60
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LTU/ADM2/geoBoundaries-LTU-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LTU/ADM2/geoBoundaries-LTU-ADM2.geojson"
+
+[[countries]]
+iso = "LUX"
+name = "Luxembourg"
+boundary_id = "LUX-ADM2-21775719"
+area_type = "Unknown"
+year = "2017"
+units = 105
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LUX/ADM2/geoBoundaries-LUX-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LUX/ADM2/geoBoundaries-LUX-ADM2.geojson"
+
+[[countries]]
+iso = "LVA"
+name = "Latvia"
+boundary_id = "LVA-ADM2-27541924"
+area_type = "pilsētās un pagastos"
+year = "2021"
+units = 589
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "data.gov.lv/dati/lv/dataset/administrativo-teritoriju-karte/resource/85aab9e3-a65a-42c0-ab8f-be249f96c58d"
+license_url = "data.gov.lv/dati/lv/dataset/administrativo-teritoriju-karte/resource/85aab9e3-a65a-42c0-ab8f-be249f96c58d"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LVA/ADM2/geoBoundaries-LVA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LVA/ADM2/geoBoundaries-LVA-ADM2.geojson"
+
+[[countries]]
+iso = "MAR"
+name = "Morocco"
+boundary_id = "MAR-ADM2-96644757"
+area_type = "Unknown"
+year = "2017"
+units = 75
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MAR/ADM2/geoBoundaries-MAR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MAR/ADM2/geoBoundaries-MAR-ADM2.geojson"
+
+[[countries]]
+iso = "MCO"
+name = "Monaco"
+boundary_id = "MCO-ADM2-19026983"
+area_type = "Unknown"
+year = "2017"
+units = 9
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MCO/ADM2/geoBoundaries-MCO-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MCO/ADM2/geoBoundaries-MCO-ADM2.geojson"
+
+[[countries]]
+iso = "MDG"
+name = "Madagascar"
+boundary_id = "MDG-ADM2-10022922"
+area_type = "districts"
+year = "2020"
+units = 119
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/madagascar-administrative-level-0-4-boundaries"
+license_url = "data.humdata.org/dataset/madagascar-administrative-level-0-4-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MDG/ADM2/geoBoundaries-MDG-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MDG/ADM2/geoBoundaries-MDG-ADM2.geojson"
+
+[[countries]]
+iso = "MDV"
+name = "Maldives"
+boundary_id = "MDV-ADM2-70690204"
+area_type = "Administrative Atolls"
+year = "2017"
+units = 21
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/maldives-administrative-boundaries-polygon-polyline"
+license_url = "data.humdata.org/dataset/maldives-administrative-boundaries-polygon-polyline"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MDV/ADM2/geoBoundaries-MDV-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MDV/ADM2/geoBoundaries-MDV-ADM2.geojson"
+
+[[countries]]
+iso = "MEX"
+name = "Mexico"
+boundary_id = "MEX-ADM2-50627088"
+area_type = "municipios"
+year = "2012"
+units = 2457
+source_license = "Creative Commons Attribution 4.0 (CC BY 4.0)"
+source_url = "datacatalog.worldbank.org/dataset/mexico-municipalities-2012"
+license_url = "datacatalog.worldbank.org/public-licenses#cc-by"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MEX/ADM2/geoBoundaries-MEX-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MEX/ADM2/geoBoundaries-MEX-ADM2.geojson"
+
+[[countries]]
+iso = "MKD"
+name = "North Macedonia"
+boundary_id = "MKD-ADM2-65306769"
+area_type = "Opštini"
+year = "2016"
+units = 84
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "data.humdata.org/dataset/fyrom-administrative-levels-1-4-from-eurogeographics-and-ntes"
+license_url = "data.humdata.org/dataset/fyrom-administrative-levels-1-4-from-eurogeographics-and-ntes"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MKD/ADM2/geoBoundaries-MKD-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MKD/ADM2/geoBoundaries-MKD-ADM2.geojson"
+
+[[countries]]
+iso = "MLI"
+name = "Mali"
+boundary_id = "MLI-ADM2-8926073"
+area_type = "Cercle"
+year = "2017"
+units = 50
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "data.humdata.org/dataset/mali-admin-boundaries-level-1-2-and-3-including-2017-population-desagregated-by-sexe"
+license_url = "data.humdata.org/dataset/mali-admin-boundaries-level-1-2-and-3-including-2017-population-desagregated-by-sexe"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MLI/ADM2/geoBoundaries-MLI-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MLI/ADM2/geoBoundaries-MLI-ADM2.geojson"
+
+[[countries]]
+iso = "MMR"
+name = "Myanmar"
+boundary_id = "MMR-ADM2-60261553"
+area_type = "District"
+year = "2019"
+units = 74
+source_license = "Creative Commons Attribution 4.0 (CC BY 4.0)"
+source_url = "data.mmanalytics.org/dataset/border-shapefiles/resource/b641b45f-898d-483b-986d-f9763af4f6c6"
+license_url = "data.mmanalytics.org/dataset/border-shapefiles"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MMR/ADM2/geoBoundaries-MMR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MMR/ADM2/geoBoundaries-MMR-ADM2.geojson"
+
+[[countries]]
+iso = "MNG"
+name = "Mongolia"
+boundary_id = "MNG-ADM2-93677404"
+area_type = "soum, düüregs"
+year = "2021"
+units = 339
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/mongolia-administrative-boundaries-polygon-polyline"
+license_url = "data.humdata.org/dataset/mongolia-administrative-boundaries-polygon-polyline"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MNG/ADM2/geoBoundaries-MNG-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MNG/ADM2/geoBoundaries-MNG-ADM2.geojson"
+
+[[countries]]
+iso = "MNP"
+name = "Northern Mariana Islands"
+boundary_id = "MNP-ADM2-39175420"
+area_type = "Municipality"
+year = "2021"
+units = 4
+source_license = "Public Domain"
+source_url = "www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html"
+license_url = "www.census.gov/about/policies/open-gov/open-data.html"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MNP/ADM2/geoBoundaries-MNP-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MNP/ADM2/geoBoundaries-MNP-ADM2.geojson"
+
+[[countries]]
+iso = "MOZ"
+name = "Mozambique"
+boundary_id = "MOZ-ADM2-85939544"
+area_type = "districts"
+year = "2019"
+units = 159
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/mozambique-administrative-levels-0-3"
+license_url = "data.humdata.org/dataset/mozambique-administrative-levels-0-3"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MOZ/ADM2/geoBoundaries-MOZ-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MOZ/ADM2/geoBoundaries-MOZ-ADM2.geojson"
+
+[[countries]]
+iso = "MRT"
+name = "Mauritania"
+boundary_id = "MRT-ADM2-47542326"
+area_type = "Mauritania"
+year = "2020"
+units = 57
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/mauritania-administrative-boundaries"
+license_url = "data.humdata.org/dataset/mauritania-administrative-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MRT/ADM2/geoBoundaries-MRT-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MRT/ADM2/geoBoundaries-MRT-ADM2.geojson"
+
+[[countries]]
+iso = "MWI"
+name = "Malawi"
+boundary_id = "MWI-ADM2-42251766"
+area_type = "district"
+year = "2020"
+units = 28
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/malawi-administrative-level-0-3-boundaries"
+license_url = "data.humdata.org/dataset/malawi-administrative-level-0-3-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MWI/ADM2/geoBoundaries-MWI-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MWI/ADM2/geoBoundaries-MWI-ADM2.geojson"
+
+[[countries]]
+iso = "MYS"
+name = "Malaysia"
+boundary_id = "MYS-ADM2-92858781"
+area_type = "Districts"
+year = "2020"
+units = 160
+source_license = "Creative Commons Attribution 3.0 License"
+source_url = "www.citypopulation.de/en/malaysia/admin/"
+license_url = "www.citypopulation.de/en/help/termsofuse/"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MYS/ADM2/geoBoundaries-MYS-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MYS/ADM2/geoBoundaries-MYS-ADM2.geojson"
+
+[[countries]]
+iso = "NAM"
+name = "Namibia"
+boundary_id = "NAM-ADM2-8085530"
+area_type = "Unknown"
+year = "2007"
+units = 109
+source_license = "Public Domain"
+source_url = "purl.stanford.edu/cs051py0596"
+license_url = "purl.stanford.edu/cs051py0596"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NAM/ADM2/geoBoundaries-NAM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NAM/ADM2/geoBoundaries-NAM-ADM2.geojson"
+
+[[countries]]
+iso = "NER"
+name = "Niger"
+boundary_id = "NER-ADM2-23599985"
+area_type = "Department"
+year = "2018"
+units = 67
+source_license = "Creative Commons Attribution 3.0 License"
+source_url = "www.citypopulation.de/en/niger/admin/?mode=status&map=osm_dlr&opacity=0.8"
+license_url = "www.citypopulation.de/termsofuse.html"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NER/ADM2/geoBoundaries-NER-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NER/ADM2/geoBoundaries-NER-ADM2.geojson"
+
+[[countries]]
+iso = "NGA"
+name = "Nigeria"
+boundary_id = "NGA-ADM2-59680162"
+area_type = "Local Government Areas"
+year = "2022"
+units = 774
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "data.grid3.org/datasets/grid3-nigeria-local-government-area-boundaries-1/explore?location=8.959048%2C8.685290%2C6.61"
+license_url = "data.grid3.org/datasets/grid3-nigeria-local-government-area-boundaries-1/explore?location=8.959048%2C8.685290%2C6.61"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NGA/ADM2/geoBoundaries-NGA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NGA/ADM2/geoBoundaries-NGA-ADM2.geojson"
+
+[[countries]]
+iso = "NIC"
+name = "Nicaragua"
+boundary_id = "NIC-ADM2-1004716"
+area_type = "Unknown"
+year = "2017"
+units = 153
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NIC/ADM2/geoBoundaries-NIC-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NIC/ADM2/geoBoundaries-NIC-ADM2.geojson"
+
+[[countries]]
+iso = "NLD"
+name = "Netherlands"
+boundary_id = "NLD-ADM2-6326949"
+area_type = "Municipality"
+year = "2022"
+units = 344
+source_license = "CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"
+source_url = "nationaalgeoregister.nl/geonetwork/srv/dut/catalog.search#/metadata/208bc283-7c66-4ce7-8ad3-1cf3e8933fb5?tab=relations"
+license_url = "nationaalgeoregister.nl/geonetwork/srv/dut/catalog.search#/metadata/208bc283-7c66-4ce7-8ad3-1cf3e8933fb5?tab=general"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NLD/ADM2/geoBoundaries-NLD-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NLD/ADM2/geoBoundaries-NLD-ADM2.geojson"
+
+[[countries]]
+iso = "NOR"
+name = "Norway"
+boundary_id = "NOR-ADM2-86288312"
+area_type = "Unknown"
+year = "2013"
+units = 431
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "kartkatalog.geonorge.no/metadata/kartverket/administrative-enheter/041f1e6e-bdbc-4091-b48f-8a5990f3cc5b"
+license_url = "kartkatalog.geonorge.no/metadata/kartverket/administrative-enheter/041f1e6e-bdbc-4091-b48f-8a5990f3cc5b"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NOR/ADM2/geoBoundaries-NOR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NOR/ADM2/geoBoundaries-NOR-ADM2.geojson"
+
+[[countries]]
+iso = "NPL"
+name = "Nepal"
+boundary_id = "NPL-ADM2-79688334"
+area_type = "Districts"
+year = "2006"
+units = 75
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NPL/ADM2/geoBoundaries-NPL-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NPL/ADM2/geoBoundaries-NPL-ADM2.geojson"
+
+[[countries]]
+iso = "NZL"
+name = "New Zealand"
+boundary_id = "NZL-ADM2-76426892"
+area_type = "Territorial Authorities"
+year = "2021"
+units = 88
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "datafinder.stats.govt.nz/layer/105153-territorial-authority-2021-generalised/"
+license_url = "datafinder.stats.govt.nz/layer/105153-territorial-authority-2021-generalised/"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NZL/ADM2/geoBoundaries-NZL-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NZL/ADM2/geoBoundaries-NZL-ADM2.geojson"
+
+[[countries]]
+iso = "OMN"
+name = "Oman"
+boundary_id = "OMN-ADM2-60546857"
+area_type = "Wilayaf"
+year = "2020"
+units = 61
+source_license = "Other - Direct Permission"
+source_url = "nsdig2gapps.ncsi.gov.om/nsdiportal/"
+license_url = "twitter.com/WMgeoLab/status/1253068523166765056"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/OMN/ADM2/geoBoundaries-OMN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/OMN/ADM2/geoBoundaries-OMN-ADM2.geojson"
+
+[[countries]]
+iso = "PAK"
+name = "Pakistan"
+boundary_id = "PAK-ADM2-60131773"
+area_type = "Districts"
+year = "2019"
+units = 126
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "creativecommons.org/share-your-work/public-domain/"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PAK/ADM2/geoBoundaries-PAK-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PAK/ADM2/geoBoundaries-PAK-ADM2.geojson"
+
+[[countries]]
+iso = "PAN"
+name = "Panama"
+boundary_id = "PAN-ADM2-35544464"
+area_type = "Unknown"
+year = "2012"
+units = 76
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "www.arcgis.com/home/item.html?id=8f1c5499d3a8423888454cfee5b45586"
+license_url = "www.arcgis.com/home/item.html?id=8f1c5499d3a8423888454cfee5b45586"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PAN/ADM2/geoBoundaries-PAN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PAN/ADM2/geoBoundaries-PAN-ADM2.geojson"
+
+[[countries]]
+iso = "PER"
+name = "Peru"
+boundary_id = "PER-ADM2-86281439"
+area_type = "Provinces"
+year = "2020"
+units = 196
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/limites-de-peru"
+license_url = "data.humdata.org/dataset/limites-de-peru"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PER/ADM2/geoBoundaries-PER-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PER/ADM2/geoBoundaries-PER-ADM2.geojson"
+
+[[countries]]
+iso = "PHL"
+name = "Philippines"
+boundary_id = "PHL-ADM2-2640588"
+area_type = "Provinces"
+year = "2020"
+units = 87
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/philippines-administrative-levels-0-to-3"
+license_url = "data.humdata.org/about/license"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/41af8f1/releaseData/gbOpen/PHL/ADM2/geoBoundaries-PHL-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/41af8f1/releaseData/gbOpen/PHL/ADM2/geoBoundaries-PHL-ADM2.geojson"
+
+[[countries]]
+iso = "PLW"
+name = "Palau"
+boundary_id = "PLW-ADM2-81905179"
+area_type = "Hamlets"
+year = "2015"
+units = 77
+source_license = "Creative Commons Attribution 4.0 (CC BY 4.0)"
+source_url = "pacificdata.org/data/geographic_data/2015_plw_phc_admin_boundaries/resource/fe6dd29b-6ec5-4a06-9aac-e8d84d895b21"
+license_url = "pacificdata.org/data/dataset/2015_plw_phc_admin_boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PLW/ADM2/geoBoundaries-PLW-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PLW/ADM2/geoBoundaries-PLW-ADM2.geojson"
+
+[[countries]]
+iso = "PNG"
+name = "Papua New Guinea"
+boundary_id = "PNG-ADM2-67681753"
+area_type = "District"
+year = "2019"
+units = 87
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/papua-new-guinea-admin-level-0-international-boundaries"
+license_url = "data.humdata.org/dataset/papua-new-guinea-admin-level-0-international-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PNG/ADM2/geoBoundaries-PNG-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PNG/ADM2/geoBoundaries-PNG-ADM2.geojson"
+
+[[countries]]
+iso = "POL"
+name = "Poland"
+boundary_id = "POL-ADM2-97123803"
+area_type = "Unknown"
+year = "2017"
+units = 380
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/POL/ADM2/geoBoundaries-POL-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/POL/ADM2/geoBoundaries-POL-ADM2.geojson"
+
+[[countries]]
+iso = "PRI"
+name = "Puerto Rico"
+boundary_id = "PRI-ADM2-32010507"
+area_type = "Municipality"
+year = "2021"
+units = 78
+source_license = "Public Domain"
+source_url = "www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html"
+license_url = "www.census.gov/about/policies/open-gov/open-data.html"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PRI/ADM2/geoBoundaries-PRI-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PRI/ADM2/geoBoundaries-PRI-ADM2.geojson"
+
+[[countries]]
+iso = "PRK"
+name = "Dem. People's Republic of Korea"
+boundary_id = "PRK-ADM2-82179303"
+area_type = "county, city, special city"
+year = "2019"
+units = 179
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/dpr-korea-administrative-boundaries"
+license_url = "data.humdata.org/dataset/dpr-korea-administrative-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PRK/ADM2/geoBoundaries-PRK-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PRK/ADM2/geoBoundaries-PRK-ADM2.geojson"
+
+[[countries]]
+iso = "PRT"
+name = "Portugal"
+boundary_id = "PRT-ADM2-2272694"
+area_type = "gbOpen"
+year = "2020"
+units = 311
+source_license = "CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"
+source_url = "en.wikipedia.org/wiki/File"
+license_url = "en.wikipedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/90a1d52/releaseData/gbOpen/PRT/ADM2/geoBoundaries-PRT-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/90a1d52/releaseData/gbOpen/PRT/ADM2/geoBoundaries-PRT-ADM2.geojson"
+
+[[countries]]
+iso = "PRY"
+name = "Paraguay"
+boundary_id = "PRY-ADM2-47425931"
+area_type = "gbOpen"
+year = "2012"
+units = 247
+source_license = "Creative Commons Attribution 4.0 (CC BY 4.0)"
+source_url = "geo.stp.gov.py/user/dgeec/tables/paraguay_2012_barrrios_y_localidades/public"
+license_url = "twitter.com/WMgeoLab/status/1179001467669078017/photo/3"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/f549eab/releaseData/gbOpen/PRY/ADM2/geoBoundaries-PRY-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/f549eab/releaseData/gbOpen/PRY/ADM2/geoBoundaries-PRY-ADM2.geojson"
+
+[[countries]]
+iso = "PSE"
+name = "State of Palestine"
+boundary_id = "PSE-ADM2-87354302"
+area_type = "governorate"
+year = "2017"
+units = 16
+source_license = "Creative Commons Attribution 4.0 (CC BY 4.0)"
+source_url = "opendatawatch.com/about/"
+license_url = "opendatawatch.com/publications/open-data-to-support-sustainable-development-goals/"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PSE/ADM2/geoBoundaries-PSE-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PSE/ADM2/geoBoundaries-PSE-ADM2.geojson"
+
+[[countries]]
+iso = "QAT"
+name = "Qatar"
+boundary_id = "QAT-ADM2-91078587"
+area_type = "Unknown"
+year = "2015"
+units = 79
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "www.data.gov.qa/explore/dataset/gis-statistics/export/"
+license_url = "www.data.gov.qa/pages/license/annexes"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/QAT/ADM2/geoBoundaries-QAT-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/QAT/ADM2/geoBoundaries-QAT-ADM2.geojson"
+
+[[countries]]
+iso = "ROU"
+name = "Romania"
+boundary_id = "ROU-ADM2-2599482"
+area_type = "municipalities"
+year = "2016"
+units = 3235
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "data.gov.ro/dataset/unitati-administrative"
+license_url = "data.gov.ro/pages/licence"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ROU/ADM2/geoBoundaries-ROU-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ROU/ADM2/geoBoundaries-ROU-ADM2.geojson"
+
+[[countries]]
+iso = "RUS"
+name = "Russian Federation"
+boundary_id = "RUS-ADM2-50074027"
+area_type = "Raion"
+year = "2017"
+units = 2328
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/RUS/ADM2/geoBoundaries-RUS-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/RUS/ADM2/geoBoundaries-RUS-ADM2.geojson"
+
+[[countries]]
+iso = "RWA"
+name = "Rwanda"
+boundary_id = "RWA-ADM2-39286606"
+area_type = "Unknown"
+year = "2012"
+units = 30
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "geodata-nisr.opendata.arcgis.com/datasets/c0a3d1deab694f7998bc4b966be12cbb_0"
+license_url = "www.statistics.gov.rw/terms-use"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/RWA/ADM2/geoBoundaries-RWA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/RWA/ADM2/geoBoundaries-RWA-ADM2.geojson"
+
+[[countries]]
+iso = "SAU"
+name = "Saudi Arabia"
+boundary_id = "SAU-ADM2-3984122"
+area_type = "Governorate"
+year = "2021"
+units = 147
+source_license = "Creative Commons Attribution-ShareAlike 2.0"
+source_url = "www.openstreetmap.org/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SAU/ADM2/geoBoundaries-SAU-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SAU/ADM2/geoBoundaries-SAU-ADM2.geojson"
+
+[[countries]]
+iso = "SDN"
+name = "Sudan"
+boundary_id = "SDN-ADM2-16777658"
+area_type = "District"
+year = "2020"
+units = 189
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/sudan-administrative-boundaries-levels-0-2"
+license_url = "data.humdata.org/dataset/sudan-administrative-boundaries-levels-0-2"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SDN/ADM2/geoBoundaries-SDN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SDN/ADM2/geoBoundaries-SDN-ADM2.geojson"
+
+[[countries]]
+iso = "SEN"
+name = "Senegal"
+boundary_id = "SEN-ADM2-50182788"
+area_type = "department"
+year = "2019"
+units = 45
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/senegal-administrative-boundaries"
+license_url = "data.humdata.org/dataset/senegal-administrative-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SEN/ADM2/geoBoundaries-SEN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SEN/ADM2/geoBoundaries-SEN-ADM2.geojson"
+
+[[countries]]
+iso = "SGP"
+name = "Singapore"
+boundary_id = "SGP-ADM2-91842731"
+area_type = "Divisions"
+year = "2016"
+units = 55
+source_license = "Singapore Open Data License Version 1.0"
+source_url = "data.gov.sg/dataset/master-plan-2014-subzone-boundary-no-sea"
+license_url = "data.gov.sg/dataset/master-plan-2014-subzone-boundary-no-sea"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SGP/ADM2/geoBoundaries-SGP-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SGP/ADM2/geoBoundaries-SGP-ADM2.geojson"
+
+[[countries]]
+iso = "SLB"
+name = "Solomon Islands"
+boundary_id = "SLB-ADM2-97153195"
+area_type = "Constituency"
+year = "2018"
+units = 50
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/solomon-islands-administrative-level-0-1-2-and-3-boundary-polygons"
+license_url = "data.humdata.org/dataset/solomon-islands-administrative-level-0-1-2-and-3-boundary-polygons"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SLB/ADM2/geoBoundaries-SLB-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SLB/ADM2/geoBoundaries-SLB-ADM2.geojson"
+
+[[countries]]
+iso = "SLE"
+name = "Sierra Leone"
+boundary_id = "SLE-ADM2-65957751"
+area_type = "Districts"
+year = "2017"
+units = 14
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/sierra-leone-all-ad-min-level-boundaries"
+license_url = "data.humdata.org/dataset/sierra-leone-all-ad-min-level-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SLE/ADM2/geoBoundaries-SLE-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SLE/ADM2/geoBoundaries-SLE-ADM2.geojson"
+
+[[countries]]
+iso = "SLV"
+name = "El Salvador"
+boundary_id = "SLV-ADM2-79315794"
+area_type = "Municipalities"
+year = "2007"
+units = 272
+source_license = "Public Domain"
+source_url = "en.wikipedia.org/wiki/Municipalities_of_El_Salvador#/media/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SLV/ADM2/geoBoundaries-SLV-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SLV/ADM2/geoBoundaries-SLV-ADM2.geojson"
+
+[[countries]]
+iso = "SOM"
+name = "Somalia"
+boundary_id = "SOM-ADM2-84685775"
+area_type = "Districts"
+year = "2022"
+units = 118
+source_license = "Creative Commons Attribution 4.0 (CC BY 4.0)"
+source_url = "polioeradication.org/"
+license_url = "polioeradication.org/"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SOM/ADM2/geoBoundaries-SOM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SOM/ADM2/geoBoundaries-SOM-ADM2.geojson"
+
+[[countries]]
+iso = "SRB"
+name = "Serbia"
+boundary_id = "SRB-ADM2-33768554"
+area_type = "Unknown"
+year = "2017"
+units = 145
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SRB/ADM2/geoBoundaries-SRB-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SRB/ADM2/geoBoundaries-SRB-ADM2.geojson"
+
+[[countries]]
+iso = "SSD"
+name = "South Sudan"
+boundary_id = "SSD-ADM2-79223893"
+area_type = "counties"
+year = "2020"
+units = 78
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/south-sudan-administrative-boundaries"
+license_url = "data.humdata.org/dataset/south-sudan-administrative-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SSD/ADM2/geoBoundaries-SSD-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SSD/ADM2/geoBoundaries-SSD-ADM2.geojson"
+
+[[countries]]
+iso = "STP"
+name = "Sao Tome and Principe"
+boundary_id = "STP-ADM2-43174148"
+area_type = "Districts"
+year = "2017"
+units = 7
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/STP/ADM2/geoBoundaries-STP-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/STP/ADM2/geoBoundaries-STP-ADM2.geojson"
+
+[[countries]]
+iso = "SUR"
+name = "Suriname"
+boundary_id = "SUR-ADM2-93971198"
+area_type = "Ressorten"
+year = "2021"
+units = 62
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SUR/ADM2/geoBoundaries-SUR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SUR/ADM2/geoBoundaries-SUR-ADM2.geojson"
+
+[[countries]]
+iso = "SVK"
+name = "Slovakia"
+boundary_id = "SVK-ADM2-56367889"
+area_type = "Okres"
+year = "2017"
+units = 79
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SVK/ADM2/geoBoundaries-SVK-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SVK/ADM2/geoBoundaries-SVK-ADM2.geojson"
+
+[[countries]]
+iso = "SVN"
+name = "Slovenia"
+boundary_id = "SVN-ADM2-79292919"
+area_type = "Unknown"
+year = "2017"
+units = 213
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SVN/ADM2/geoBoundaries-SVN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SVN/ADM2/geoBoundaries-SVN-ADM2.geojson"
+
+[[countries]]
+iso = "SWE"
+name = "Sweden"
+boundary_id = "SWE-ADM2-70781695"
+area_type = "Municipality"
+year = "2017"
+units = 290
+source_license = "CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SWE/ADM2/geoBoundaries-SWE-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SWE/ADM2/geoBoundaries-SWE-ADM2.geojson"
+
+[[countries]]
+iso = "SWZ"
+name = "Eswatini"
+boundary_id = "SWZ-ADM2-25544865"
+area_type = "Unknown"
+year = "2017"
+units = 53
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SWZ/ADM2/geoBoundaries-SWZ-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SWZ/ADM2/geoBoundaries-SWZ-ADM2.geojson"
+
+[[countries]]
+iso = "SYC"
+name = "Seychelles"
+boundary_id = "SYC-ADM2-34574756"
+area_type = "Regions"
+year = "2020"
+units = 8
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "data.humdata.org/dataset/seychelles-subnational-administrative-boundaries"
+license_url = "data.humdata.org/dataset/seychelles-subnational-administrative-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SYC/ADM2/geoBoundaries-SYC-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SYC/ADM2/geoBoundaries-SYC-ADM2.geojson"
+
+[[countries]]
+iso = "SYR"
+name = "Syrian Arab Republic"
+boundary_id = "SYR-ADM2-27442178"
+area_type = "District"
+year = "2017"
+units = 61
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/syrian-arab-republic-administrative-boundaries-populated-places"
+license_url = "data.humdata.org/dataset/syrian-arab-republic-administrative-boundaries-populated-places"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SYR/ADM2/geoBoundaries-SYR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SYR/ADM2/geoBoundaries-SYR-ADM2.geojson"
+
+[[countries]]
+iso = "TCD"
+name = "Chad"
+boundary_id = "TCD-ADM2-50815135"
+area_type = "Departments"
+year = "2019"
+units = 70
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/chad-admin-boundaries-admin-1-and-admin-2"
+license_url = "data.humdata.org/dataset/chad-admin-boundaries-admin-1-and-admin-2"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TCD/ADM2/geoBoundaries-TCD-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TCD/ADM2/geoBoundaries-TCD-ADM2.geojson"
+
+[[countries]]
+iso = "TGO"
+name = "Togo"
+boundary_id = "TGO-ADM2-56601680"
+area_type = "Prefectures"
+year = "2017"
+units = 37
+source_license = "Creative Commons Attribution-ShareAlike 2.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TGO/ADM2/geoBoundaries-TGO-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TGO/ADM2/geoBoundaries-TGO-ADM2.geojson"
+
+[[countries]]
+iso = "THA"
+name = "Thailand"
+boundary_id = "THA-ADM2-78962969"
+area_type = "districts"
+year = "2019"
+units = 928
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/thailand-administrative-boundaries"
+license_url = "data.humdata.org/dataset/thailand-administrative-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/THA/ADM2/geoBoundaries-THA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/THA/ADM2/geoBoundaries-THA-ADM2.geojson"
+
+[[countries]]
+iso = "TJK"
+name = "Tajikistan"
+boundary_id = "TJK-ADM2-16282066"
+area_type = "Unknown"
+year = "2017"
+units = 58
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TJK/ADM2/geoBoundaries-TJK-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TJK/ADM2/geoBoundaries-TJK-ADM2.geojson"
+
+[[countries]]
+iso = "TKM"
+name = "Turkmenistan"
+boundary_id = "TKM-ADM2-10190150"
+area_type = "Unknown"
+year = "2009"
+units = 66
+source_license = "Creative Commons Attribution-ShareAlike 3.0 Unported"
+source_url = "sedac.ciesin.columbia.edu/data/set/grump-v1-population-density/maps/7"
+license_url = "sedac.ciesin.columbia.edu/data/set/grump-v1-population-density/maps/7"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TKM/ADM2/geoBoundaries-TKM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TKM/ADM2/geoBoundaries-TKM-ADM2.geojson"
+
+[[countries]]
+iso = "TLS"
+name = "Timor-Leste"
+boundary_id = "TLS-ADM2-22284137"
+area_type = "Administrative Posts"
+year = "2020"
+units = 65
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/timor-leste-administrative-boundaries-levels-0-3"
+license_url = "data.humdata.org/dataset/timor-leste-administrative-boundaries-levels-0-3"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TLS/ADM2/geoBoundaries-TLS-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TLS/ADM2/geoBoundaries-TLS-ADM2.geojson"
+
+[[countries]]
+iso = "TON"
+name = "Tonga"
+boundary_id = "TON-ADM2-48082658"
+area_type = "district"
+year = "2020"
+units = 23
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "pacificdata.org/data/geographic_data/2016_ton_phc_admin_boundaries/resource/a825b058-0932-48ac-a3e2-9ec316e89372"
+license_url = "pacificdata.org/data/geographic_data/2016_ton_phc_admin_boundaries/resource/a825b058-0932-48ac-a3e2-9ec316e89372"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TON/ADM2/geoBoundaries-TON-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TON/ADM2/geoBoundaries-TON-ADM2.geojson"
+
+[[countries]]
+iso = "TUN"
+name = "Tunisia"
+boundary_id = "TUN-ADM2-11933810"
+area_type = "Unknown"
+year = "2017"
+units = 264
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TUN/ADM2/geoBoundaries-TUN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TUN/ADM2/geoBoundaries-TUN-ADM2.geojson"
+
+[[countries]]
+iso = "TUR"
+name = "Turkey"
+boundary_id = "TUR-ADM2-54988432"
+area_type = "Districts"
+year = "2021"
+units = 999
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "osm-boundaries.com"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TUR/ADM2/geoBoundaries-TUR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TUR/ADM2/geoBoundaries-TUR-ADM2.geojson"
+
+[[countries]]
+iso = "TUV"
+name = "Tuvalu"
+boundary_id = "TUV-ADM2-33948139"
+area_type = "village"
+year = "2017"
+units = 34
+source_license = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+source_url = "pacificdata.org/data/geographic_data/2017_tuv_phc_admin_boundaries/resource/9eefabe8-d129-44ee-a3a4-7f93a24b2349"
+license_url = "pacificdata.org/data/geographic_data/2017_tuv_phc_admin_boundaries/resource/9eefabe8-d129-44ee-a3a4-7f93a24b2349"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TUV/ADM2/geoBoundaries-TUV-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TUV/ADM2/geoBoundaries-TUV-ADM2.geojson"
+
+[[countries]]
+iso = "TWN"
+name = "Taiwan"
+boundary_id = "TWN-ADM2-52511910"
+area_type = "Townships"
+year = "2017"
+units = 369
+source_license = "Creative Commons Attribution-ShareAlike 2.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TWN/ADM2/geoBoundaries-TWN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TWN/ADM2/geoBoundaries-TWN-ADM2.geojson"
+
+[[countries]]
+iso = "TZA"
+name = "United Republic of Tanzania"
+boundary_id = "TZA-ADM2-72390352"
+area_type = "Districts"
+year = "2021"
+units = 170
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/tanzania-administrative-boundaries-level-1-to-3-regions-districts-and-wards-with-2012-population"
+license_url = "data.humdata.org/dataset/tanzania-administrative-boundaries-level-1-to-3-regions-districts-and-wards-with-2012-population"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TZA/ADM2/geoBoundaries-TZA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TZA/ADM2/geoBoundaries-TZA-ADM2.geojson"
+
+[[countries]]
+iso = "UGA"
+name = "Uganda"
+boundary_id = "UGA-ADM2-47994165"
+area_type = "Counties"
+year = "2006"
+units = 151
+source_license = "Public Domain"
+source_url = "commons.wikimedia.org/wiki/File"
+license_url = "commons.wikimedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/UGA/ADM2/geoBoundaries-UGA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/UGA/ADM2/geoBoundaries-UGA-ADM2.geojson"
+
+[[countries]]
+iso = "UKR"
+name = "Ukraine"
+boundary_id = "UKR-ADM2-74538382"
+area_type = "Raions"
+year = "2006"
+units = 495
+source_license = "Public Domain"
+source_url = "en.wikipedia.org/wiki/File"
+license_url = "en.wikipedia.org/wiki/File"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/UKR/ADM2/geoBoundaries-UKR-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/UKR/ADM2/geoBoundaries-UKR-ADM2.geojson"
+
+[[countries]]
+iso = "URY"
+name = "Uruguay"
+boundary_id = "URY-ADM2-84410073"
+area_type = "Municipalities"
+year = "2013"
+units = 124
+source_license = "Creative Commons Attribution-ShareAlike 3.0 Unported"
+source_url = "commons.wikimedia.org/wiki/Category"
+license_url = "commons.wikimedia.org/wiki/Category"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/URY/ADM2/geoBoundaries-URY-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/URY/ADM2/geoBoundaries-URY-ADM2.geojson"
+
+[[countries]]
+iso = "USA"
+name = "United States of America"
+boundary_id = "USA-ADM2-52423323"
+area_type = "Counties"
+year = "2018"
+units = 3233
+source_license = "Public Domain"
+source_url = "www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html"
+license_url = "www.census.gov/programs-surveys/geography/technical-documentation/naming-convention/cartographic-boundary-file.html"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/USA/ADM2/geoBoundaries-USA-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/USA/ADM2/geoBoundaries-USA-ADM2.geojson"
+
+[[countries]]
+iso = "UZB"
+name = "Uzbekistan"
+boundary_id = "UZB-ADM2-79887680"
+area_type = "Tuman"
+year = "2020"
+units = 199
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/ubbekistan-update"
+license_url = "data.humdata.org/dataset/ubbekistan-update"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/UZB/ADM2/geoBoundaries-UZB-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/UZB/ADM2/geoBoundaries-UZB-ADM2.geojson"
+
+[[countries]]
+iso = "VEN"
+name = "Venezuela (Bolivarian Republic of)"
+boundary_id = "VEN-ADM2-92452058"
+area_type = "Municipios"
+year = "2015"
+units = 335
+source_license = "Open Data Commons Open Database License 1.0"
+source_url = "tapiquen-sig.jimdofree.com/descargas-gratuitas/venezuela/"
+license_url = "twitter.com/WMgeoLab/status/1251983690709827590"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/VEN/ADM2/geoBoundaries-VEN-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/VEN/ADM2/geoBoundaries-VEN-ADM2.geojson"
+
+[[countries]]
+iso = "VNM"
+name = "Viet Nam"
+boundary_id = "VNM-ADM2-81297802"
+area_type = "District"
+year = "2020"
+units = 708
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/viet-nam-administrative-boundaries-polygon-polyline"
+license_url = "data.humdata.org/dataset/viet-nam-administrative-boundaries-polygon-polyline"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/VNM/ADM2/geoBoundaries-VNM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/VNM/ADM2/geoBoundaries-VNM-ADM2.geojson"
+
+[[countries]]
+iso = "VUT"
+name = "Vanuatu"
+boundary_id = "VUT-ADM2-77236927"
+area_type = "Municipalities"
+year = "2019"
+units = 65
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/vanuatu-administrative-level-0-1-and-2-boundaries"
+license_url = "data.humdata.org/dataset/vanuatu-administrative-level-0-1-and-2-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/VUT/ADM2/geoBoundaries-VUT-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/VUT/ADM2/geoBoundaries-VUT-ADM2.geojson"
+
+[[countries]]
+iso = "WSM"
+name = "Samoa"
+boundary_id = "WSM-ADM2-51752279"
+area_type = "Districts"
+year = "2011"
+units = 43
+source_license = "Creative Commons Attribution 4.0 (CC BY 4.0)"
+source_url = "pacificdata.org/data/geographic_data/2011_wsm_phc_admin_boundaries/resource/d5aee425-5e46-41f1-929e-3b7413ff1d4a"
+license_url = "pacificdata.org/data/dataset/2011_wsm_phc_admin_boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/WSM/ADM2/geoBoundaries-WSM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/WSM/ADM2/geoBoundaries-WSM-ADM2.geojson"
+
+[[countries]]
+iso = "XKX"
+name = "Kosovo"
+boundary_id = "XKX-ADM2-46174442"
+area_type = "Municipality"
+year = "2017"
+units = 38
+source_license = "Creative Commons Attribution-ShareAlike 2.0"
+source_url = "wambachers-osm.website/boundaries/"
+license_url = "www.openstreetmap.org/copyright"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/XKX/ADM2/geoBoundaries-XKX-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/XKX/ADM2/geoBoundaries-XKX-ADM2.geojson"
+
+[[countries]]
+iso = "YEM"
+name = "Yemen"
+boundary_id = "YEM-ADM2-15242507"
+area_type = "Districts"
+year = "2021"
+units = 335
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/yemen-admin-boundaries"
+license_url = "data.humdata.org/dataset/yemen-admin-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/YEM/ADM2/geoBoundaries-YEM-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/YEM/ADM2/geoBoundaries-YEM-ADM2.geojson"
+
+[[countries]]
+iso = "ZAF"
+name = "South Africa"
+boundary_id = "ZAF-ADM2-47623444"
+area_type = "District municipality"
+year = "2020"
+units = 52
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/south-africa-admin-level-1-boundaries"
+license_url = "data.humdata.org/dataset/south-africa-admin-level-1-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ZAF/ADM2/geoBoundaries-ZAF-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ZAF/ADM2/geoBoundaries-ZAF-ADM2.geojson"
+
+[[countries]]
+iso = "ZMB"
+name = "Zambia"
+boundary_id = "ZMB-ADM2-96606910"
+area_type = "Districts"
+year = "2020"
+units = 116
+source_license = "Creative Commons Attribution 4.0 (CC BY 4.0)"
+source_url = "data.grid3.org/datasets/GRID3"
+license_url = "data.grid3.org/datasets/GRID3"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ZMB/ADM2/geoBoundaries-ZMB-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ZMB/ADM2/geoBoundaries-ZMB-ADM2.geojson"
+
+[[countries]]
+iso = "ZWE"
+name = "Zimbabwe"
+boundary_id = "ZWE-ADM2-62879985"
+area_type = "District"
+year = "2020"
+units = 91
+source_license = "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)"
+source_url = "data.humdata.org/dataset/zimbabwe-administrative-levels-0-3-boundaries"
+license_url = "data.humdata.org/dataset/zimbabwe-administrative-levels-0-3-boundaries"
+download_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ZWE/ADM2/geoBoundaries-ZWE-ADM2_simplified.geojson"
+full_geometry_url = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ZWE/ADM2/geoBoundaries-ZWE-ADM2.geojson"

@@ -1,0 +1,249 @@
+schema_version = 1
+red_list_version = "2026-1"
+data_last_updated = "2026-07-09"
+official_url = "https://www.iucnredlist.org/resources/spatial-data-download"
+format = "Esri shapefile ZIP"
+
+# Broad class archives are used where IUCN publishes one. Fishes, marine
+# groups, and freshwater groups are distributed as separate archives; the
+# normalization stage must deduplicate overlapping species/ranges.
+
+[[files]]
+logical_name = "mammals.zip"
+provider_filename = "MAMMALS.zip"
+bucket = "mammals"
+label = "Mammals"
+size = "1.21GB"
+file_id = "69dda226-01ad-4b0c-a8df-226f0f96db4a"
+
+[[files]]
+logical_name = "amphibians.zip"
+provider_filename = "AMPHIBIANS.zip"
+bucket = "amphibians"
+label = "Amphibians"
+size = "1.69GB"
+file_id = "af13f6f5-11dd-4c83-9c84-ba79dc108a8c"
+
+[[files]]
+logical_name = "reptiles.zip"
+provider_filename = "REPTILES.zip"
+bucket = "reptiles"
+label = "Reptiles"
+size = "1.39GB"
+file_id = "260a913f-f6f4-4dae-8571-a371fb07fadf"
+
+[[files]]
+logical_name = "plants.zip"
+provider_filename = "PLANTS.zip"
+bucket = "plants"
+label = "Plants"
+size = "3.13GB"
+file_id = "fe632352-ab7b-431e-9ece-6dbc4435696d"
+
+[[files]]
+logical_name = "fishes_chondrichthyes.zip"
+provider_filename = "SHARKS_RAYS_CHIMAERAS.zip"
+bucket = "fishes"
+label = "Chondrichthyes"
+size = "<500MB"
+file_id = "8a596e26-473f-4776-8f36-bdc59f7e8e04"
+
+[[files]]
+logical_name = "fishes_croakers_drums.zip"
+provider_filename = "CROAKERS_DRUMS.zip"
+bucket = "fishes"
+label = "Croakers and Drums"
+size = "<250MB"
+file_id = "79c7523d-e9aa-4edf-a9f2-604cf0570723"
+
+[[files]]
+logical_name = "fishes_eels.zip"
+provider_filename = "EELS.zip"
+bucket = "fishes"
+label = "Eels"
+size = "<500MB"
+file_id = "069c577b-5700-4055-868c-222c9b68a15c"
+
+[[files]]
+logical_name = "fishes_groupers.zip"
+provider_filename = "GROUPERS.zip"
+bucket = "fishes"
+label = "Groupers"
+size = "<500MB"
+file_id = "d5cde06c-7e69-4ec5-8680-6b0858db2e93"
+
+[[files]]
+logical_name = "fishes_hagfishes.zip"
+provider_filename = "HAGFISH.zip"
+bucket = "fishes"
+label = "Hagfishes"
+size = "<500MB"
+file_id = "e4fea22d-47af-4d6c-a503-fcccb192b9a7"
+
+[[files]]
+logical_name = "fishes_salmonids.zip"
+provider_filename = "SALMONIDS.zip"
+bucket = "fishes"
+label = "Salmonids"
+size = "<250MB"
+file_id = "c1a31e2e-eb46-41a7-88c3-2f4fb3ec9f27"
+
+[[files]]
+logical_name = "fishes_seabreams_snappers_grunts.zip"
+provider_filename = "SEABREAMS_SNAPPERS_GRUNTS.zip"
+bucket = "fishes"
+label = "Seabreams, Snappers and Grunts"
+size = "542MB"
+file_id = "6034c7a1-8fcf-490c-80ff-6d055d9bc12c"
+
+[[files]]
+logical_name = "fishes_sturgeons_paddlefishes.zip"
+provider_filename = "STURGEONS_PADDLEFISHES.zip"
+bucket = "fishes"
+label = "Sturgeons and Paddlefishes"
+size = "<50MB"
+file_id = "9326f049-f8c5-4dfb-bbaa-0053dab3e965"
+
+[[files]]
+logical_name = "fishes_syngnathiformes.zip"
+provider_filename = "SYNGNATHIFORM_FISHES.zip"
+bucket = "fishes"
+label = "Syngnathiform fishes"
+size = "<500MB"
+file_id = "07355d78-ed22-4481-b9f9-7db929380988"
+
+[[files]]
+logical_name = "fishes_tunas_billfishes_swordfishes.zip"
+provider_filename = "TUNAS_BILLFISHES_SWORDFISH.zip"
+bucket = "fishes"
+label = "Tunas, Billfishes and Swordfishes"
+size = "<250MB"
+file_id = "2d0b4b04-af89-4f8f-a925-5fa0daff2aff"
+
+[[files]]
+logical_name = "fishes_wrasses_parrotfishes.zip"
+provider_filename = "WRASSES_PARROTFISHES.zip"
+bucket = "fishes"
+label = "Wrasses and Parrotfishes"
+size = "<500MB"
+file_id = "c99dfe45-9419-4baa-ba44-ec1e810fc153"
+
+[[files]]
+logical_name = "fishes_marine.zip"
+provider_filename = "MARINEFISH.zip"
+bucket = "fishes"
+label = "Marine Fishes"
+size = "9.72GB"
+file_id = "3f4d2be7-5c60-4e10-bb58-6ba0ab86c8a7"
+
+[[files]]
+logical_name = "marine_abalones.zip"
+provider_filename = "ABALONES.zip"
+bucket = "marine_groups"
+label = "Abalones"
+size = "<50MB"
+file_id = "4062b076-a16c-4e30-8042-7e68dee4cefc"
+
+[[files]]
+logical_name = "marine_cone_snails.zip"
+provider_filename = "CONE_SNAILS.zip"
+bucket = "marine_groups"
+label = "Cone Snails"
+size = "<500MB"
+file_id = "76e303ae-505f-4007-961e-d200347241b9"
+
+[[files]]
+logical_name = "marine_reef_forming_corals.zip"
+provider_filename = "REEF_FORMING_CORALS.zip"
+bucket = "marine_groups"
+label = "Reef-forming Corals"
+size = "1.76GB"
+file_id = "88f8addb-7d89-4e2a-9284-5862824797c3"
+
+[[files]]
+logical_name = "marine_lobsters.zip"
+provider_filename = "LOBSTERS.zip"
+bucket = "marine_groups"
+label = "Lobsters"
+size = "<250MB"
+file_id = "073b6786-beb2-4b65-93a9-e6c3b8f0e0f3"
+
+[[files]]
+logical_name = "marine_mangroves.zip"
+provider_filename = "MANGROVES.zip"
+bucket = "marine_groups"
+label = "Mangroves"
+size = "<100MB"
+file_id = "0f712c2f-1de0-4a4a-8e53-62bf3f6697e6"
+
+[[files]]
+logical_name = "marine_seagrasses.zip"
+provider_filename = "SEAGRASSES.zip"
+bucket = "marine_groups"
+label = "Seagrasses"
+size = "<100MB"
+file_id = "28bbd04b-4491-4d5c-8b83-5bec9b62a0a4"
+
+[[files]]
+logical_name = "freshwater_crabs.zip"
+provider_filename = "FW_CRABS.zip"
+bucket = "freshwater_groups"
+label = "Freshwater Crabs"
+size = "<100MB"
+file_id = "6cea071e-084c-41a9-94dd-5929597b3140"
+
+[[files]]
+logical_name = "freshwater_crayfishes.zip"
+provider_filename = "FW_CRAYFISH.zip"
+bucket = "freshwater_groups"
+label = "Freshwater Crayfishes"
+size = "<50MB"
+file_id = "14a9016b-1f85-4337-bad8-dc79be279779"
+
+[[files]]
+logical_name = "freshwater_fishes.zip"
+provider_filename = "FW_FISH.zip"
+bucket = "freshwater_groups"
+label = "Freshwater Fishes"
+size = "2.40GB"
+file_id = "424bc197-b56e-4c6c-acca-0c072616d2d9"
+
+[[files]]
+logical_name = "freshwater_molluscs.zip"
+provider_filename = "FW_MOLLUSCS.zip"
+bucket = "freshwater_groups"
+label = "Freshwater Molluscs"
+size = "547MB"
+file_id = "733994f7-6db3-4787-a014-5260645ec86d"
+
+[[files]]
+logical_name = "freshwater_odonata.zip"
+provider_filename = "FW_ODONATA.zip"
+bucket = "freshwater_groups"
+label = "Freshwater Odonata"
+size = "790MB"
+file_id = "2ad9dd7b-a2c4-405a-b9f4-51d3e0745758"
+
+[[files]]
+logical_name = "freshwater_plants.zip"
+provider_filename = "FW_PLANTS.zip"
+bucket = "freshwater_groups"
+label = "Freshwater Plants"
+size = "1.03GB"
+file_id = "ba643f3d-56b4-4bb1-b6b4-81791f2a1c88"
+
+[[files]]
+logical_name = "freshwater_shrimps.zip"
+provider_filename = "FW_SHRIMPS.zip"
+bucket = "freshwater_groups"
+label = "Freshwater Shrimps"
+size = "<100MB"
+file_id = "3a4bc57b-5d74-45a4-9e2c-94c16f147c9d"
+
+[[files]]
+logical_name = "freshwater_other.zip"
+provider_filename = "FW_OTHER.zip"
+bucket = "freshwater_groups"
+label = "Freshwater Other"
+size = "3.37GB"
+file_id = "c8523c93-7d19-4b3b-ae9b-5b76c5631972"

@@ -1,0 +1,55 @@
+schema_version = 4
+profile_id = "iucn-richness-any-touch-v3"
+
+[coverage]
+source = "IUCN range polygons, occurrence points, and HydroBASINS relationships"
+resolution = 7
+definition = "Below 100 square degrees of bbox area, a species is present when the closed source range polygon and closed H3 cell intersect at any point. At or above 100 square degrees, the same rule is applied after a bounded 0.01 degree decision simplification whose conservative WGS84 displacement bound is 1116.94 metres."
+candidate_mode = "bbox_overlap"
+candidate_tile_degrees = 10.0
+large_candidate_tile_degrees = 2.5
+large_candidate_bbox_degrees2 = 100.0
+res3_derivation = "parent of an included resolution-7 cell"
+
+[point_coverage]
+definition = "Each eligible IUCN point contributes the single resolution-7 H3 cell containing its WGS84 dec_lat/dec_long coordinate. Points are not buffered."
+latitude_column = "dec_lat"
+longitude_column = "dec_long"
+invalid_coordinate_policy = "exclude null and out-of-range coordinates"
+
+[hydrobasin_coverage]
+definition = "Each eligible IUCN species-to-HYBAS_ID relationship inherits the any-touch resolution-7 coverage of that HydroBASINS v1c polygon. Each referenced basin is covered once and reused across species tables."
+release = "v1c"
+relationship_key = "hybas_id"
+geometry_key = "HYBAS_ID"
+
+[algorithm]
+production_kernel = "direct-any-touch-v2"
+coarse_resolution = 3
+hierarchy_start_resolution = 2
+small_polygon_bbox_degrees2 = 100.0
+antimeridian_kernel = "direct-any-touch-v2"
+candidate_simplification_degrees = 0.0
+candidate_buffer_factor = 1.0
+# 0.01° has a conservative WGS84 displacement bound of 1,116.94 m.
+# It is used only for the five largest bbox bands (>= 100 deg²).
+decision_simplification_degrees = 0.01
+decision_simplification_min_bbox_degrees2 = 100.0
+max_decision_displacement_metres = 2000.0
+
+[row_policy]
+# IUCN's published 2021+ species-richness / rarity-weighted-richness selection.
+presence = [1, 4]
+origin = [1, 2, 6]
+seasonality = [1, 2, 3, 5]
+exclude_null_geometry = true
+exclusion_precedence = ["null_iucn_sis_id", "null_geometry", "presence_policy", "origin_policy", "seasonality_policy"]
+
+[geometry_repair]
+method = "shapely.make_valid"
+max_relative_planar_area_change = 0.05
+fail_when_original_area_is_zero = true
+
+[runtime]
+geometry_batch_rows = 128
+pair_write_rows = 250000

@@ -39,6 +39,10 @@ BLOCKED_SUFFIXES = {
     ".sqlite3",
     ".tsv",
 }
+BLOCKED_DIRECTORIES = {
+    "archive", "acquisition", "denmark_prototype", ".tmp", ".venv",
+    "node_modules", "__pycache__", ".ruff_cache", ".pytest_cache", ".svelte-kit",
+}
 SECRET_PATTERNS = (
     re.compile(rb"-----BEGIN (?:RSA |OPENSSH |EC |DSA )?PRIVATE KEY-----"),
     re.compile(rb"AKIA[0-9A-Z]{16}"),
@@ -72,6 +76,13 @@ def worktree_errors(paths: list[Path]) -> list[str]:
         relative = path.relative_to(ROOT).as_posix()
         suffix = path.suffix.lower()
 
+        if any(part in BLOCKED_DIRECTORIES for part in Path(relative).parts[:-1]):
+            errors.append(f"local-only artifact must remain outside Git: {relative}")
+        if (path.name == ".env" or path.name.startswith(".env.")) and path.name != ".env.example":
+            errors.append(f"environment secrets must remain outside Git: {relative}")
+        if path.is_symlink():
+            errors.append(f"file symlinks require explicit release review: {relative}")
+            continue
         if relative in BLOCKED_EXACT_PATHS:
             errors.append(f"restricted database must not be published: {relative}")
         if relative.startswith("data/") and relative not in ALLOWED_DATA_FILES:
