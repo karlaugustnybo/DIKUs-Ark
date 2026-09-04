@@ -16,44 +16,24 @@ public data snapshot.
   or is covered by a compatible licence.
 - [ ] Run `just check` and retain the successful output.
 - [ ] Review `git status --short` and `git diff --cached` before committing.
-- [ ] Run `just release-history-check` after the history rewrite below.
+- [ ] Run `just release-history-check` and investigate any affected ref before
+  every public push.
 - [ ] Compare current provider terms with `DATA_POLICY.md` and `NOTICE.md`.
 - [ ] Confirm that every public deployment offers the corresponding source for
   its running version through the persistent Source link required by AGPL §13.
 
-## Known public-history incident
+## Resolved public-history incident
 
-The public repository's `main` history contains `data/Ark-IV.duckdb` and
-`data/precomputed_cache.duckdb`. Removing them in a later commit does **not**
-remove the downloadable objects from history. The files contain IUCN/EDGE-backed
-records that should not be publicly redistributed.
+On 4 September 2026, the repository history was rewritten to remove
+`data/Ark-IV.duckdb` and `data/precomputed_cache.duckdb` from affected refs.
+The databases contained IUCN/EDGE-backed records without an established public
+redistribution grant. The cause, scope, remediation, residual risk, and
+required re-clone procedure are preserved in
+`docs/reference/restricted-data-history-incident.md`.
 
-History rewriting changes commit IDs and requires every collaborator to
-re-clone. It should be done deliberately by a repository administrator, after
-making a private backup and coordinating a short push freeze. A suitable
-procedure is:
-
-1. Temporarily make the GitHub repository private and stop collaborator pushes.
-2. Create a private mirror backup outside the working repository.
-3. Install `git-filter-repo` with Homebrew if needed.
-4. In a disposable mirror clone, remove the two databases from every ref:
-
-   ```bash
-   git filter-repo --force --invert-paths \
-     --path data/Ark-IV.duckdb \
-     --path data/precomputed_cache.duckdb
-   ```
-
-5. Inspect the rewritten refs, run the history release check, then force-push
-   the intended branches and tags with repository-administrator approval.
-6. Ask every collaborator to delete old clones and re-clone. Old clones can
-   reintroduce the removed objects.
-7. Contact GitHub Support if cached views or pull-request refs still expose the
-   files.
-
-The old MOV tutorial files and obsolete diagram PNGs also occupy substantial
-history. They may be removed in the same coordinated rewrite for repository
-size, but they are not the licensing incident that makes the rewrite mandatory.
+Do not merge or push branches from a clone made before the cleanup. Re-clone
+instead, because an old ref can reintroduce the removed objects. If the history
+audit fails, stop the release and identify the stale ref before pushing.
 
 ## Data snapshot review
 

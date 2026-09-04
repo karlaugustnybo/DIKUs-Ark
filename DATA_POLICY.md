@@ -80,6 +80,8 @@ commit. It rejects common data formats (including Arrow and PMTiles), files
 under `data/`, known restricted database paths, likely credentials, and files
 near GitHub's size limit.
 
-`just release-history-check` additionally checks local Git history for the two
-known restricted databases. It intentionally fails until the history cleanup
-in `docs/publication_checklist.md` has been completed.
+`just release-history-check` additionally checks every local Git ref for the
+two databases removed during the 2026-09-04 history cleanup. This is a
+permanent regression guard: it prevents an old clone, branch, or tag from
+silently reintroducing the restricted objects. The incident and remediation
+are recorded in `docs/reference/restricted-data-history-incident.md`.
